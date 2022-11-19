@@ -28,6 +28,7 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.adaptive.calculateDisplayFeatures
+import org.voegtle.privatetrainer.business.BluetoothState
 import org.voegtle.privatetrainer.business.PrivateTrainerState
 import org.voegtle.privatetrainer.business.PrivateTrainerViewModel
 import org.voegtle.privatetrainer.ui.theme.PrivateTrainerTheme
@@ -39,43 +40,46 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalLifecycleComposeApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val bluetoothManager: BluetoothManager = getSystemService(BluetoothManager::class.java)
+        val bluetoothAdapter: BluetoothAdapter? = bluetoothManager.getAdapter()
+        if (bluetoothAdapter == null) {
+            // Device doesn't support Bluetooth
+        }
+        val bluetoothEnabled = bluetoothAdapter!!.isEnabled
+
+        val bluetoothState = BluetoothState()
+        val requestPermissionLauncher =
+            registerForActivityResult(
+                ActivityResultContracts.RequestPermission()
+            ) { isGranted: Boolean ->
+                bluetoothState.permissionGranted = isGranted
+                if (isGranted) {
+                    val bondedDevices = bluetoothAdapter?.bondedDevices
+                    bluetoothState.bondedDevices = bondedDevices
+                }
+            }
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.BLUETOOTH_CONNECT
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissionLauncher.launch(
+                Manifest.permission.BLUETOOTH_CONNECT
+            )
+        } else {
+            bluetoothState.permissionGranted = true
+            bluetoothState.bondedDevices = bluetoothAdapter.bondedDevices
+        }
+
         setContent {
-//            val bluetoothManager: BluetoothManager = getSystemService(BluetoothManager::class.java)
-//            val bluetoothAdapter: BluetoothAdapter? = bluetoothManager.getAdapter()
-//            if (bluetoothAdapter == null) {
-//                // Device doesn't support Bluetooth
-//            }
-//            val bluetoothEnabled = bluetoothAdapter!!.isEnabled
-//
-//            val requestPermissionLauncher =
-//                registerForActivityResult(
-//                    ActivityResultContracts.RequestPermission()
-//                ) { isGranted: Boolean ->
-//                    if (isGranted) {
-//                        val bondedDevices = bluetoothAdapter?.bondedDevices
-//                        showBondedDevices(bluetoothEnabled, bondedDevices)
-//                    } else {
-//                        showBluetoothPermissionDenied()
-//                    }
-//                }
-//
-//            if (ActivityCompat.checkSelfPermission(
-//                    this,
-//                    Manifest.permission.BLUETOOTH_CONNECT
-//                ) != PackageManager.PERMISSION_GRANTED
-//            ) {
-//                requestPermissionLauncher.launch(
-//                    Manifest.permission.BLUETOOTH_CONNECT
-//                )
-//            } else {
-//                val bondedDevices = bluetoothAdapter?.bondedDevices
-//                showBondedDevices(bluetoothEnabled, bondedDevices)
-//            }
+            val uiState by viewModel.privateTrainerState.collectAsStateWithLifecycle()
+            uiState.bluetoothState = bluetoothState
 
             PrivateTrainerTheme {
                 val windowSize = calculateWindowSizeClass(this)
                 val displayFeatures = calculateDisplayFeatures(this)
-                val uiState by viewModel.privateTrainerState.collectAsStateWithLifecycle()
 
                 PrivateTrainerApp(
                     windowSize = windowSize,
@@ -84,7 +88,8 @@ class MainActivity : ComponentActivity() {
                     closeDetailScreen = {
                         viewModel.closeDetailScreen()
                     },
-                    navigateToDetail = { emailId, pane -> {}
+                    navigateToDetail = { emailId, pane ->
+                        {}
                     }
                 )
             }
@@ -138,7 +143,8 @@ fun BluetoothPermissionRequired() {
 
 @Composable
 fun BluetoothStatus(enabled: Boolean) {
-    val indicatorColor = if (enabled) MaterialTheme.colorScheme.inversePrimary else MaterialTheme.colorScheme.errorContainer
+    val indicatorColor =
+        if (enabled) MaterialTheme.colorScheme.inversePrimary else MaterialTheme.colorScheme.errorContainer
     val statusText = if (enabled) "aktiv" else "ausgeschaltet"
     Surface(color = indicatorColor) {
         Text(
