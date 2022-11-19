@@ -1,3 +1,10 @@
 <resources>
   <string name="app_name">Private Trainer</string>
+    <string name="navigation_drawer">Navigation</string>
+    <string name="empty_screen_title">Screen under construction</string>
+    <string name="empty_screen_subtitle">This screen is still under construction</string>
+    <string name="tab_start">Start</string>
+    <string name="tab_settings">Einstellungen</string>
+    <string name="tab_saved_settings">Gespeicherte Einstellungen</string>
+    <string name="tab_about">Über Private Trainer</string>
 </resources>
