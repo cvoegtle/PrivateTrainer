@@ -44,8 +44,8 @@ class PrivateNavigationActions(private val navController: NavHostController) {
 val TOP_LEVEL_DESTINATIONS = listOf(
     PrivateTopLevelDestination(
         route = PrivateRoute.START,
-        selectedIcon = Icons.Default.Start,
-        unselectedIcon = Icons.Default.Start,
+        selectedIcon = Icons.Default.Home,
+        unselectedIcon = Icons.Default.Home,
         iconTextId = R.string.tab_start
     ),
     PrivateTopLevelDestination(
