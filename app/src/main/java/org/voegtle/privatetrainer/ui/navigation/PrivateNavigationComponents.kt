@@ -56,27 +56,27 @@ fun PermanentNavigationDrawerContent(
                         .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    TOP_LEVEL_DESTINATIONS.forEach { replyDestination ->
+                    TOP_LEVEL_DESTINATIONS.forEach { privateDestination ->
                         NavigationDrawerItem(
-                            selected = selectedDestination == replyDestination.route,
+                            selected = selectedDestination == privateDestination.route,
                             label = {
                                 Text(
-                                    text = stringResource(id = replyDestination.iconTextId),
+                                    text = stringResource(id = privateDestination.iconTextId),
                                     modifier = Modifier.padding(horizontal = 16.dp)
                                 )
                             },
                             icon = {
                                 Icon(
-                                    imageVector = replyDestination.selectedIcon,
+                                    imageVector = privateDestination.selectedIcon,
                                     contentDescription = stringResource(
-                                        id = replyDestination.iconTextId
+                                        id = privateDestination.iconTextId
                                     )
                                 )
                             },
                             colors = NavigationDrawerItemDefaults.colors(
                                 unselectedContainerColor = Color.Transparent
                             ),
-                            onClick = { navigateToTopLevelDestination(replyDestination) }
+                            onClick = { navigateToTopLevelDestination(privateDestination) }
                         )
                     }
                 }

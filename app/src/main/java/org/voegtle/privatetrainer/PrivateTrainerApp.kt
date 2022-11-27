@@ -25,6 +25,7 @@ import androidx.window.layout.FoldingFeature
 import kotlinx.coroutines.launch
 import org.voegtle.privatetrainer.business.PrivateTrainerState
 import org.voegtle.privatetrainer.ui.EmptyComingSoon
+import org.voegtle.privatetrainer.ui.OverviewScreen
 import org.voegtle.privatetrainer.ui.navigation.*
 import org.voegtle.privatetrainer.ui.utils.*
 
@@ -264,7 +265,7 @@ private fun PrivateTrainerNavHost(
         startDestination = PrivateRoute.START,
     ) {
         composable(PrivateRoute.START) {
-            EmptyComingSoon()
+            OverviewScreen(privateTrainerState)
         }
         composable(PrivateRoute.SETTINGS) {
             EmptyComingSoon()

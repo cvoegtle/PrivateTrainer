@@ -40,7 +40,6 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalLifecycleComposeApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val bluetoothManager: BluetoothManager = getSystemService(BluetoothManager::class.java)
         val bluetoothAdapter: BluetoothAdapter? = bluetoothManager.getAdapter()
         if (bluetoothAdapter == null) {
@@ -56,7 +55,7 @@ class MainActivity : ComponentActivity() {
                 bluetoothState.permissionGranted = isGranted
                 if (isGranted) {
                     val bondedDevices = bluetoothAdapter?.bondedDevices
-                    bluetoothState.bondedDevices = bondedDevices
+                    readBluetoothDeviceStatus(bluetoothState, bondedDevices)
                 }
             }
 
@@ -70,7 +69,8 @@ class MainActivity : ComponentActivity() {
             )
         } else {
             bluetoothState.permissionGranted = true
-            bluetoothState.bondedDevices = bluetoothAdapter.bondedDevices
+            val bondedDevices = bluetoothAdapter?.bondedDevices
+            readBluetoothDeviceStatus(bluetoothState, bondedDevices)
         }
 
         setContent {
@@ -94,6 +94,14 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+    }
+
+    private fun readBluetoothDeviceStatus(
+        bluetoothState: BluetoothState,
+        bondedDevices: MutableSet<BluetoothDevice>
+    ) {
+        bluetoothState.bondedDevices = bondedDevices
+        bluetoothState.selectedDevice = bondedDevices?.firstOrNull()
     }
 
 }

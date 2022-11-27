@@ -15,61 +15,61 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val privateTrainerDarkColorScheme = darkColorScheme(
-    primary = replyDarkPrimary,
-    onPrimary = replyDarkOnPrimary,
-    primaryContainer = replyDarkPrimaryContainer,
-    onPrimaryContainer = replyDarkOnPrimaryContainer,
-    inversePrimary = replyDarkPrimaryInverse,
-    secondary = replyDarkSecondary,
-    onSecondary = replyDarkOnSecondary,
-    secondaryContainer = replyDarkSecondaryContainer,
-    onSecondaryContainer = replyDarkOnSecondaryContainer,
-    tertiary = replyDarkTertiary,
-    onTertiary = replyDarkOnTertiary,
-    tertiaryContainer = replyDarkTertiaryContainer,
-    onTertiaryContainer = replyDarkOnTertiaryContainer,
-    error = replyDarkError,
-    onError = replyDarkOnError,
-    errorContainer = replyDarkErrorContainer,
-    onErrorContainer = replyDarkOnErrorContainer,
-    background = replyDarkBackground,
-    onBackground = replyDarkOnBackground,
-    surface = replyDarkSurface,
-    onSurface = replyDarkOnSurface,
-    inverseSurface = replyDarkInverseSurface,
-    inverseOnSurface = replyDarkInverseOnSurface,
-    surfaceVariant = replyDarkSurfaceVariant,
-    onSurfaceVariant = replyDarkOnSurfaceVariant,
-    outline = replyDarkOutline
+    primary = privateDarkPrimary,
+    onPrimary = privateDarkOnPrimary,
+    primaryContainer = privateDarkPrimaryContainer,
+    onPrimaryContainer = privateDarkOnPrimaryContainer,
+    inversePrimary = privateDarkPrimaryInverse,
+    secondary = privateDarkSecondary,
+    onSecondary = privateDarkOnSecondary,
+    secondaryContainer = privateDarkSecondaryContainer,
+    onSecondaryContainer = privateDarkOnSecondaryContainer,
+    tertiary = privateDarkTertiary,
+    onTertiary = privateDarkOnTertiary,
+    tertiaryContainer = privateDarkTertiaryContainer,
+    onTertiaryContainer = privateDarkOnTertiaryContainer,
+    error = privateDarkError,
+    onError = privateDarkOnError,
+    errorContainer = privateDarkErrorContainer,
+    onErrorContainer = privateDarkOnErrorContainer,
+    background = privateDarkBackground,
+    onBackground = privateDarkOnBackground,
+    surface = privateDarkSurface,
+    onSurface = privateDarkOnSurface,
+    inverseSurface = privateDarkInverseSurface,
+    inverseOnSurface = privateDarkInverseOnSurface,
+    surfaceVariant = privateDarkSurfaceVariant,
+    onSurfaceVariant = privateDarkOnSurfaceVariant,
+    outline = privateDarkOutline
 )
 
 private val privateTrainerLightColorScheme = lightColorScheme(
-    primary = replyLightPrimary,
-    onPrimary = replyLightOnPrimary,
-    primaryContainer = replyLightPrimaryContainer,
-    onPrimaryContainer = replyLightOnPrimaryContainer,
-    inversePrimary = replyLightPrimaryInverse,
-    secondary = replyLightSecondary,
-    onSecondary = replyLightOnSecondary,
-    secondaryContainer = replyLightSecondaryContainer,
-    onSecondaryContainer = replyLightOnSecondaryContainer,
-    tertiary = replyLightTertiary,
-    onTertiary = replyLightOnTertiary,
-    tertiaryContainer = replyLightTertiaryContainer,
-    onTertiaryContainer = replyLightOnTertiaryContainer,
-    error = replyLightError,
-    onError = replyLightOnError,
-    errorContainer = replyLightErrorContainer,
-    onErrorContainer = replyLightOnErrorContainer,
-    background = replyLightBackground,
-    onBackground = replyLightOnBackground,
-    surface = replyLightSurface,
-    onSurface = replyLightOnSurface,
-    inverseSurface = replyLightInverseSurface,
-    inverseOnSurface = replyLightInverseOnSurface,
-    surfaceVariant = replyLightSurfaceVariant,
-    onSurfaceVariant = replyLightOnSurfaceVariant,
-    outline = replyLightOutline
+    primary = privateLightPrimary,
+    onPrimary = privateLightOnPrimary,
+    primaryContainer = privateLightPrimaryContainer,
+    onPrimaryContainer = privateLightOnPrimaryContainer,
+    inversePrimary = privateLightPrimaryInverse,
+    secondary = privateLightSecondary,
+    onSecondary = privateLightOnSecondary,
+    secondaryContainer = privateLightSecondaryContainer,
+    onSecondaryContainer = privateLightOnSecondaryContainer,
+    tertiary = privateLightTertiary,
+    onTertiary = privateLightOnTertiary,
+    tertiaryContainer = privateLightTertiaryContainer,
+    onTertiaryContainer = privateLightOnTertiaryContainer,
+    error = privateLightError,
+    onError = privateLightOnError,
+    errorContainer = privateLightErrorContainer,
+    onErrorContainer = privateLightOnErrorContainer,
+    background = privateLightBackground,
+    onBackground = privateLightOnBackground,
+    surface = privateLightSurface,
+    onSurface = privateLightOnSurface,
+    inverseSurface = privateLightInverseSurface,
+    inverseOnSurface = privateLightInverseOnSurface,
+    surfaceVariant = privateLightSurfaceVariant,
+    onSurfaceVariant = privateLightOnSurfaceVariant,
+    outline = privateLightOutline
 )
 
 @Composable
@@ -78,7 +78,7 @@ fun PrivateTrainerTheme(
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val replyColorScheme = when {
+    val privateColorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
@@ -90,14 +90,14 @@ fun PrivateTrainerTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = replyColorScheme.primary.toArgb()
+            window.statusBarColor = privateColorScheme.primary.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }
 
     androidx.compose.material3.MaterialTheme(
-        colorScheme = replyColorScheme,
-        typography = replyTypography,
+        colorScheme = privateColorScheme,
+        typography = privateTypography,
         shapes = shapes,
         content = content
     )
