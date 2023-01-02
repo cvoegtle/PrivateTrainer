@@ -1,6 +1,5 @@
 package org.voegtle.privatetrainer.ui
 
-import android.provider.Settings.Global.getString
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer

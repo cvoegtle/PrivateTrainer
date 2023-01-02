@@ -13,6 +13,7 @@
     <string name = "setting_strength">Stärke</string>
     <string name = "setting_interval">Intervall</string>
     <string name = "battery">Batterie</string>
+    <string name = "bluetooth_scan">neu suchen</string>
     <string name = "connected">verbunden</string>
     <string name = "error_bluetooth_not_supported">Das Gerät unterstützt kein Bluetooth.</string>
     <string name = "error_bluetooth_disabled">Bluetooth ist ausgeschaltet.</string>
