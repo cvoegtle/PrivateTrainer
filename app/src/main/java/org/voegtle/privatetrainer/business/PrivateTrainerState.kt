@@ -8,11 +8,23 @@ import kotlinx.coroutines.flow.StateFlow
 data class BluetoothState(
     var bondedDevices: MutableSet<BluetoothDevice> = HashSet(),
     var selectedDevice: BluetoothDevice? = null,
-    var connected: Boolean = false,
-    var permissionGranted: Boolean = false
+    var connectionStatus: BluetoothConnectionStatus = BluetoothConnectionStatus.not_supported,
 )
 
-data class PrivateTrainerState(var bluetoothState: BluetoothState = BluetoothState())
+enum class BluetoothConnectionStatus {
+    not_supported, disabled, permission_denied, not_connected, connected
+}
+
+data class DeviceSettings(
+    var mode: Int = 1, // 1 - 10
+    var strength: Float = 0.8f, // 10 - 100%
+    var interval: Float = 2f,// 0,1 - 120s
+)
+
+data class PrivateTrainerState(
+    var bluetoothState: BluetoothState = BluetoothState(),
+    var deviceSetting: DeviceSettings = DeviceSettings()
+)
 
 class PrivateTrainerViewModel() :
     ViewModel() {

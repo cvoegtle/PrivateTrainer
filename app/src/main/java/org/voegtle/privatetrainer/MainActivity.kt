@@ -28,8 +28,8 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.adaptive.calculateDisplayFeatures
+import org.voegtle.privatetrainer.business.BluetoothConnectionStatus.*
 import org.voegtle.privatetrainer.business.BluetoothState
-import org.voegtle.privatetrainer.business.PrivateTrainerState
 import org.voegtle.privatetrainer.business.PrivateTrainerViewModel
 import org.voegtle.privatetrainer.ui.theme.PrivateTrainerTheme
 
@@ -42,35 +42,23 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val bluetoothManager: BluetoothManager = getSystemService(BluetoothManager::class.java)
         val bluetoothAdapter: BluetoothAdapter? = bluetoothManager.getAdapter()
-        if (bluetoothAdapter == null) {
-            // Device doesn't support Bluetooth
-        }
-        val bluetoothEnabled = bluetoothAdapter!!.isEnabled
 
         val bluetoothState = BluetoothState()
-        val requestPermissionLauncher =
-            registerForActivityResult(
-                ActivityResultContracts.RequestPermission()
-            ) { isGranted: Boolean ->
-                bluetoothState.permissionGranted = isGranted
-                if (isGranted) {
-                    val bondedDevices = bluetoothAdapter?.bondedDevices
-                    readBluetoothDeviceStatus(bluetoothState, bondedDevices)
-                }
-            }
+        bluetoothState.connectionStatus = when {
+            bluetoothAdapter == null -> not_supported
+            bluetoothAdapter.isEnabled -> not_connected
+            !bluetoothAdapter.isEnabled -> disabled
+            else -> not_supported
+        }
 
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.BLUETOOTH_CONNECT
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            requestPermissionLauncher.launch(
-                Manifest.permission.BLUETOOTH_CONNECT
-            )
+            readBluetoothDeviceStatusWithPermissionCheck(bluetoothState, bluetoothAdapter)
         } else {
-            bluetoothState.permissionGranted = true
-            val bondedDevices = bluetoothAdapter?.bondedDevices
-            readBluetoothDeviceStatus(bluetoothState, bondedDevices)
+            readBluetoothDeviceStatus(bluetoothState, bluetoothAdapter)
         }
 
         setContent {
@@ -96,7 +84,34 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun readBluetoothDeviceStatusWithPermissionCheck(
+        bluetoothState: BluetoothState,
+        bluetoothAdapter: BluetoothAdapter?
+    ) {
+        val requestPermissionLauncher =
+            registerForActivityResult(
+                ActivityResultContracts.RequestPermission()
+            ) { isGranted: Boolean ->
+                bluetoothState.connectionStatus =
+                    if (isGranted) not_connected else permission_denied
+                readBluetoothDeviceStatus(bluetoothState, bluetoothAdapter)
+            }
+        requestPermissionLauncher.launch(
+            Manifest.permission.BLUETOOTH_CONNECT
+        )
+    }
+
     private fun readBluetoothDeviceStatus(
+        bluetoothState: BluetoothState,
+        bluetoothAdapter: BluetoothAdapter?
+    ) {
+        if (bluetoothState.connectionStatus > permission_denied) {
+            val bondedDevices = bluetoothAdapter?.bondedDevices
+            collectBluetoothDeviceStatus(bluetoothState, bondedDevices!!)
+        }
+    }
+
+    private fun collectBluetoothDeviceStatus(
         bluetoothState: BluetoothState,
         bondedDevices: MutableSet<BluetoothDevice>
     ) {

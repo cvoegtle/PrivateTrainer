@@ -9,6 +9,13 @@
     <string name="tab_about">Über Private Trainer</string>
     <string name = "device_start">Trainer starten</string>
     <string name = "device_stop">Trainer stoppen</string>
+    <string name = "setting_mode">Modus</string>
+    <string name = "setting_strength">Stärke</string>
+    <string name = "setting_interval">Intervall</string>
     <string name = "battery">Batterie</string>
     <string name = "connected">verbunden</string>
+    <string name = "error_bluetooth_not_supported">Das Gerät unterstützt kein Bluetooth.</string>
+    <string name = "error_bluetooth_disabled">Bluetooth ist ausgeschaltet.</string>
+    <string name = "error_bluetooth_access_denied">Der Zugriff auf Bluetooth wurde verweigert.</string>
+    <string name = "error_bluetooth_device_not_connected">Das Bluetooth-Gerät ist nicht verbunden</string>
 </resources>
