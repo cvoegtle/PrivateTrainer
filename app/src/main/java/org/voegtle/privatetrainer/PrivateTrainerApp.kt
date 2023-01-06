@@ -23,7 +23,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
 import kotlinx.coroutines.launch
-import org.voegtle.privatetrainer.business.PrivateTrainerState
+import org.voegtle.privatetrainer.business.PrivateTrainerViewModel
 import org.voegtle.privatetrainer.ui.EmptyComingSoon
 import org.voegtle.privatetrainer.ui.OverviewScreen
 import org.voegtle.privatetrainer.ui.navigation.*
@@ -33,7 +33,7 @@ import org.voegtle.privatetrainer.ui.utils.*
 fun PrivateTrainerApp (
     windowSize: WindowSizeClass,
     displayFeatures: List<DisplayFeature>,
-    privateTrainerState: PrivateTrainerState,
+    privateTrainerViewModel: PrivateTrainerViewModel,
     closeDetailScreen: () -> Unit = {},
     navigateToDetail: (Long, PrivateContentType) -> Unit = { _, _ -> }
 
@@ -111,7 +111,7 @@ fun PrivateTrainerApp (
         contentType = contentType,
         displayFeatures = displayFeatures,
         navigationContentPosition = navigationContentPosition,
-        privateTrainerState = privateTrainerState,
+        privateTrainerViewModel = privateTrainerViewModel,
         closeDetailScreen = closeDetailScreen,
         navigateToDetail = navigateToDetail
     )
@@ -125,7 +125,7 @@ private fun PrivateTrainerNavigationWrapper(
     contentType: PrivateContentType,
     displayFeatures: List<DisplayFeature>,
     navigationContentPosition: PrivateNavigationContentPosition,
-    privateTrainerState: PrivateTrainerState,
+    privateTrainerViewModel: PrivateTrainerViewModel,
     closeDetailScreen: () -> Unit,
     navigateToDetail: (Long, PrivateContentType) -> Unit
 ) {
@@ -154,7 +154,7 @@ private fun PrivateTrainerNavigationWrapper(
                 contentType = contentType,
                 displayFeatures = displayFeatures,
                 navigationContentPosition = navigationContentPosition,
-                privateTrainerState = privateTrainerState,
+                privateTrainerViewModel = privateTrainerViewModel,
                 navController = navController,
                 selectedDestination = selectedDestination,
                 navigateToTopLevelDestination = navigationActions::navigateTo,
@@ -183,7 +183,7 @@ private fun PrivateTrainerNavigationWrapper(
                 contentType = contentType,
                 displayFeatures = displayFeatures,
                 navigationContentPosition = navigationContentPosition,
-                privateTrainerState = privateTrainerState,
+                privateTrainerViewModel = privateTrainerViewModel,
                 navController = navController,
                 selectedDestination = selectedDestination,
                 navigateToTopLevelDestination = navigationActions::navigateTo,
@@ -205,7 +205,7 @@ fun PrivateTrainerAppContent(
     contentType: PrivateContentType,
     displayFeatures: List<DisplayFeature>,
     navigationContentPosition: PrivateNavigationContentPosition,
-    privateTrainerState: PrivateTrainerState,
+    privateTrainerViewModel: PrivateTrainerViewModel,
     navController: NavHostController,
     selectedDestination: String,
     navigateToTopLevelDestination: (PrivateTopLevelDestination) -> Unit,
@@ -231,7 +231,7 @@ fun PrivateTrainerAppContent(
                 navController = navController,
                 contentType = contentType,
                 displayFeatures = displayFeatures,
-                privateTrainerState = privateTrainerState,
+                privateTrainerViewModel = privateTrainerViewModel,
                 navigationType = navigationType,
                 closeDetailScreen = closeDetailScreen,
                 navigateToDetail = navigateToDetail,
@@ -253,7 +253,7 @@ private fun PrivateTrainerNavHost(
     navController: NavHostController,
     contentType: PrivateContentType,
     displayFeatures: List<DisplayFeature>,
-    privateTrainerState: PrivateTrainerState,
+    privateTrainerViewModel: PrivateTrainerViewModel,
     navigationType: PrivateNavigationType,
     closeDetailScreen: () -> Unit,
     navigateToDetail: (Long, PrivateContentType) -> Unit,
@@ -265,7 +265,7 @@ private fun PrivateTrainerNavHost(
         startDestination = PrivateRoute.START,
     ) {
         composable(PrivateRoute.START) {
-            OverviewScreen(privateTrainerState)
+            OverviewScreen(privateTrainerViewModel)
         }
         composable(PrivateRoute.SETTINGS) {
             EmptyComingSoon()

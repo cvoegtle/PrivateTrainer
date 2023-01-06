@@ -40,10 +40,39 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalLifecycleComposeApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val detectedBluetoothState = determineBluetoothState()
+
+        setContent {
+
+            val bluetoothState by viewModel.bluetoothState.collectAsStateWithLifecycle()
+            bluetoothState.copyFrom(detectedBluetoothState)
+
+            PrivateTrainerTheme {
+                val windowSize = calculateWindowSizeClass(this)
+                val displayFeatures = calculateDisplayFeatures(this)
+
+                PrivateTrainerApp(
+                    windowSize = windowSize,
+                    displayFeatures = displayFeatures,
+                    privateTrainerViewModel = viewModel,
+                    closeDetailScreen = {
+                        viewModel.closeDetailScreen()
+                    },
+                    navigateToDetail = { emailId, pane ->
+                        {}
+                    }
+                )
+            }
+        }
+    }
+
+    private fun determineBluetoothState(): BluetoothState {
+        val bluetoothState = BluetoothState()
+
         val bluetoothManager: BluetoothManager = getSystemService(BluetoothManager::class.java)
         val bluetoothAdapter: BluetoothAdapter? = bluetoothManager.getAdapter()
 
-        val bluetoothState = BluetoothState()
         bluetoothState.connectionStatus = when {
             bluetoothAdapter == null -> not_supported
             bluetoothAdapter.isEnabled -> not_connected
@@ -61,27 +90,7 @@ class MainActivity : ComponentActivity() {
             readBluetoothDeviceStatus(bluetoothState, bluetoothAdapter)
         }
 
-        setContent {
-            val uiState by viewModel.privateTrainerState.collectAsStateWithLifecycle()
-            uiState.bluetoothState = bluetoothState
-
-            PrivateTrainerTheme {
-                val windowSize = calculateWindowSizeClass(this)
-                val displayFeatures = calculateDisplayFeatures(this)
-
-                PrivateTrainerApp(
-                    windowSize = windowSize,
-                    displayFeatures = displayFeatures,
-                    privateTrainerState = uiState,
-                    closeDetailScreen = {
-                        viewModel.closeDetailScreen()
-                    },
-                    navigateToDetail = { emailId, pane ->
-                        {}
-                    }
-                )
-            }
-        }
+        return bluetoothState
     }
 
     private fun readBluetoothDeviceStatusWithPermissionCheck(

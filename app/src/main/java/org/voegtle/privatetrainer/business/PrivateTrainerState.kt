@@ -8,8 +8,14 @@ import kotlinx.coroutines.flow.StateFlow
 data class BluetoothState(
     var bondedDevices: MutableSet<BluetoothDevice> = HashSet(),
     var selectedDevice: BluetoothDevice? = null,
-    var connectionStatus: BluetoothConnectionStatus = BluetoothConnectionStatus.not_supported,
-)
+    var connectionStatus: BluetoothConnectionStatus = BluetoothConnectionStatus.not_supported
+) {
+    fun copyFrom(bluetoothState: BluetoothState) {
+        this.bondedDevices = bluetoothState.bondedDevices
+        this.selectedDevice = bluetoothState.selectedDevice
+        this.connectionStatus = bluetoothState.connectionStatus
+    }
+}
 
 enum class BluetoothConnectionStatus {
     not_supported, disabled, permission_denied, not_connected, connected
@@ -21,15 +27,13 @@ data class DeviceSettings(
     var interval: Float = 2f,// 0,1 - 120s
 )
 
-data class PrivateTrainerState(
-    var bluetoothState: BluetoothState = BluetoothState(),
-    var deviceSetting: DeviceSettings = DeviceSettings()
-)
-
 class PrivateTrainerViewModel() :
     ViewModel() {
-    private val _privateTrainerState = MutableStateFlow(PrivateTrainerState())
-    val privateTrainerState: StateFlow<PrivateTrainerState> = _privateTrainerState
+    private val _bluetoothState = MutableStateFlow(BluetoothState())
+    var bluetoothState: StateFlow<BluetoothState> = _bluetoothState
+
+    private val _deviceSettings = MutableStateFlow(DeviceSettings())
+    var deviceSettings: StateFlow<DeviceSettings> = _deviceSettings
 
     fun closeDetailScreen() {
     }

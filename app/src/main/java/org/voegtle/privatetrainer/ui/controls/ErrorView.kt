@@ -44,7 +44,7 @@ fun ErrorView(
                 ),
                 modifier = Modifier
                     .fillMaxHeight()
-                    .align(Alignment.CenterVertically).
+                    .align(Alignment.CenterVertically)
             )
         }
     }
