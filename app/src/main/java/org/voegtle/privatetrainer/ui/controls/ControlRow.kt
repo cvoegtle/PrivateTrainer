@@ -10,20 +10,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ControlRow(buttonText: String, value: String, selected: Boolean) {
+fun ControlRow(textId: Int, value: String, selected: Boolean, onActivation: () -> Unit) {
+    val context = LocalContext.current
     Row(modifier = Modifier.height(60.dp)) {
         ElevatedButton(
-            onClick = {},
+            onClick = onActivation,
             modifier = Modifier
                 .width(150.dp)
                 .fillMaxHeight(),
             border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outline),
             colors = if (selected) ButtonDefaults.buttonColors() else ButtonDefaults.elevatedButtonColors()
         ) {
-            Text(buttonText)
+            Text(context.getString(textId))
         }
         Box(
             Modifier
@@ -35,4 +37,8 @@ fun ControlRow(buttonText: String, value: String, selected: Boolean) {
             Text(value, color = MaterialTheme.colorScheme.primary)
         }
     }
+}
+
+enum class ControlType {
+    mode, strength, intervall
 }
