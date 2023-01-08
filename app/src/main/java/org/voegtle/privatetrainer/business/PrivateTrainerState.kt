@@ -2,8 +2,10 @@ package org.voegtle.privatetrainer.business
 
 import android.bluetooth.BluetoothDevice
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 data class BluetoothState(
     var bondedDevices: MutableSet<BluetoothDevice> = HashSet(),
@@ -29,14 +31,29 @@ data class DeviceSettings(
 
 class PrivateTrainerViewModel() :
     ViewModel() {
+
     private val _bluetoothState = MutableStateFlow(BluetoothState())
     var bluetoothState: StateFlow<BluetoothState> = _bluetoothState
 
     private val _deviceSettings = MutableStateFlow(DeviceSettings())
     var deviceSettings: StateFlow<DeviceSettings> = _deviceSettings
 
+    init {
+        startWithDefaults()
+    }
+
+    private fun startWithDefaults() {
+        viewModelScope.launch {
+            _deviceSettings.value = DeviceSettings(mode = 2, strength = 0.5f, interval = 8.0f)
+        }
+    }
+
     fun updateDeviceSetting(update: DeviceSettings) {
-        _deviceSettings.value = update
+        _deviceSettings.value = _deviceSettings.value.copy(
+            mode = update.mode,
+            strength = update.strength,
+            interval = update.interval
+        )
     }
 }
 
@@ -46,10 +63,47 @@ enum class SettingType {
     interval
 }
 
-class SettingsRanges (
-    val mode: SettingsSteps<Int> = SettingsSteps<Int>(SettingType.mode, 1,2, 3, 4, 5, 6, 7, 8, 9, 10),
-    val strength: SettingsSteps<Float> = SettingsSteps<Float>(SettingType.strength, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f),
-    val interval: SettingsSteps<Float> = SettingsSteps<Float>(SettingType.interval, 0.1f, 1.0f, 2.0f, 5.0f, 8.0f, 15.0f, 30.0f, 60.0f, 90.0f, 120.0f)){
+class SettingsRanges(
+    val mode: SettingsSteps<Int> = SettingsSteps<Int>(
+        SettingType.mode,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+    ),
+    val strength: SettingsSteps<Float> = SettingsSteps<Float>(
+        SettingType.strength,
+        0.1f,
+        0.2f,
+        0.3f,
+        0.4f,
+        0.5f,
+        0.6f,
+        0.7f,
+        0.8f,
+        0.9f,
+        1.0f
+    ),
+    val interval: SettingsSteps<Float> = SettingsSteps<Float>(
+        SettingType.interval,
+        0.1f,
+        1.0f,
+        2.0f,
+        5.0f,
+        8.0f,
+        15.0f,
+        30.0f,
+        60.0f,
+        90.0f,
+        120.0f
+    )
+) {
     fun getRange(type: SettingType): SettingsSteps<*> = when (type) {
         SettingType.mode -> mode
         SettingType.strength -> strength
@@ -74,7 +128,7 @@ class SettingsSteps<T>(val type: SettingType, val steps: ArrayList<T> = ArrayLis
     }
 
     fun start(): Float = 0.0f
-    fun end(): Float = (steps.size-1).toFloat()
+    fun end(): Float = (steps.size - 1).toFloat()
 }
 
 

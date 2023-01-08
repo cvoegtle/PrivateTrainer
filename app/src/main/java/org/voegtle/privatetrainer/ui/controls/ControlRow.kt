@@ -46,9 +46,11 @@ fun ControlRow(
 
 @Composable
 fun FloatSliderRow(value: Float, range: SettingsSteps<Float>, onChange: (Float) -> Unit) {
+    var currentValue by remember { mutableStateOf(value) }
+
     Slider(
-        value = range.value2Index(value),
-        onValueChange = { onChange(range.index2Value(it)) },
+        value = range.value2Index(currentValue),
+        onValueChange = { currentValue = range.index2Value(it) ; onChange(currentValue) },
         steps = range.numberOfSteps(),
         valueRange = range.start()..range.end()
     )
@@ -56,9 +58,11 @@ fun FloatSliderRow(value: Float, range: SettingsSteps<Float>, onChange: (Float) 
 
 @Composable
 fun IntSliderRow(value: Int, range: SettingsSteps<Int>, onChange: (Int) -> Unit) {
+    var currentValue by remember { mutableStateOf(value) }
+
     Slider(
-        value = range.value2Index(value),
-        onValueChange = { onChange(range.index2Value(it)) },
+        value = range.value2Index(currentValue),
+        onValueChange = { currentValue = range.index2Value(it) ; onChange(currentValue) },
         steps = range.numberOfSteps(),
         valueRange = range.start()..range.end()
     )
