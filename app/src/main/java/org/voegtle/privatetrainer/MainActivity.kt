@@ -56,12 +56,6 @@ class MainActivity : ComponentActivity() {
                     windowSize = windowSize,
                     displayFeatures = displayFeatures,
                     privateTrainerViewModel = viewModel,
-                    closeDetailScreen = {
-                        viewModel.closeDetailScreen()
-                    },
-                    navigateToDetail = { emailId, pane ->
-                        {}
-                    }
                 )
             }
         }

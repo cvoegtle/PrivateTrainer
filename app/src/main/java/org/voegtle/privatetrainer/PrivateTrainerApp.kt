@@ -34,9 +34,6 @@ fun PrivateTrainerApp (
     windowSize: WindowSizeClass,
     displayFeatures: List<DisplayFeature>,
     privateTrainerViewModel: PrivateTrainerViewModel,
-    closeDetailScreen: () -> Unit = {},
-    navigateToDetail: (Long, PrivateContentType) -> Unit = { _, _ -> }
-
 ) {
     /**
      * This will help us select type of navigation and content type depending on window size and
@@ -112,8 +109,6 @@ fun PrivateTrainerApp (
         displayFeatures = displayFeatures,
         navigationContentPosition = navigationContentPosition,
         privateTrainerViewModel = privateTrainerViewModel,
-        closeDetailScreen = closeDetailScreen,
-        navigateToDetail = navigateToDetail
     )
 
 }
@@ -126,8 +121,6 @@ private fun PrivateTrainerNavigationWrapper(
     displayFeatures: List<DisplayFeature>,
     navigationContentPosition: PrivateNavigationContentPosition,
     privateTrainerViewModel: PrivateTrainerViewModel,
-    closeDetailScreen: () -> Unit,
-    navigateToDetail: (Long, PrivateContentType) -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -158,8 +151,6 @@ private fun PrivateTrainerNavigationWrapper(
                 navController = navController,
                 selectedDestination = selectedDestination,
                 navigateToTopLevelDestination = navigationActions::navigateTo,
-                closeDetailScreen = closeDetailScreen,
-                navigateToDetail = navigateToDetail
             )
         }
     } else {
@@ -187,8 +178,6 @@ private fun PrivateTrainerNavigationWrapper(
                 navController = navController,
                 selectedDestination = selectedDestination,
                 navigateToTopLevelDestination = navigationActions::navigateTo,
-                closeDetailScreen = closeDetailScreen,
-                navigateToDetail = navigateToDetail
             ) {
                 scope.launch {
                     drawerState.open()
@@ -209,8 +198,6 @@ fun PrivateTrainerAppContent(
     navController: NavHostController,
     selectedDestination: String,
     navigateToTopLevelDestination: (PrivateTopLevelDestination) -> Unit,
-    closeDetailScreen: () -> Unit,
-    navigateToDetail: (Long, PrivateContentType) -> Unit,
     onDrawerClicked: () -> Unit = {}
 ) {
     Row(modifier = modifier.fillMaxSize()) {
@@ -233,8 +220,6 @@ fun PrivateTrainerAppContent(
                 displayFeatures = displayFeatures,
                 privateTrainerViewModel = privateTrainerViewModel,
                 navigationType = navigationType,
-                closeDetailScreen = closeDetailScreen,
-                navigateToDetail = navigateToDetail,
                 modifier = Modifier.weight(1f),
             )
             AnimatedVisibility(visible = navigationType == PrivateNavigationType.BOTTOM_NAVIGATION) {
@@ -255,8 +240,6 @@ private fun PrivateTrainerNavHost(
     displayFeatures: List<DisplayFeature>,
     privateTrainerViewModel: PrivateTrainerViewModel,
     navigationType: PrivateNavigationType,
-    closeDetailScreen: () -> Unit,
-    navigateToDetail: (Long, PrivateContentType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavHost(

@@ -11,7 +11,7 @@ import org.voegtle.privatetrainer.ui.controls.FloatSliderRow
 import org.voegtle.privatetrainer.ui.controls.IntSliderRow
 
 @Composable
-fun DeviceStateView(deviceSettings: DeviceSettings) {
+fun DeviceStateView(deviceSettings: DeviceSettings, onChange: (DeviceSettings) -> Unit) {
     var selectedType by remember { mutableStateOf(SettingType.strength) }
     val settingsRanges = SettingsRanges()
 
@@ -21,35 +21,35 @@ fun DeviceStateView(deviceSettings: DeviceSettings) {
             R.string.setting_mode,
             deviceSettings.mode.toString(),
             selectedType,
-            { selectedType = it }
+            { type -> selectedType = type }
         )
         ControlRow(
             SettingType.strength,
             R.string.setting_strength,
             renderPercent(deviceSettings.strength),
             selectedType,
-            { selectedType = it }
+            { type -> selectedType = type }
         )
         ControlRow(
             SettingType.interval,
             R.string.setting_interval,
             renderSeconds(deviceSettings.interval),
             selectedType,
-            { selectedType = it }
+            { type -> selectedType = type }
         )
         when (selectedType) {
             SettingType.mode -> IntSliderRow(
                 value = deviceSettings.mode,
                 range = settingsRanges.mode,
-                onChange = { deviceSettings.mode = it })
+                onChange = { mode -> deviceSettings.mode = mode; onChange(deviceSettings) })
             SettingType.strength -> FloatSliderRow(
                 value = deviceSettings.strength,
                 range = settingsRanges.strength,
-                onChange = { deviceSettings.strength = it })
+                onChange = { strength -> deviceSettings.strength = strength; onChange(deviceSettings) })
             SettingType.interval -> FloatSliderRow(
                 value = deviceSettings.interval,
                 range = settingsRanges.interval,
-                onChange = { deviceSettings.interval = it }
+                onChange = { interval -> deviceSettings.interval = interval; onChange(deviceSettings) }
             )
         }
     }

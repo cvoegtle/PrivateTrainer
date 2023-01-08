@@ -18,10 +18,12 @@ import org.voegtle.privatetrainer.business.PrivateTrainerViewModel
 fun OverviewScreen(privateTrainerViewModel: PrivateTrainerViewModel) {
     val bluetoothState by privateTrainerViewModel.bluetoothState.collectAsStateWithLifecycle()
     val deviceSettings by privateTrainerViewModel.deviceSettings.collectAsStateWithLifecycle()
-    Column (horizontalAlignment = Alignment.CenterHorizontally){
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         BluetoothStateView(bluetoothState = bluetoothState)
         Spacer(Modifier.height(5.dp))
-        DeviceStateView(deviceSettings = deviceSettings)
+        DeviceStateView(
+            deviceSettings = deviceSettings,
+            { changedSetting -> privateTrainerViewModel.updateDeviceSetting(changedSetting) })
 
     }
 }

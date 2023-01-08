@@ -35,7 +35,8 @@ class PrivateTrainerViewModel() :
     private val _deviceSettings = MutableStateFlow(DeviceSettings())
     var deviceSettings: StateFlow<DeviceSettings> = _deviceSettings
 
-    fun closeDetailScreen() {
+    fun updateDeviceSetting(update: DeviceSettings) {
+        _deviceSettings.value = update
     }
 }
 
