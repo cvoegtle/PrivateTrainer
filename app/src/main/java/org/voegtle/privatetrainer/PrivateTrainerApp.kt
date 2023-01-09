@@ -6,9 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.*
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
-import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,7 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
 import kotlinx.coroutines.launch
-import org.voegtle.privatetrainer.business.PrivateTrainerViewModel
+import org.voegtle.privatetrainer.business.BluetoothState
 import org.voegtle.privatetrainer.ui.EmptyComingSoon
 import org.voegtle.privatetrainer.ui.OverviewScreen
 import org.voegtle.privatetrainer.ui.navigation.*
@@ -33,7 +32,7 @@ import org.voegtle.privatetrainer.ui.utils.*
 fun PrivateTrainerApp (
     windowSize: WindowSizeClass,
     displayFeatures: List<DisplayFeature>,
-    privateTrainerViewModel: PrivateTrainerViewModel,
+    detectedBluetoothState: BluetoothState,
 ) {
     /**
      * This will help us select type of navigation and content type depending on window size and
@@ -108,7 +107,7 @@ fun PrivateTrainerApp (
         contentType = contentType,
         displayFeatures = displayFeatures,
         navigationContentPosition = navigationContentPosition,
-        privateTrainerViewModel = privateTrainerViewModel,
+        detectedBluetoothState = detectedBluetoothState,
     )
 
 }
@@ -120,7 +119,7 @@ private fun PrivateTrainerNavigationWrapper(
     contentType: PrivateContentType,
     displayFeatures: List<DisplayFeature>,
     navigationContentPosition: PrivateNavigationContentPosition,
-    privateTrainerViewModel: PrivateTrainerViewModel,
+    detectedBluetoothState: BluetoothState,
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -145,9 +144,9 @@ private fun PrivateTrainerNavigationWrapper(
             PrivateTrainerAppContent(
                 navigationType = navigationType,
                 contentType = contentType,
+                detectedBluetoothState = detectedBluetoothState,
                 displayFeatures = displayFeatures,
                 navigationContentPosition = navigationContentPosition,
-                privateTrainerViewModel = privateTrainerViewModel,
                 navController = navController,
                 selectedDestination = selectedDestination,
                 navigateToTopLevelDestination = navigationActions::navigateTo,
@@ -174,7 +173,7 @@ private fun PrivateTrainerNavigationWrapper(
                 contentType = contentType,
                 displayFeatures = displayFeatures,
                 navigationContentPosition = navigationContentPosition,
-                privateTrainerViewModel = privateTrainerViewModel,
+                detectedBluetoothState = detectedBluetoothState,
                 navController = navController,
                 selectedDestination = selectedDestination,
                 navigateToTopLevelDestination = navigationActions::navigateTo,
@@ -193,8 +192,8 @@ fun PrivateTrainerAppContent(
     navigationType: PrivateNavigationType,
     contentType: PrivateContentType,
     displayFeatures: List<DisplayFeature>,
+    detectedBluetoothState: BluetoothState,
     navigationContentPosition: PrivateNavigationContentPosition,
-    privateTrainerViewModel: PrivateTrainerViewModel,
     navController: NavHostController,
     selectedDestination: String,
     navigateToTopLevelDestination: (PrivateTopLevelDestination) -> Unit,
@@ -218,7 +217,7 @@ fun PrivateTrainerAppContent(
                 navController = navController,
                 contentType = contentType,
                 displayFeatures = displayFeatures,
-                privateTrainerViewModel = privateTrainerViewModel,
+                detectedBluetoothState = detectedBluetoothState,
                 navigationType = navigationType,
                 modifier = Modifier.weight(1f),
             )
@@ -238,7 +237,7 @@ private fun PrivateTrainerNavHost(
     navController: NavHostController,
     contentType: PrivateContentType,
     displayFeatures: List<DisplayFeature>,
-    privateTrainerViewModel: PrivateTrainerViewModel,
+    detectedBluetoothState: BluetoothState,
     navigationType: PrivateNavigationType,
     modifier: Modifier = Modifier,
 ) {
@@ -248,7 +247,7 @@ private fun PrivateTrainerNavHost(
         startDestination = PrivateRoute.START,
     ) {
         composable(PrivateRoute.START) {
-            OverviewScreen(privateTrainerViewModel)
+            OverviewScreen(detectedBluetoothState)
         }
         composable(PrivateRoute.SETTINGS) {
             EmptyComingSoon()

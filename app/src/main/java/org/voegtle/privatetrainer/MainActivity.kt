@@ -30,12 +30,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.adaptive.calculateDisplayFeatures
 import org.voegtle.privatetrainer.business.BluetoothConnectionStatus.*
 import org.voegtle.privatetrainer.business.BluetoothState
-import org.voegtle.privatetrainer.business.PrivateTrainerViewModel
 import org.voegtle.privatetrainer.ui.theme.PrivateTrainerTheme
 
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: PrivateTrainerViewModel by viewModels()
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalLifecycleComposeApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,10 +42,6 @@ class MainActivity : ComponentActivity() {
         val detectedBluetoothState = determineBluetoothState()
 
         setContent {
-
-            val bluetoothState by viewModel.bluetoothState.collectAsStateWithLifecycle()
-            bluetoothState.copyFrom(detectedBluetoothState)
-
             PrivateTrainerTheme {
                 val windowSize = calculateWindowSizeClass(this)
                 val displayFeatures = calculateDisplayFeatures(this)
@@ -55,7 +49,7 @@ class MainActivity : ComponentActivity() {
                 PrivateTrainerApp(
                     windowSize = windowSize,
                     displayFeatures = displayFeatures,
-                    privateTrainerViewModel = viewModel,
+                    detectedBluetoothState = detectedBluetoothState
                 )
             }
         }

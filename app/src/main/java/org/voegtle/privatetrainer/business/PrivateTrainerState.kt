@@ -1,6 +1,7 @@
 package org.voegtle.privatetrainer.business
 
 import android.bluetooth.BluetoothDevice
+import androidx.compose.runtime.saveable.mapSaver
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,35 +27,26 @@ enum class BluetoothConnectionStatus {
 data class DeviceSettings(
     var mode: Int = 1, // 1 - 10
     var strength: Float = 0.8f, // 10 - 100%
-    var interval: Float = 2f,// 0,1 - 120s
+    var interval: Float = 2f // 0,1 - 120s
 )
 
-class PrivateTrainerViewModel() :
-    ViewModel() {
-
-    private val _bluetoothState = MutableStateFlow(BluetoothState())
-    var bluetoothState: StateFlow<BluetoothState> = _bluetoothState
-
-    private val _deviceSettings = MutableStateFlow(DeviceSettings())
-    var deviceSettings: StateFlow<DeviceSettings> = _deviceSettings
-
-    init {
-        startWithDefaults()
-    }
-
-    private fun startWithDefaults() {
-        viewModelScope.launch {
-            _deviceSettings.value = DeviceSettings(mode = 2, strength = 0.5f, interval = 8.0f)
+val DeviceSettingsSaver = run {
+    mapSaver<DeviceSettings>(
+        save = {
+            mapOf<String, Any>(
+                SettingType.mode.toString() to it.mode,
+                SettingType.strength.toString() to it.strength,
+                SettingType.interval.toString() to it.interval
+            )
+        },
+        restore = {
+            DeviceSettings(
+                mode = it[SettingType.mode.toString()] as Int,
+                strength = it[SettingType.strength.toString()] as Float,
+                interval = it[SettingType.interval.toString()] as Float
+            )
         }
-    }
-
-    fun updateDeviceSetting(update: DeviceSettings) {
-        _deviceSettings.value = _deviceSettings.value.copy(
-            mode = update.mode,
-            strength = update.strength,
-            interval = update.interval
-        )
-    }
+    )
 }
 
 enum class SettingType {
@@ -93,6 +85,7 @@ class SettingsRanges(
     val interval: SettingsSteps<Float> = SettingsSteps<Float>(
         SettingType.interval,
         0.1f,
+        0.5f,
         1.0f,
         2.0f,
         5.0f,

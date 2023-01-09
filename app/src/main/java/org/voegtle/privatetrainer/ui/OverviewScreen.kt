@@ -11,19 +11,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import org.voegtle.privatetrainer.business.PrivateTrainerViewModel
+import org.voegtle.privatetrainer.business.BluetoothState
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalLifecycleComposeApi::class)
 @Composable
-fun OverviewScreen(privateTrainerViewModel: PrivateTrainerViewModel) {
-    val bluetoothState by privateTrainerViewModel.bluetoothState.collectAsStateWithLifecycle()
-    val deviceSettings by privateTrainerViewModel.deviceSettings.collectAsStateWithLifecycle()
+fun OverviewScreen(bluetoothState : BluetoothState) {
+
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         BluetoothStateView(bluetoothState = bluetoothState)
         Spacer(Modifier.height(5.dp))
-        DeviceStateView(
-            deviceSettings = deviceSettings,
-            { changedSetting -> privateTrainerViewModel.updateDeviceSetting(changedSetting) })
+        DeviceStateView()
 
     }
 }
