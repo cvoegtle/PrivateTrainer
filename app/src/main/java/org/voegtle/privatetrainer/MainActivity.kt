@@ -1,6 +1,7 @@
 package org.voegtle.privatetrainer
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
@@ -9,7 +10,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -19,23 +19,26 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ActivityCompat
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.adaptive.calculateDisplayFeatures
+import com.lorenzofelletti.permissions.PermissionManager
+import com.lorenzofelletti.permissions.dispatcher.dsl.checkPermissions
+import com.lorenzofelletti.permissions.dispatcher.dsl.doOnDenied
+import com.lorenzofelletti.permissions.dispatcher.dsl.doOnGranted
+import com.lorenzofelletti.permissions.dispatcher.dsl.withRequestCode
 import org.voegtle.privatetrainer.business.BluetoothConnectionStatus.*
 import org.voegtle.privatetrainer.business.BluetoothState
+import org.voegtle.privatetrainer.business.bluetooth.BluetoothPermissions
 import org.voegtle.privatetrainer.ui.theme.PrivateTrainerTheme
 
 class MainActivity : ComponentActivity() {
 
+    private val permissionsManager = PermissionManager(this)
 
-    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalLifecycleComposeApi::class)
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -68,37 +71,24 @@ class MainActivity : ComponentActivity() {
             else -> not_supported
         }
 
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.BLUETOOTH_CONNECT
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            readBluetoothDeviceStatusWithPermissionCheck(bluetoothState, bluetoothAdapter)
-        } else {
-            readBluetoothDeviceStatus(bluetoothState, bluetoothAdapter)
+        permissionsManager.buildRequestResultsDispatcher {
+            withRequestCode(BluetoothPermissions().code) {
+                checkPermissions(BluetoothPermissions().permissions)
+                doOnDenied {
+                    bluetoothState.connectionStatus = permission_denied
+                }
+                doOnGranted {
+                    scanBluetoothDeviceStatus(bluetoothState, bluetoothAdapter)
+                }
+            }
         }
+        permissionsManager.checkRequestAndDispatch(BluetoothPermissions().code)
 
         return bluetoothState
     }
 
-    private fun readBluetoothDeviceStatusWithPermissionCheck(
-        bluetoothState: BluetoothState,
-        bluetoothAdapter: BluetoothAdapter?
-    ) {
-        val requestPermissionLauncher =
-            registerForActivityResult(
-                ActivityResultContracts.RequestPermission()
-            ) { isGranted: Boolean ->
-                bluetoothState.connectionStatus =
-                    if (isGranted) not_connected else permission_denied
-                readBluetoothDeviceStatus(bluetoothState, bluetoothAdapter)
-            }
-        requestPermissionLauncher.launch(
-            Manifest.permission.BLUETOOTH_CONNECT
-        )
-    }
-
-    private fun readBluetoothDeviceStatus(
+    @SuppressLint("MissingPermission")
+    private fun scanBluetoothDeviceStatus(
         bluetoothState: BluetoothState,
         bluetoothAdapter: BluetoothAdapter?
     ) {
@@ -118,48 +108,6 @@ class MainActivity : ComponentActivity() {
 
 }
 
-//    private fun showBondedDevices(
-//        bluetoothEnabled: Boolean,
-//        bondedDevices: MutableSet<BluetoothDevice>
-//    ) {
-//        setContent {
-//            PrivateTrainerTheme {
-//                Column(
-//                    modifier = Modifier.fillMaxSize(),
-//                ) {
-//                    BluetoothStatus(enabled = bluetoothEnabled)
-//                    bondedDevices?.forEach { device ->
-//                        BluetoothDeviceLine(device = device)
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    private fun showBluetoothPermissionDenied() {
-//        setContent {
-//            PrivateTrainerTheme {
-//                Surface(
-//                    modifier = Modifier.fillMaxSize(),
-//                ) {
-//                    BluetoothPermissionRequired()
-//                }
-//            }
-//        }
-//    }
-//}
-
-@Composable
-fun BluetoothPermissionRequired() {
-    Surface(color = MaterialTheme.colorScheme.errorContainer) {
-        Text(
-            text = "Sorry, ohne Bluetooth kann ich nichts für Dich tun",
-            modifier = Modifier.padding(all = 10.dp),
-            fontSize = 24.sp
-        )
-    }
-
-}
 
 @Composable
 fun BluetoothStatus(enabled: Boolean) {
@@ -175,6 +123,7 @@ fun BluetoothStatus(enabled: Boolean) {
     }
 }
 
+@SuppressLint("MissingPermission")
 @Composable
 fun BluetoothDeviceLine(device: BluetoothDevice) {
     Text(

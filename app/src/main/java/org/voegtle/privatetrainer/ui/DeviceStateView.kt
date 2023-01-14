@@ -2,10 +2,9 @@ package org.voegtle.privatetrainer.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import org.voegtle.privatetrainer.R
 import org.voegtle.privatetrainer.business.DeviceSettings
-import org.voegtle.privatetrainer.business.DeviceSettingsSaver
 import org.voegtle.privatetrainer.business.SettingType
 import org.voegtle.privatetrainer.business.SettingsRanges
 import org.voegtle.privatetrainer.ui.controls.ControlRow
@@ -14,9 +13,7 @@ import org.voegtle.privatetrainer.ui.controls.IntSliderRow
 
 @Composable
 fun DeviceStateView() {
-    var deviceSettingsState: DeviceSettings by rememberSaveable(
-        stateSaver = DeviceSettingsSaver
-    ) {
+    var deviceSettingsState: DeviceSettings by rememberSaveable {
         mutableStateOf(DeviceSettings())
     }
     var selectedType by remember { mutableStateOf(SettingType.mode) }

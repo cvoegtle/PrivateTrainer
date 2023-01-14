@@ -1,12 +1,14 @@
 package org.voegtle.privatetrainer.business
 
 import android.bluetooth.BluetoothDevice
+import android.os.Parcelable
 import androidx.compose.runtime.saveable.mapSaver
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
 
 data class BluetoothState(
     var bondedDevices: MutableSet<BluetoothDevice> = HashSet(),
@@ -24,30 +26,32 @@ enum class BluetoothConnectionStatus {
     not_supported, disabled, permission_denied, not_connected, connected
 }
 
+@Parcelize
 data class DeviceSettings(
     var mode: Int = 1, // 1 - 10
     var strength: Float = 0.8f, // 10 - 100%
-    var interval: Float = 2f // 0,1 - 120s
-)
+    var interval: Float = 2.0f // 0,1 - 120s
+) : Parcelable
 
-val DeviceSettingsSaver = run {
-    mapSaver<DeviceSettings>(
-        save = {
-            mapOf<String, Any>(
-                SettingType.mode.toString() to it.mode,
-                SettingType.strength.toString() to it.strength,
-                SettingType.interval.toString() to it.interval
-            )
-        },
-        restore = {
-            DeviceSettings(
-                mode = it[SettingType.mode.toString()] as Int,
-                strength = it[SettingType.strength.toString()] as Float,
-                interval = it[SettingType.interval.toString()] as Float
-            )
-        }
-    )
-}
+
+//val DeviceSettingsSaver = run {
+//    mapSaver<DeviceSettings>(
+//        save = {
+//            mapOf<String, Any>(
+//                SettingType.mode.toString() to it.mode,
+//                SettingType.strength.toString() to it.strength,
+//                SettingType.interval.toString() to it.interval
+//            )
+//        },
+//        restore = {
+//            DeviceSettings(
+//                mode = it[SettingType.mode.toString()] as Int,
+//                strength = it[SettingType.strength.toString()] as Float,
+//                interval = it[SettingType.interval.toString()] as Float
+//            )
+//        }
+//    )
+//}
 
 enum class SettingType {
     mode,

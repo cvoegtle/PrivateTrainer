@@ -1,5 +1,6 @@
 package org.voegtle.privatetrainer.ui
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import org.voegtle.privatetrainer.R
 import org.voegtle.privatetrainer.business.BluetoothState
 
+@SuppressLint("MissingPermission")
 @Composable
 fun BluetoothDevice(bluetoothState: BluetoothState, modifier: Modifier) {
     val context = LocalContext.current
