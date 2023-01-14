@@ -1,22 +1,16 @@
 package org.voegtle.privatetrainer.business
 
-import android.bluetooth.BluetoothDevice
 import android.os.Parcelable
-import androidx.compose.runtime.saveable.mapSaver
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import org.voegtle.privatetrainer.business.bluetooth.BleDevice
 
 data class BluetoothState(
-    var bondedDevices: MutableSet<BluetoothDevice> = HashSet(),
-    var selectedDevice: BluetoothDevice? = null,
+    var visibleDevices: MutableSet<BleDevice> = HashSet(),
+    var selectedDevice: BleDevice? = null,
     var connectionStatus: BluetoothConnectionStatus = BluetoothConnectionStatus.not_supported
 ) {
     fun copyFrom(bluetoothState: BluetoothState) {
-        this.bondedDevices = bluetoothState.bondedDevices
+        this.visibleDevices = bluetoothState.visibleDevices
         this.selectedDevice = bluetoothState.selectedDevice
         this.connectionStatus = bluetoothState.connectionStatus
     }
