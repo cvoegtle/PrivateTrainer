@@ -10,7 +10,6 @@ data class BluetoothState(
     var connectionStatus: BluetoothConnectionStatus = BluetoothConnectionStatus.not_supported
 ) {
     fun copyFrom(bluetoothState: BluetoothState) {
-        this.visibleDevices = bluetoothState.visibleDevices
         this.selectedDevice = bluetoothState.selectedDevice
         this.connectionStatus = bluetoothState.connectionStatus
     }

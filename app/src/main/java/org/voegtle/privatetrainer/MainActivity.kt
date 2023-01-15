@@ -1,9 +1,7 @@
 package org.voegtle.privatetrainer
 
 import android.annotation.SuppressLint
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothManager
+import android.bluetooth.*
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -33,6 +31,8 @@ import org.voegtle.privatetrainer.business.BluetoothConnectionStatus.*
 import org.voegtle.privatetrainer.business.BluetoothState
 import org.voegtle.privatetrainer.business.bluetooth.*
 import org.voegtle.privatetrainer.ui.theme.PrivateTrainerTheme
+import java.util.logging.Level
+import java.util.logging.Logger
 
 class MainActivity : ComponentActivity() {
 
@@ -50,6 +50,7 @@ class MainActivity : ComponentActivity() {
             PrivateTrainerTheme {
                 val windowSize = calculateWindowSizeClass(this)
                 val displayFeatures = calculateDisplayFeatures(this)
+                Logger.getGlobal().log(Level.INFO, "---------> " + System.identityHashCode(bluetoothState.value) + " Bluetooth LE connection status display: " + bluetoothState.value.connectionStatus.toString())
 
                 PrivateTrainerApp(
                     windowSize = windowSize,
@@ -100,9 +101,20 @@ class MainActivity : ComponentActivity() {
                 if (!bluetoothState.value.visibleDevices.contains(device)) {
                     bluetoothState.value.visibleDevices.add(device)
                     if (device.name == BleDevice.NAME_PRIVATETRAINER) {
-                        bluetoothState.value =
-                            bluetoothState.value.copy(selectedDevice = device)
-                        val connectGatt = it.device.connectGatt(this, true, BleGattCallback())
+                        val connectGatt = it.device.connectGatt(this, true, object : BluetoothGattCallback() {
+                            override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
+                                if (newState == BluetoothProfile.STATE_CONNECTED) {
+                                    bluetoothState.value =
+                                        bluetoothState.value.copy(selectedDevice = device.copy(connected = true), connectionStatus = connected)
+                                } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                                    bluetoothState.value =
+                                        bluetoothState.value.copy(selectedDevice = device.copy(connected=false), connectionStatus = not_connected)
+                                }
+                                Logger.getGlobal().log(Level.INFO, ">--------- " + System.identityHashCode(bluetoothState.value) + " Bluetooth LE connection status: " + bluetoothState.value.connectionStatus.toString())
+                            }
+
+                        })
+                        connectGatt.readCharacteristic()
                     }
                 }
             })).scanBleDevices()
