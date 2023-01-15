@@ -16,7 +16,7 @@ data class BluetoothState(
 }
 
 enum class BluetoothConnectionStatus {
-    not_supported, disabled, permission_denied, not_connected, connected
+    not_supported, disabled, permission_denied, not_connected, device_found
 }
 
 @Parcelize

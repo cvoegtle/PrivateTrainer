@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import org.voegtle.privatetrainer.R
-import org.voegtle.privatetrainer.business.BluetoothConnectionStatus.connected
 import org.voegtle.privatetrainer.business.BluetoothState
 
 @SuppressLint("MissingPermission")
@@ -32,7 +31,7 @@ fun BluetoothDevice(bluetoothState: BluetoothState, modifier: Modifier) {
             )
             Row() {
                 Text(
-                    context.getString(R.string.battery) + ": 47%",
+                    context.getString(R.string.battery) + ": " + renderPercent(it.batteryLevel),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.inverseOnSurface
                 )

@@ -64,4 +64,5 @@ fun DeviceStateView() {
 }
 
 fun renderSeconds(interval: Float) = "${interval}s"
-fun renderPercent(value: Float) = String.format("%.0f", value * 100) + "%"
+fun renderPercent(value: Float?) =
+    if (value == null) "- %" else String.format("%.0f", value * 100) + "%"
