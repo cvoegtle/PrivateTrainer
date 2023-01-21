@@ -14,12 +14,16 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.voegtle.privatetrainer.R
+import java.util.logging.Level
+import java.util.logging.Logger
 
 
 @Composable
 fun ErrorView(
-    messageId: Int, color: Color = MaterialTheme.colorScheme.inverseOnSurface,
-    style: TextStyle = MaterialTheme.typography.bodyLarge
+    messageId: Int,
+    color: Color = MaterialTheme.colorScheme.inverseOnSurface,
+    style: TextStyle = MaterialTheme.typography.bodyLarge,
+    onButtonClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
 
@@ -34,7 +38,10 @@ fun ErrorView(
         Spacer(modifier = Modifier.width(8.dp))
 
         IconButton(
-            onClick = { /*TODO*/ },
+            onClick = {
+                onButtonClick()
+                Logger.getGlobal().log(Level.INFO, "ErrorView.onClick")
+            },
             colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.errorContainer)
         ) {
             Icon(

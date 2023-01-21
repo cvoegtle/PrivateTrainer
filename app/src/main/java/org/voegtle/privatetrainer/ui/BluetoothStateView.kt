@@ -15,7 +15,7 @@ import org.voegtle.privatetrainer.business.BluetoothState
 import org.voegtle.privatetrainer.ui.controls.ErrorView
 
 @Composable
-fun BluetoothStateView(bluetoothState: BluetoothState) {
+fun BluetoothStateView(bluetoothState: BluetoothState, onSearchDeviceClicked: () -> Unit) {
 
     Surface(
         modifier = Modifier
@@ -26,11 +26,17 @@ fun BluetoothStateView(bluetoothState: BluetoothState) {
         if (bluetoothState.connectionStatus == not_supported) {
             ErrorView(messageId = R.string.error_bluetooth_not_supported)
         } else if (bluetoothState.connectionStatus == disabled) {
-            ErrorView(messageId = R.string.error_bluetooth_disabled)
+            ErrorView(
+                messageId = R.string.error_bluetooth_disabled,
+                onButtonClick = onSearchDeviceClicked
+            )
         } else if (bluetoothState.connectionStatus == permission_denied) {
-            ErrorView(messageId = R.string.error_bluetooth_access_denied)
+            ErrorView(
+                messageId = R.string.error_bluetooth_access_denied,
+                onButtonClick = onSearchDeviceClicked
+            )
         } else if (bluetoothState.selectedDevice == null) {
-            ErrorView(messageId = R.string.error_bluetooth_device_not_connected)
+            ErrorView(messageId = R.string.error_bluetooth_device_not_connected, onButtonClick=onSearchDeviceClicked)
         } else {
             BluetoothDeviceRow(bluetoothState)
         }
@@ -39,7 +45,7 @@ fun BluetoothStateView(bluetoothState: BluetoothState) {
 }
 
 @Composable
-private fun BluetoothDeviceRow(bluetoothState: BluetoothState) {
+private fun BluetoothDeviceRow(bluetoothState: BluetoothState, onButtonClick: () -> Unit = {}) {
     Row(modifier = Modifier.fillMaxWidth()) {
         BluetoothDevice(
             bluetoothState = bluetoothState,
@@ -48,7 +54,7 @@ private fun BluetoothDeviceRow(bluetoothState: BluetoothState) {
         Spacer(modifier = Modifier.width(8.dp))
 
         IconButton(
-            onClick = { /*TODO*/ },
+            onClick = { onButtonClick() },
             colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.errorContainer)
         ) {
             Icon(

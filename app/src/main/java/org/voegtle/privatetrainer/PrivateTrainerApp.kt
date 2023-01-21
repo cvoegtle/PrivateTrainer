@@ -33,6 +33,7 @@ fun PrivateTrainerApp (
     windowSize: WindowSizeClass,
     displayFeatures: List<DisplayFeature>,
     detectedBluetoothState: BluetoothState,
+    onSearchDeviceClicked: () -> Unit,
 ) {
     /**
      * This will help us select type of navigation and content type depending on window size and
@@ -108,6 +109,7 @@ fun PrivateTrainerApp (
         displayFeatures = displayFeatures,
         navigationContentPosition = navigationContentPosition,
         detectedBluetoothState = detectedBluetoothState,
+        onSearchDeviceClicked = onSearchDeviceClicked
     )
 
 }
@@ -120,6 +122,7 @@ private fun PrivateTrainerNavigationWrapper(
     displayFeatures: List<DisplayFeature>,
     navigationContentPosition: PrivateNavigationContentPosition,
     detectedBluetoothState: BluetoothState,
+    onSearchDeviceClicked: () -> Unit,
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -150,6 +153,7 @@ private fun PrivateTrainerNavigationWrapper(
                 navController = navController,
                 selectedDestination = selectedDestination,
                 navigateToTopLevelDestination = navigationActions::navigateTo,
+                onSearchDeviceClicked = onSearchDeviceClicked
             )
         }
     } else {
@@ -172,16 +176,18 @@ private fun PrivateTrainerNavigationWrapper(
                 navigationType = navigationType,
                 contentType = contentType,
                 displayFeatures = displayFeatures,
-                navigationContentPosition = navigationContentPosition,
                 detectedBluetoothState = detectedBluetoothState,
+                navigationContentPosition = navigationContentPosition,
                 navController = navController,
                 selectedDestination = selectedDestination,
                 navigateToTopLevelDestination = navigationActions::navigateTo,
-            ) {
-                scope.launch {
-                    drawerState.open()
-                }
-            }
+                onDrawerClicked = {
+                    scope.launch {
+                        drawerState.open()
+                    }
+                },
+                onSearchDeviceClicked = onSearchDeviceClicked,
+            )
         }
     }
 }
@@ -197,17 +203,10 @@ fun PrivateTrainerAppContent(
     navController: NavHostController,
     selectedDestination: String,
     navigateToTopLevelDestination: (PrivateTopLevelDestination) -> Unit,
-    onDrawerClicked: () -> Unit = {}
+    onDrawerClicked: () -> Unit = {},
+    onSearchDeviceClicked: () -> Unit
 ) {
     Row(modifier = modifier.fillMaxSize()) {
-//        AnimatedVisibility(visible = navigationType == PrivateNavigationType.NAVIGATION_RAIL) {
-//            ReplyNavigationRail(
-//                selectedDestination = selectedDestination,
-//                navigationContentPosition = navigationContentPosition,
-//                navigateToTopLevelDestination = navigateToTopLevelDestination,
-//                onDrawerClicked = onDrawerClicked,
-//            )
-//        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -220,6 +219,7 @@ fun PrivateTrainerAppContent(
                 detectedBluetoothState = detectedBluetoothState,
                 navigationType = navigationType,
                 modifier = Modifier.weight(1f),
+                onSearchDeviceClicked = onSearchDeviceClicked
             )
             AnimatedVisibility(visible = navigationType == PrivateNavigationType.BOTTOM_NAVIGATION) {
                 PrivateBottomNavigationBar(
@@ -240,6 +240,7 @@ private fun PrivateTrainerNavHost(
     detectedBluetoothState: BluetoothState,
     navigationType: PrivateNavigationType,
     modifier: Modifier = Modifier,
+    onSearchDeviceClicked: () -> Unit,
 ) {
     NavHost(
         modifier = modifier,
@@ -247,7 +248,7 @@ private fun PrivateTrainerNavHost(
         startDestination = PrivateRoute.START,
     ) {
         composable(PrivateRoute.START) {
-            OverviewScreen(detectedBluetoothState)
+            OverviewScreen(detectedBluetoothState, onSearchDeviceClicked)
         }
         composable(PrivateRoute.SETTINGS) {
             EmptyComingSoon()

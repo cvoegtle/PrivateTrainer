@@ -3,11 +3,13 @@ package org.voegtle.privatetrainer.business
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import org.voegtle.privatetrainer.business.bluetooth.BleDevice
+import java.util.UUID
 
 data class BluetoothState(
     var visibleDevices: MutableSet<BleDevice> = HashSet(),
     var selectedDevice: BleDevice? = null,
-    var connectionStatus: BluetoothConnectionStatus = BluetoothConnectionStatus.not_supported
+    var connectionStatus: BluetoothConnectionStatus = BluetoothConnectionStatus.not_supported,
+    var characteristics : MutableMap<UUID, ByteArray> = HashMap()
 ) {
     fun copyFrom(bluetoothState: BluetoothState) {
         this.selectedDevice = bluetoothState.selectedDevice
