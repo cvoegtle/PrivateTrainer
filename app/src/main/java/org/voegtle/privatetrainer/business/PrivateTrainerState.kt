@@ -6,7 +6,6 @@ import org.voegtle.privatetrainer.business.bluetooth.BleDevice
 import java.util.UUID
 
 data class BluetoothState(
-    var visibleDevices: MutableSet<BleDevice> = HashSet(),
     var selectedDevice: BleDevice? = null,
     var connectionStatus: BluetoothConnectionStatus = BluetoothConnectionStatus.not_supported,
     var characteristics : MutableMap<UUID, ByteArray> = HashMap()

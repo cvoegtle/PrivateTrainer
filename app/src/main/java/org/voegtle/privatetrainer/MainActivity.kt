@@ -2,7 +2,6 @@ package org.voegtle.privatetrainer
 
 import android.annotation.SuppressLint
 import android.bluetooth.*
-import android.bluetooth.BluetoothGatt.GATT_SUCCESS
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -39,10 +38,6 @@ import java.util.logging.Logger
 class MainActivity : ComponentActivity() {
 
     private val permissionsManager = PermissionManager(this)
-
-    private val uuid_genericAccess = UUID.fromString("00001800-0000-1000-8000-00805f9b34fb")
-    private val uuid_deviceInformation = UUID.fromString("0000180a-0000-1000-8000-00805f9b34fb")
-    private val uuid_unknown = UUID.fromString("0000ff00-0000-1000-8000-00805f9b34fb")
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,7 +85,7 @@ class MainActivity : ComponentActivity() {
                     bluetoothState.value.connectionStatus = permission_denied
                 }
                 doOnGranted {
-                    scanBluetoothDeviceStatus(bluetoothState, bluetoothManager)
+                    scanBluetoothDeviceStatus(bluetoothManager, bluetoothState)
                 }
             }
         }
@@ -99,112 +94,13 @@ class MainActivity : ComponentActivity() {
 
     @SuppressLint("MissingPermission")
     private fun scanBluetoothDeviceStatus(
-        bluetoothState: MutableState<BluetoothState>,
-        bluetoothManager: BluetoothManager
+        bluetoothManager: BluetoothManager,
+        bluetoothState: MutableState<BluetoothState>
     ) {
-        if (bluetoothState.value.connectionStatus > permission_denied) {
-            BleScanManager(
-                bluetoothManager,
-                scanPeriod = 5000,
-                scanCallback = BleScanCallback({ it ->
-                    val name = it?.device?.name
-                    if (name.isNullOrBlank()) return@BleScanCallback
-
-                    val device = BleDevice(name)
-                    if (!bluetoothState.value.visibleDevices.contains(device)) {
-                        bluetoothState.value.visibleDevices.add(device)
-                        if (device.name == BleDevice.NAME_PRIVATETRAINER) {
-                            val connectGatt =
-                                it.device.connectGatt(this, true, object : BluetoothGattCallback() {
-                                    override fun onConnectionStateChange(
-                                        gatt: BluetoothGatt,
-                                        status: Int,
-                                        newState: Int
-                                    ) {
-                                        val connected = newState == BluetoothProfile.STATE_CONNECTED
-                                        bluetoothState.value =
-                                            bluetoothState.value.copy(
-                                                selectedDevice = device.copy(
-                                                    connected = connected
-                                                ), connectionStatus = device_found
-                                            )
-                                        if (connected) {
-                                            gatt.discoverServices()
-                                        }
-                                    }
-
-                                    override fun onServicesDiscovered(
-                                        gatt: BluetoothGatt,
-                                        status: Int
-                                    ) {
-                                        if (status == GATT_SUCCESS) {
-                                            readCharacteristics(gatt)
-                                        }
-                                    }
-
-
-                                    override fun onCharacteristicRead(
-                                        gatt: BluetoothGatt,
-                                        characteristic: BluetoothGattCharacteristic,
-                                        value: ByteArray,
-                                        status: Int
-                                    ) {
-                                        val currentState = bluetoothState.value.copy()
-                                        currentState.characteristics.put(characteristic.uuid, value)
-                                        bluetoothState.value = currentState
-                                    }
-
-                                    override fun onCharacteristicChanged(
-                                        gatt: BluetoothGatt,
-                                        characteristic: BluetoothGattCharacteristic,
-                                        value: ByteArray
-                                    ) {
-                                        val currentState = bluetoothState.value.copy()
-                                        currentState.characteristics.put(characteristic.uuid, value)
-                                        bluetoothState.value = currentState
-                                    }
-
-                                    private fun requestCharacteristicsNotification(gatt: BluetoothGatt) {
-                                        val privateTrainerService = gatt.getService(uuid_unknown)
-                                        for (characteristic in privateTrainerService.characteristics) {
-                                            gatt.setCharacteristicNotification(characteristic, true)
-                                        }
-                                        Logger.getGlobal().log(
-                                            Level.INFO,
-                                            privateTrainerService.characteristics.joinToString(
-                                                separator = "\n"
-                                            ) { "${it.uuid} - P=${it.properties}" })
-                                    }
-
-                                    private fun readCharacteristics(gatt: BluetoothGatt) {
-                                        val privateTrainerService = gatt.getService(uuid_unknown)
-                                        for (characteristic in privateTrainerService.characteristics) {
-                                            if (characteristic.uuid == UUID.fromString("0000ff02-0000-1000-8000-00805f9b34fb")) {
-                                                gatt.readCharacteristic(characteristic)
-                                            }
-                                        }
-                                        Logger.getGlobal().log(
-                                            Level.INFO,
-                                            privateTrainerService.characteristics.joinToString(
-                                                separator = "\n"
-                                            ) { "${it.uuid} - P=${it.properties}" })
-                                    }
-
-                                    private fun readBatteryLevel(gatt: BluetoothGatt) {
-                                        val batteryServiceUuid =
-                                            UUID.fromString("0000180f-0000-1000-8000-00805f9b34fb")
-                                        val batteryLevelCharUuid =
-                                            UUID.fromString("00002a19-0000-1000-8000-00805f9b34fb")
-                                        val batteryLevelChar: BluetoothGattCharacteristic? = gatt
-                                            .getService(batteryServiceUuid)
-                                            ?.getCharacteristic(batteryLevelCharUuid)
-                                        gatt.readCharacteristic(batteryLevelChar)
-                                    }
-                                })
-                        }
-                    }
-                })
-            ).scanBleDevices()
+        BluetoothScanner(bluetoothManager, bluetoothState).scanForPrivateTrainer {
+            bluetoothState.value = bluetoothState.value.copy(selectedDevice = BleDevice(it.name))
+            val bluetoothCaller = BluetoothCaller(this, it, bluetoothState)
+            bluetoothCaller.connect()
         }
     }
 
