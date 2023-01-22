@@ -50,7 +50,7 @@ class BluetoothCaller(
             gatt: BluetoothGatt,
             status: Int
         ) {
-            if (status == BluetoothGatt.GATT_SUCCESS) {
+.s            if (status == BluetoothGatt.GATT_SUCCESS) {
                 readCharacteristics()
                 requestCharacteristicsNotification()
             }
@@ -179,15 +179,12 @@ class BluetoothCaller(
         gatt?.let {
             val privateTrainerService = it.getService(uuid_unknown)
             for (characteristic in privateTrainerService.characteristics) {
-                commandQueue.schedule {
-                    it.readCharacteristic(characteristic)
+                if (characteristic.properties and BluetoothGattCharacteristic.PROPERTY_READ != 0) {
+                    commandQueue.schedule {
+                        it.readCharacteristic(characteristic)
+                    }
                 }
             }
-            Logger.getGlobal().log(
-                Level.INFO,
-                privateTrainerService.characteristics.joinToString(
-                    separator = "\n"
-                ) { "${it.uuid} - P=${it.properties}" })
         }
     }
 
@@ -195,15 +192,10 @@ class BluetoothCaller(
         gatt?.let {
             val privateTrainerService = it.getService(uuid_unknown)
             for (characteristic in privateTrainerService.characteristics) {
-                commandQueue.schedule {
+                if (characteristic.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0) {
                     it.setCharacteristicNotification(characteristic, true)
                 }
             }
-            Logger.getGlobal().log(
-                Level.INFO,
-                privateTrainerService.characteristics.joinToString(
-                    separator = "\n"
-                ) { "${it.uuid} - P=${it.properties}" })
         }
     }
 

@@ -1,7 +1,9 @@
 package org.voegtle.privatetrainer.business.bluetooth
 
+import java.util.concurrent.ArrayBlockingQueue
+
 class BluetoothCommandQueue {
-    val commandQueue = ArrayDeque<() -> Unit>()
+    val commandQueue = ArrayBlockingQueue<() -> Unit>(100)
     var running = false
 
     fun clear() {
@@ -21,7 +23,7 @@ class BluetoothCommandQueue {
     }
 
     fun runNext() {
-        val command = commandQueue.firstOrNull()
+        val command = commandQueue.poll()
         running = command != null
         command?.invoke()
     }
