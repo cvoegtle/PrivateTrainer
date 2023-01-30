@@ -36,9 +36,12 @@ fun BluetoothStateView(bluetoothState: BluetoothState, onSearchDeviceClicked: ()
                 onButtonClick = onSearchDeviceClicked
             )
         } else if (bluetoothState.selectedDevice == null) {
-            ErrorView(messageId = R.string.error_bluetooth_device_not_connected, onButtonClick=onSearchDeviceClicked)
+            ErrorView(
+                messageId = R.string.error_bluetooth_device_not_connected,
+                onButtonClick = onSearchDeviceClicked
+            )
         } else {
-            BluetoothDeviceRow(bluetoothState)
+            BluetoothDeviceRow(bluetoothState, onButtonClick = onSearchDeviceClicked)
         }
 
     }
@@ -54,7 +57,9 @@ private fun BluetoothDeviceRow(bluetoothState: BluetoothState, onButtonClick: ()
         Spacer(modifier = Modifier.width(8.dp))
 
         IconButton(
-            onClick = { onButtonClick() },
+            onClick = {
+                onButtonClick()
+            },
             colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.errorContainer)
         ) {
             Icon(

@@ -38,8 +38,9 @@ import java.util.logging.Logger
 class MainActivity : ComponentActivity() {
 
     private val permissionsManager = PermissionManager(this)
+    var bluetoothCaller: BluetoothCaller? = null
 
-    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+        @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -85,7 +86,11 @@ class MainActivity : ComponentActivity() {
                     bluetoothState.value.connectionStatus = permission_denied
                 }
                 doOnGranted {
-                    scanBluetoothDeviceStatus(bluetoothManager, bluetoothState)
+                    if (isBluetoothDeviceConnected()) {
+                        rescanBluetoothDeviceStatus()
+                    } else {
+                        scanBluetoothDeviceStatus(bluetoothManager, bluetoothState)
+                    }
                 }
             }
         }
@@ -99,10 +104,17 @@ class MainActivity : ComponentActivity() {
     ) {
         BluetoothScanner(bluetoothManager, bluetoothState).scanForPrivateTrainer {
             bluetoothState.value = bluetoothState.value.copy(selectedDevice = BleDevice(it.name))
-            val bluetoothCaller = BluetoothCaller(this, it, bluetoothState)
-            bluetoothCaller.connect()
+            bluetoothCaller = BluetoothCaller(this, it, bluetoothState)
+            bluetoothCaller!!.connect()
         }
     }
+
+    @SuppressLint("MissingPermission")
+    private fun rescanBluetoothDeviceStatus() {
+        bluetoothCaller!!.discoverServices()
+    }
+
+    fun isBluetoothDeviceConnected() = bluetoothCaller?.isConnected() ?: false
 
 }
 

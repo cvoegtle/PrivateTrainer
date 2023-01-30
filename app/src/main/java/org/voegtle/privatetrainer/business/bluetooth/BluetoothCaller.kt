@@ -5,6 +5,7 @@ import android.bluetooth.*
 import android.content.Context
 import androidx.compose.runtime.MutableState
 import org.voegtle.privatetrainer.business.BluetoothConnectionStatus
+import org.voegtle.privatetrainer.business.BluetoothConnectionStatus.device_found
 import org.voegtle.privatetrainer.business.BluetoothState
 import java.util.*
 import java.util.logging.Level
@@ -35,7 +36,7 @@ class BluetoothCaller(
                 bluetoothState.value.copy(
                     selectedDevice = BleDevice(
                         name = privateTrainerDevice.name, connected = connected
-                    ), connectionStatus = BluetoothConnectionStatus.device_found
+                    ), connectionStatus = device_found
                 )
             this@BluetoothCaller.gatt = gatt
 
@@ -50,7 +51,7 @@ class BluetoothCaller(
             gatt: BluetoothGatt,
             status: Int
         ) {
-.s            if (status == BluetoothGatt.GATT_SUCCESS) {
+            if (status == BluetoothGatt.GATT_SUCCESS) {
                 readCharacteristics()
                 requestCharacteristicsNotification()
             }
@@ -121,15 +122,6 @@ class BluetoothCaller(
             commandQueue.runNext()
         }
 
-        override fun onCharacteristicRead(
-            gatt: BluetoothGatt?,
-            characteristic: BluetoothGattCharacteristic?,
-            status: Int
-        ) {
-            super.onCharacteristicRead(gatt, characteristic, status)
-            commandQueue.runNext()
-        }
-
         override fun onCharacteristicChanged(
             gatt: BluetoothGatt,
             characteristic: BluetoothGattCharacteristic,
@@ -139,14 +131,6 @@ class BluetoothCaller(
             currentState.characteristics.put(characteristic.uuid, value)
             bluetoothState.value = currentState
 
-            commandQueue.runNext()
-        }
-
-        override fun onCharacteristicChanged(
-            gatt: BluetoothGatt?,
-            characteristic: BluetoothGattCharacteristic?
-        ) {
-            super.onCharacteristicChanged(gatt, characteristic)
             commandQueue.runNext()
         }
 
@@ -168,7 +152,7 @@ class BluetoothCaller(
 
     fun connect() {
         commandQueue.clear()
-        privateTrainerDevice.connectGatt(context, true, bluetoothGattCallback)
+        privateTrainerDevice.connectGatt(context, false, bluetoothGattCallback)
     }
 
     fun discoverServices() {
@@ -214,5 +198,7 @@ class BluetoothCaller(
             }
         }
     }
+
+    fun isConnected(): Boolean = gatt != null && bluetoothState.value.selectedDevice?.connected ?: false
 
 }
