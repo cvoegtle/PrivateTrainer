@@ -7,7 +7,7 @@ import java.util.UUID
 
 data class BluetoothState(
     var selectedDevice: BleDevice? = null,
-    var connectionStatus: BluetoothConnectionStatus = BluetoothConnectionStatus.not_supported,
+    var connectionStatus: BluetoothConnectionStatus = BluetoothConnectionStatus.not_connected,
     var characteristics : MutableMap<UUID, ByteArray> = HashMap()
 ) {
     fun copyFrom(bluetoothState: BluetoothState) {

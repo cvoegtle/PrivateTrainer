@@ -46,22 +46,14 @@ class MainActivity : ComponentActivity() {
 
         setContent {
 
-            val bluetoothState: MutableState<BluetoothState> =
-                remember { mutableStateOf(BluetoothState()) }
-            determineBluetoothState(bluetoothState)
             PrivateTrainerTheme {
                 val windowSize = calculateWindowSizeClass(this)
                 val displayFeatures = calculateDisplayFeatures(this)
-                Logger.getGlobal().log(
-                    Level.INFO,
-                    "---------> " + System.identityHashCode(bluetoothState.value) + " Bluetooth LE connection status display: " + bluetoothState.value.connectionStatus.toString()
-                )
 
                 PrivateTrainerApp(
                     windowSize = windowSize,
                     displayFeatures = displayFeatures,
-                    detectedBluetoothState = bluetoothState.value,
-                    onSearchDeviceClicked = { determineBluetoothState(bluetoothState) }
+                    onSearchDeviceClicked = { state -> determineBluetoothState(state) }
                 )
             }
         }
