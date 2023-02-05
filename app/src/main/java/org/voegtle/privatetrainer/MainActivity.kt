@@ -15,8 +15,6 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,11 +27,9 @@ import com.lorenzofelletti.permissions.dispatcher.dsl.doOnGranted
 import com.lorenzofelletti.permissions.dispatcher.dsl.withRequestCode
 import org.voegtle.privatetrainer.business.BluetoothConnectionStatus.*
 import org.voegtle.privatetrainer.business.BluetoothState
+import org.voegtle.privatetrainer.business.DeviceSettings
 import org.voegtle.privatetrainer.business.bluetooth.*
 import org.voegtle.privatetrainer.ui.theme.PrivateTrainerTheme
-import java.util.UUID
-import java.util.logging.Level
-import java.util.logging.Logger
 
 class MainActivity : ComponentActivity() {
 
@@ -53,8 +49,12 @@ class MainActivity : ComponentActivity() {
                 PrivateTrainerApp(
                     windowSize = windowSize,
                     displayFeatures = displayFeatures,
-                    onSearchDeviceClicked = { state -> determineBluetoothState(state) }
-                )
+                    savedDeviceSettings = listOf(
+                        DeviceSettings(name = "Soft and Slow", mode = 2, strength = 0.2f, interval = 120.0f),
+                        DeviceSettings(name = "Strong and Slow", mode = 2, strength = 0.9f, interval = 120.0f),
+                        DeviceSettings(name = "Full Power", mode = 2, strength = 1.0f, interval = 2.0f)
+                    )
+                ) { state -> determineBluetoothState(state) }
             }
         }
     }

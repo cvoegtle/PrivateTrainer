@@ -20,8 +20,10 @@ import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
 import kotlinx.coroutines.launch
 import org.voegtle.privatetrainer.business.BluetoothState
+import org.voegtle.privatetrainer.business.DeviceSettings
 import org.voegtle.privatetrainer.ui.EmptyComingSoon
 import org.voegtle.privatetrainer.ui.OverviewScreen
+import org.voegtle.privatetrainer.ui.SettingsManagementScreen
 import org.voegtle.privatetrainer.ui.navigation.*
 import org.voegtle.privatetrainer.ui.utils.*
 
@@ -29,6 +31,7 @@ import org.voegtle.privatetrainer.ui.utils.*
 fun PrivateTrainerApp (
     windowSize: WindowSizeClass,
     displayFeatures: List<DisplayFeature>,
+    savedDeviceSettings: List<DeviceSettings>,
     onSearchDeviceClicked: (MutableState<BluetoothState>) -> Unit
 ) {
     /**
@@ -102,6 +105,7 @@ fun PrivateTrainerApp (
     PrivateTrainerNavigationWrapper(
         navigationType = navigationType,
         contentType = contentType,
+        savedDeviceSettings = savedDeviceSettings,
         displayFeatures = displayFeatures,
         navigationContentPosition = navigationContentPosition,
         onSearchDeviceClicked = onSearchDeviceClicked
@@ -114,6 +118,7 @@ fun PrivateTrainerApp (
 private fun PrivateTrainerNavigationWrapper(
     navigationType: PrivateNavigationType,
     contentType: PrivateContentType,
+    savedDeviceSettings: List<DeviceSettings>,
     displayFeatures: List<DisplayFeature>,
     navigationContentPosition: PrivateNavigationContentPosition,
     onSearchDeviceClicked: (state: MutableState<BluetoothState>) -> Unit,
@@ -140,6 +145,7 @@ private fun PrivateTrainerNavigationWrapper(
         }) {
             PrivateTrainerAppContent(
                 navigationType = navigationType,
+                savedDeviceSettings = savedDeviceSettings,
                 contentType = contentType,
                 displayFeatures = displayFeatures,
                 navigationContentPosition = navigationContentPosition,
@@ -167,6 +173,7 @@ private fun PrivateTrainerNavigationWrapper(
         ) {
             PrivateTrainerAppContent(
                 navigationType = navigationType,
+                savedDeviceSettings = savedDeviceSettings,
                 contentType = contentType,
                 displayFeatures = displayFeatures,
                 navigationContentPosition = navigationContentPosition,
@@ -187,6 +194,7 @@ private fun PrivateTrainerNavigationWrapper(
 @Composable
 fun PrivateTrainerAppContent(
     modifier: Modifier = Modifier,
+    savedDeviceSettings: List<DeviceSettings>,
     navigationType: PrivateNavigationType,
     contentType: PrivateContentType,
     displayFeatures: List<DisplayFeature>,
@@ -205,6 +213,7 @@ fun PrivateTrainerAppContent(
         ) {
             PrivateTrainerNavHost(
                 navController = navController,
+                savedDeviceSettings = savedDeviceSettings,
                 contentType = contentType,
                 displayFeatures = displayFeatures,
                 navigationType = navigationType,
@@ -225,6 +234,7 @@ fun PrivateTrainerAppContent(
 @Composable
 private fun PrivateTrainerNavHost(
     navController: NavHostController,
+    savedDeviceSettings: List<DeviceSettings>,
     contentType: PrivateContentType,
     displayFeatures: List<DisplayFeature>,
     navigationType: PrivateNavigationType,
@@ -239,10 +249,10 @@ private fun PrivateTrainerNavHost(
         composable(PrivateRoute.START) {
             OverviewScreen(onSearchDeviceClicked)
         }
-        composable(PrivateRoute.SETTINGS) {
-            EmptyComingSoon()
-        }
         composable(PrivateRoute.SAVED_SETTINGS) {
+            SettingsManagementScreen(savedDeviceSettings)
+        }
+        composable(PrivateRoute.SETTINGS) {
             EmptyComingSoon()
         }
         composable(PrivateRoute.ABOUT) {

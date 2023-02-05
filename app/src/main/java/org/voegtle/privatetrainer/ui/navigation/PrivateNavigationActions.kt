@@ -49,16 +49,16 @@ val TOP_LEVEL_DESTINATIONS = listOf(
         iconTextId = R.string.tab_start
     ),
     PrivateTopLevelDestination(
-        route = PrivateRoute.SETTINGS,
-        selectedIcon = Icons.Default.Settings,
-        unselectedIcon = Icons.Default.Settings,
-        iconTextId = R.string.tab_settings
-    ),
-    PrivateTopLevelDestination(
         route = PrivateRoute.SAVED_SETTINGS,
         selectedIcon = Icons.Default.Save,
         unselectedIcon = Icons.Outlined.Save,
         iconTextId = R.string.tab_saved_settings
+    ),
+    PrivateTopLevelDestination(
+        route = PrivateRoute.SETTINGS,
+        selectedIcon = Icons.Default.Settings,
+        unselectedIcon = Icons.Default.Settings,
+        iconTextId = R.string.tab_settings
     ),
     PrivateTopLevelDestination(
         route = PrivateRoute.ABOUT,

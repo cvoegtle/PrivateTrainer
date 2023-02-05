@@ -5,6 +5,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -15,8 +18,10 @@ import org.voegtle.privatetrainer.business.BluetoothState
 import org.voegtle.privatetrainer.ui.controls.ErrorView
 
 @Composable
-fun BluetoothStateView(bluetoothState: BluetoothState, onSearchDeviceClicked: () -> Unit) {
-
+fun BluetoothStateView(onSearchDeviceClicked: (MutableState<BluetoothState>) -> Unit) {
+    val bluetoothMutableState: MutableState<BluetoothState> =
+        remember { mutableStateOf(BluetoothState()) }
+    val bluetoothState = bluetoothMutableState.value
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -28,20 +33,20 @@ fun BluetoothStateView(bluetoothState: BluetoothState, onSearchDeviceClicked: ()
         } else if (bluetoothState.connectionStatus == disabled) {
             ErrorView(
                 messageId = R.string.error_bluetooth_disabled,
-                onButtonClick = onSearchDeviceClicked
+                onButtonClick = { onSearchDeviceClicked(bluetoothMutableState) }
             )
         } else if (bluetoothState.connectionStatus == permission_denied) {
             ErrorView(
                 messageId = R.string.error_bluetooth_access_denied,
-                onButtonClick = onSearchDeviceClicked
+                onButtonClick = { onSearchDeviceClicked(bluetoothMutableState) }
             )
         } else if (bluetoothState.selectedDevice == null) {
             ErrorView(
                 messageId = R.string.error_bluetooth_device_not_connected,
-                onButtonClick = onSearchDeviceClicked
+                onButtonClick =  { onSearchDeviceClicked(bluetoothMutableState) }
             )
         } else {
-            BluetoothDeviceRow(bluetoothState, onButtonClick = onSearchDeviceClicked)
+            BluetoothDeviceRow(bluetoothState, onButtonClick = { onSearchDeviceClicked(bluetoothMutableState) })
         }
 
     }

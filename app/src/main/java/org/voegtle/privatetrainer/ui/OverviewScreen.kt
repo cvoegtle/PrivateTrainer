@@ -13,15 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.voegtle.privatetrainer.business.BluetoothState
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun OverviewScreen(onSearchDeviceClicked: (state: MutableState<BluetoothState>) -> Unit) {
-    val bluetoothState: MutableState<BluetoothState> =
-        remember { mutableStateOf(BluetoothState()) }
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         BluetoothStateView(
-            bluetoothState = bluetoothState.value,
-            onSearchDeviceClicked = { onSearchDeviceClicked(bluetoothState) }
+            onSearchDeviceClicked = onSearchDeviceClicked
         )
         Spacer(Modifier.height(5.dp))
         DeviceSettingsEditor()
