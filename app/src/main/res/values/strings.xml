@@ -20,4 +20,5 @@
     <string name = "error_bluetooth_disabled">Bluetooth ist ausgeschaltet.</string>
     <string name = "error_bluetooth_access_denied">Der Zugriff auf Bluetooth wurde verweigert.</string>
     <string name = "error_bluetooth_device_not_connected">Das Bluetooth-Gerät ist nicht verbunden</string>
+  <string name="settings_name">Name</string>
 </resources>

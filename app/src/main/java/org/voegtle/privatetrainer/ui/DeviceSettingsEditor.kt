@@ -10,53 +10,55 @@ import org.voegtle.privatetrainer.business.SettingsRanges
 import org.voegtle.privatetrainer.ui.controls.ControlRow
 import org.voegtle.privatetrainer.ui.controls.FloatSliderRow
 import org.voegtle.privatetrainer.ui.controls.IntSliderRow
+import org.voegtle.privatetrainer.ui.controls.NameEditRow
 
 @Composable
-fun DeviceStateView() {
-    var deviceSettingsState: DeviceSettings by rememberSaveable {
+fun DeviceSettingsEditor() {
+    var deviceSettings: DeviceSettings by rememberSaveable {
         mutableStateOf(DeviceSettings())
     }
     var selectedType by remember { mutableStateOf(SettingType.mode) }
     val settingsRanges = SettingsRanges()
 
     Column {
+        NameEditRow(deviceSettings.name, { name -> deviceSettings = deviceSettings.copy(name = name)})
         ControlRow(
             SettingType.mode,
             R.string.setting_mode,
-            deviceSettingsState.mode.toString(),
+            deviceSettings.mode.toString(),
             selectedType,
             { type -> selectedType = type }
         )
         ControlRow(
             SettingType.strength,
             R.string.setting_strength,
-            renderPercent(deviceSettingsState.strength),
+            renderPercent(deviceSettings.strength),
             selectedType,
             { type -> selectedType = type }
         )
         ControlRow(
             SettingType.interval,
             R.string.setting_interval,
-            renderSeconds(deviceSettingsState.interval),
+            renderSeconds(deviceSettings.interval),
             selectedType,
             { type -> selectedType = type }
         )
         when (selectedType) {
             SettingType.mode -> IntSliderRow(
-                value = deviceSettingsState.mode,
+                value = deviceSettings.mode,
                 range = settingsRanges.mode,
-                onChange = { mode -> deviceSettingsState = deviceSettingsState.copy(mode = mode) })
+                onChange = { mode -> deviceSettings = deviceSettings.copy(mode = mode) })
             SettingType.strength -> FloatSliderRow(
-                value = deviceSettingsState.strength,
+                value = deviceSettings.strength,
                 range = settingsRanges.strength,
                 onChange = { strength ->
-                    deviceSettingsState = deviceSettingsState.copy(strength = strength)
+                    deviceSettings = deviceSettings.copy(strength = strength)
                 })
             SettingType.interval -> FloatSliderRow(
-                value = deviceSettingsState.interval,
+                value = deviceSettings.interval,
                 range = settingsRanges.interval,
                 onChange = { interval ->
-                    deviceSettingsState = deviceSettingsState.copy(interval = interval)
+                    deviceSettings = deviceSettings.copy(interval = interval)
                 }
             )
         }

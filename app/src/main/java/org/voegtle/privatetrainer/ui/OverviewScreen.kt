@@ -24,7 +24,7 @@ fun OverviewScreen(onSearchDeviceClicked: (state: MutableState<BluetoothState>) 
             onSearchDeviceClicked = { onSearchDeviceClicked(bluetoothState) }
         )
         Spacer(Modifier.height(5.dp))
-        DeviceStateView()
+        DeviceSettingsEditor()
 
     }
 }
