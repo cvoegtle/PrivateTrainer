@@ -22,11 +22,13 @@ enum class BluetoothConnectionStatus {
 
 @Parcelize
 data class DeviceSettings(
+    var id: String = UUID.randomUUID().toString(),
     var name: String = "",
     var mode: Int = 1, // 1 - 10
     var strength: Float = 0.8f, // 10 - 100%
     var interval: Float = 2.0f // 0,1 - 120s
 ) : Parcelable
+
 
 
 //val DeviceSettingsSaver = run {

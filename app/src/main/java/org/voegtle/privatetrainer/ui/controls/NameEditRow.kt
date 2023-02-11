@@ -8,20 +8,27 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusState
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import org.voegtle.privatetrainer.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NameEditRow(name: String, onNameChange: (String) -> Unit) {
+fun NameEditRow(name: String, onNameChange: (String) -> Unit, onFocusLost: () -> Unit) {
     val context = LocalContext.current
 
     Row(modifier = Modifier.height(60.dp)) {
         TextField(
             value = name,
+            modifier= Modifier.onFocusChanged { focusState ->
+                if (!focusState.isFocused) {
+                    onFocusLost()
+                }
+            },
             onValueChange = onNameChange,
-            modifier = Modifier.fillMaxWidth(1.0f),
             label = { Text(context.getString(R.string.settings_name)) }
         )
     }
