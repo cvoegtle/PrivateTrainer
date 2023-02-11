@@ -50,7 +50,7 @@ fun NameEditRow(name: String,
             colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.errorContainer)
         ) {
             Icon(
-                imageVector = if (favorite) { Icons.Outlined.ThumbUp } else {Icons.Filled.ThumbUp},
+                imageVector = if (favorite) { Icons.Filled.ThumbUp } else {Icons.Outlined.ThumbUp},
                 contentDescription = stringResource(
                     id = R.string.device_start
                 ),
