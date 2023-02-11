@@ -40,7 +40,6 @@ fun ErrorView(
         IconButton(
             onClick = {
                 onButtonClick()
-                Logger.getGlobal().log(Level.INFO, "ErrorView.onClick")
             },
             colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.errorContainer)
         ) {

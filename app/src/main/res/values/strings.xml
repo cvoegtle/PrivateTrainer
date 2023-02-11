@@ -10,6 +10,7 @@
     <string name = "device_start">Trainer starten</string>
     <string name = "device_stop">Trainer stoppen</string>
     <string name = "setting_mode">Modus</string>
+    <string name = "keep_setting">Einstellungen merken</string>
     <string name = "setting_strength">Stärke</string>
     <string name = "setting_interval">Intervall</string>
     <string name = "battery">Batterie</string>

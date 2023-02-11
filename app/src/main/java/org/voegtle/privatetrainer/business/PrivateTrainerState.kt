@@ -22,7 +22,7 @@ enum class BluetoothConnectionStatus {
 
 @Parcelize
 data class DeviceSettings(
-    var id: String = UUID.randomUUID().toString(),
+    var id: String? = null,
     var name: String = "",
     var mode: Int = 1, // 1 - 10
     var strength: Float = 0.8f, // 10 - 100%

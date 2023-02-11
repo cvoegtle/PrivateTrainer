@@ -22,6 +22,8 @@ class PrivateTrainerStore(context: Context) {
         editor.apply()
     }
 
+
+
     private fun json2settings(settingsString: String): DeviceSettings {
         return gson.fromJson(settingsString, DeviceSettings::class.java)
     }

@@ -14,6 +14,7 @@ import org.voegtle.privatetrainer.ui.controls.ControlRow
 import org.voegtle.privatetrainer.ui.controls.FloatSliderRow
 import org.voegtle.privatetrainer.ui.controls.IntSliderRow
 import org.voegtle.privatetrainer.ui.controls.NameEditRow
+import java.util.*
 
 @Composable
 fun DeviceSettingsEditor() {
@@ -27,9 +28,16 @@ fun DeviceSettingsEditor() {
 
     Column {
         NameEditRow(
-            deviceSettings.name,
+            name = deviceSettings.name,
+            favorite = deviceSettings.id != null,
             onNameChange = { name -> deviceSettings = deviceSettings.copy(name = name) },
-            onFocusLost = { storeCurrentDeviceSettings(context, deviceSettings) })
+            onFocusLost = { storeCurrentDeviceSettings(context, deviceSettings) },
+            onFavoriteClicked = { favorite ->
+                deviceSettings = deviceSettings.copy(
+                    id = if (favorite) UUID.randomUUID().toString() else null
+                )
+                storeCurrentDeviceSettings(context, deviceSettings)
+            })
         ControlRow(
             SettingType.mode,
             R.string.setting_mode,
