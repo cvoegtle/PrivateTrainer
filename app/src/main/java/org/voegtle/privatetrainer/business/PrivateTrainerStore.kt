@@ -3,23 +3,44 @@ package org.voegtle.privatetrainer.business
 import android.content.Context
 import com.google.gson.Gson
 
-private const val STORE = "PRIVATE_TRAINER_STORE"
+private const val CURRENT_STORE = "CURRENT_STORE"
+private const val FAVORITE_STORE = "FAVORITE_STORE"
 private const val SAVED_SETTINGS = "SAVED_SETTINGS"
 private const val CURRENT_SETTINGS = "CURRENT_SETTINGS"
 
 class PrivateTrainerStore(context: Context) {
-    val sharedPreferences = context.getSharedPreferences(STORE, Context.MODE_PRIVATE)
+    val shorttimePreferences = context.getSharedPreferences(CURRENT_STORE, Context.MODE_PRIVATE)
+    val longtimetimePreferences = context.getSharedPreferences(FAVORITE_STORE, Context.MODE_PRIVATE)
     val gson: Gson = Gson()
 
+    fun storeSettings(deviceSettings: DeviceSettings) {
+        storeCurrentSettings(deviceSettings)
+        if (deviceSettings.isFavorite()) {
+            storeFavoriteSettings(deviceSettings)
+        }
+    }
     fun retrieveCurrentSettings(): DeviceSettings {
-        val jsonSettings = sharedPreferences.getString(CURRENT_SETTINGS, null)
+        val jsonSettings = shorttimePreferences.getString(CURRENT_SETTINGS, null)
         return if (jsonSettings != null) json2settings(jsonSettings) else DeviceSettings()
     }
 
-    fun storeCurrentSettings(deviceSettings: DeviceSettings) {
-        val editor = sharedPreferences.edit()
+    private fun storeCurrentSettings(deviceSettings: DeviceSettings) {
+        val editor = shorttimePreferences.edit()
         editor.putString(CURRENT_SETTINGS, settings2json(deviceSettings))
         editor.apply()
+    }
+
+    private fun storeFavoriteSettings(deviceSettings: DeviceSettings) {
+        assert(deviceSettings.id != null)
+        val editor = longtimetimePreferences.edit()
+        editor.putString(deviceSettings.id, settings2json(deviceSettings))
+        editor.apply()
+    }
+
+    fun retrieveFavoriteSettings(): List<DeviceSettings> {
+        return longtimetimePreferences.all
+            .map { entry -> json2settings(entry.value as String)}
+            .toList()
     }
 
 

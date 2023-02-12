@@ -91,7 +91,7 @@ private fun retrieveCurrentDeviceSettings(context: Context): DeviceSettings {
 }
 
 private fun storeCurrentDeviceSettings(context: Context, currentDeviceSettings: DeviceSettings) {
-    PrivateTrainerStore(context).storeCurrentSettings(currentDeviceSettings)
+    PrivateTrainerStore(context).storeSettings(currentDeviceSettings)
 }
 
 fun renderSeconds(interval: Float) = "${interval}s"

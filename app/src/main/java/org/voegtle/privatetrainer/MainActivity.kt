@@ -28,6 +28,7 @@ import com.lorenzofelletti.permissions.dispatcher.dsl.withRequestCode
 import org.voegtle.privatetrainer.business.BluetoothConnectionStatus.*
 import org.voegtle.privatetrainer.business.BluetoothState
 import org.voegtle.privatetrainer.business.DeviceSettings
+import org.voegtle.privatetrainer.business.PrivateTrainerStore
 import org.voegtle.privatetrainer.business.bluetooth.*
 import org.voegtle.privatetrainer.ui.theme.PrivateTrainerTheme
 
@@ -39,21 +40,16 @@ class MainActivity : ComponentActivity() {
         @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
-
             PrivateTrainerTheme {
                 val windowSize = calculateWindowSizeClass(this)
                 val displayFeatures = calculateDisplayFeatures(this)
+                val settingsStore = PrivateTrainerStore(this)
 
                 PrivateTrainerApp(
                     windowSize = windowSize,
                     displayFeatures = displayFeatures,
-                    savedDeviceSettings = listOf(
-                        DeviceSettings(name = "Soft and Slow", mode = 2, strength = 0.2f, interval = 120.0f),
-                        DeviceSettings(name = "Strong and Slow", mode = 2, strength = 0.9f, interval = 120.0f),
-                        DeviceSettings(name = "Full Power", mode = 2, strength = 1.0f, interval = 2.0f)
-                    )
+                    savedDeviceSettings = settingsStore.retrieveFavoriteSettings()
                 ) { state -> determineBluetoothState(state) }
             }
         }
@@ -122,16 +118,6 @@ fun BluetoothStatus(enabled: Boolean) {
             fontSize = 24.sp
         )
     }
-}
-
-@SuppressLint("MissingPermission")
-@Composable
-fun BluetoothDeviceLine(device: BluetoothDevice) {
-    Text(
-        text = device.name,
-        modifier = Modifier.padding(all = 8.dp),
-        fontSize = 16.sp
-    )
 }
 
 @Preview(showBackground = true)
