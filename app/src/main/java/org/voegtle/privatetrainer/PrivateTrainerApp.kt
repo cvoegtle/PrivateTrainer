@@ -23,7 +23,7 @@ import org.voegtle.privatetrainer.business.BluetoothState
 import org.voegtle.privatetrainer.business.DeviceSettings
 import org.voegtle.privatetrainer.ui.EmptyComingSoon
 import org.voegtle.privatetrainer.ui.OverviewScreen
-import org.voegtle.privatetrainer.ui.SettingsManagementScreen
+import org.voegtle.privatetrainer.ui.FavoriteSettingsManagementScreen
 import org.voegtle.privatetrainer.ui.navigation.*
 import org.voegtle.privatetrainer.ui.utils.*
 
@@ -250,7 +250,7 @@ private fun PrivateTrainerNavHost(
             OverviewScreen(onSearchDeviceClicked)
         }
         composable(PrivateRoute.SAVED_SETTINGS) {
-            SettingsManagementScreen(savedDeviceSettings)
+            FavoriteSettingsManagementScreen(savedDeviceSettings)
         }
         composable(PrivateRoute.SETTINGS) {
             EmptyComingSoon()
