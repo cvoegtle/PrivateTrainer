@@ -8,11 +8,11 @@ import org.voegtle.privatetrainer.business.BluetoothConnectionStatus
 import org.voegtle.privatetrainer.business.BluetoothState
 
 class BluetoothScanner(private val bluetoothManager: BluetoothManager,
-                       private val bluetoothState: MutableState<BluetoothState>) {
+                       private val bluetoothState: BluetoothState) {
 
     @SuppressLint("MissingPermission")
     fun scanForPrivateTrainer(callback: (BluetoothDevice) -> Unit) {
-        if (bluetoothState.value.connectionStatus > BluetoothConnectionStatus.permission_denied) {
+        if (bluetoothState.connectionStatus > BluetoothConnectionStatus.permission_denied) {
             BleScanManager(
                 bluetoothManager,
                 scanPeriod = 5000,

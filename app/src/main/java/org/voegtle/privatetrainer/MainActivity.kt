@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
     private val permissionsManager = PermissionManager(this)
     var bluetoothCaller: BluetoothCaller? = null
 
-        @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -51,10 +51,18 @@ class MainActivity : ComponentActivity() {
                     windowSize = windowSize,
                     displayFeatures = displayFeatures,
                     savedDeviceSettings = settingsStore.retrieveFavoriteSettings(),
-                    onSearchDeviceClicked = fun(state: MutableState<BluetoothState>) { determineBluetoothState(state) },
-                    onSendToDeviceClicked = fun(command: PrivateTrainerCommand,
-                                                settings:DeviceSettings,
-                                                state: BluetoothState) { sendCommandToDevice(command, settings, state) }
+                    onSearchDeviceClicked = fun(state: MutableState<BluetoothState>) {
+                        determineBluetoothState(
+                            state
+                        )
+                    },
+                    onSendToDeviceClicked = fun(
+                        command: PrivateTrainerCommand,
+                        settings: DeviceSettings,
+                        state: MutableState<BluetoothState>
+                    ) {
+                        sendCommandToDevice(command, settings, state)
+                    }
                 )
             }
         }
@@ -63,9 +71,13 @@ class MainActivity : ComponentActivity() {
     private fun sendCommandToDevice(
         command: PrivateTrainerCommand,
         settings: DeviceSettings,
-        state: BluetoothState
+        state: MutableState<BluetoothState>
     ) {
-        TODO("Not yet implemented")
+        val bluetoothManager: BluetoothManager = getSystemService(BluetoothManager::class.java)
+        BluetoothScanner(bluetoothManager, state.value).scanForPrivateTrainer {
+            bluetoothCaller = BluetoothCaller(this, it, state)
+            bluetoothCaller!!.connect()
+        }
     }
 
     private fun determineBluetoothState(bluetoothState: MutableState<BluetoothState>) {
@@ -87,11 +99,7 @@ class MainActivity : ComponentActivity() {
                     bluetoothState.value.connectionStatus = permission_denied
                 }
                 doOnGranted {
-                    if (isBluetoothDeviceConnected()) {
-                        rescanBluetoothDeviceStatus()
-                    } else {
-                        scanBluetoothDeviceStatus(bluetoothManager, bluetoothState)
-                    }
+                    scanBluetoothDeviceStatus(bluetoothManager, bluetoothState)
                 }
             }
         }
@@ -103,16 +111,9 @@ class MainActivity : ComponentActivity() {
         bluetoothManager: BluetoothManager,
         bluetoothState: MutableState<BluetoothState>
     ) {
-        BluetoothScanner(bluetoothManager, bluetoothState).scanForPrivateTrainer {
+        BluetoothScanner(bluetoothManager, bluetoothState.value).scanForPrivateTrainer {
             bluetoothState.value = bluetoothState.value.copy(selectedDevice = BleDevice(it.name))
-            bluetoothCaller = BluetoothCaller(this, it, bluetoothState)
-            bluetoothCaller!!.connect()
         }
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun rescanBluetoothDeviceStatus() {
-        bluetoothCaller!!.discoverServices()
     }
 
     fun isBluetoothDeviceConnected() = bluetoothCaller?.isConnected() ?: false

@@ -40,7 +40,7 @@ fun DeviceSettingsEditor(deviceSettings: DeviceSettings, onValueChange: (deviceS
         ControlRow(
             SettingType.strength,
             R.string.setting_strength,
-            renderPercent(deviceSettings.strength),
+            renderLevel(deviceSettings.strength),
             selectedType,
             { type -> selectedType = type }
         )
@@ -58,7 +58,7 @@ fun DeviceSettingsEditor(deviceSettings: DeviceSettings, onValueChange: (deviceS
                 onChange = { mode ->
                     onValueChange(deviceSettings.copy(mode = mode))
                 })
-            SettingType.strength -> FloatSliderRow(
+            SettingType.strength -> IntSliderRow(
                 value = deviceSettings.strength,
                 range = settingsRanges.strength,
                 onChange = { strength ->
@@ -78,3 +78,5 @@ fun DeviceSettingsEditor(deviceSettings: DeviceSettings, onValueChange: (deviceS
 fun renderSeconds(interval: Float) = "${interval}s"
 fun renderPercent(value: Float?) =
     if (value == null) "- %" else String.format("%.0f", value * 100) + "%"
+fun renderLevel(value: Int?) =
+     "Stufe ${value ?: "-"}"

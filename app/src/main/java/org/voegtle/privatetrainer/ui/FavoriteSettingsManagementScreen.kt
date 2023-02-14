@@ -28,9 +28,9 @@ fun retrieveFavoriteDeviceSettings(context: Context): List<DeviceSettings> {
 @Composable
 fun SettingsManagementScreenPreview() {
     val deviceSettings = listOf(
-        DeviceSettings(name = "Soft and Slow", mode = 2, strength = 0.2f, interval = 120.0f),
-        DeviceSettings(name = "Strong and Slow", mode = 2, strength = 0.9f, interval = 120.0f),
-        DeviceSettings(name = "Full Power", mode = 2, strength = 1.0f, interval = 2.0f)
+        DeviceSettings(name = "Soft and Slow", mode = 2, strength = 2, interval = 120.0f),
+        DeviceSettings(name = "Strong and Slow", mode = 2, strength = 9, interval = 120.0f),
+        DeviceSettings(name = "Full Power", mode = 2, strength = 10, interval = 2.0f)
     )
     FavoriteSettingsManagementScreen(settingsList = deviceSettings)
 }

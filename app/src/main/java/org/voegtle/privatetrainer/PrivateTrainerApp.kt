@@ -36,7 +36,7 @@ fun PrivateTrainerApp (
     onSearchDeviceClicked: (MutableState<BluetoothState>) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
                             settings:DeviceSettings,
-                            state: BluetoothState) -> Unit
+                            state: MutableState<BluetoothState>) -> Unit
 ) {
     /**
      * This will help us select type of navigation and content type depending on window size and
@@ -129,7 +129,7 @@ private fun PrivateTrainerNavigationWrapper(
     onSearchDeviceClicked: (state: MutableState<BluetoothState>) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
                             settings:DeviceSettings,
-                            state: BluetoothState) -> Unit
+                            state: MutableState<BluetoothState>) -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -216,7 +216,7 @@ fun PrivateTrainerAppContent(
     onSearchDeviceClicked: (state: MutableState<BluetoothState>) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
                             settings:DeviceSettings,
-                            state: BluetoothState) -> Unit
+                            state: MutableState<BluetoothState>) -> Unit
 ) {
     Row(modifier = modifier.fillMaxSize()) {
         Column(
@@ -256,7 +256,7 @@ private fun PrivateTrainerNavHost(
     onSearchDeviceClicked: (state: MutableState<BluetoothState>) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
                             settings:DeviceSettings,
-                            state: BluetoothState) -> Unit
+                            state: MutableState<BluetoothState>) -> Unit
 ) {
     NavHost(
         modifier = modifier,

@@ -29,7 +29,7 @@ data class DeviceSettings(
     var id: String? = null,
     var name: String = "",
     var mode: Int = 1, // 1 - 10
-    var strength: Float = 0.8f, // 10 - 100%
+    var strength: Int = 8, // Stufe 1 - 10
     var interval: Float = 2.0f // 0,1 - 120s
 ) : Parcelable {
     fun isFavorite() = id != null
@@ -76,18 +76,18 @@ class SettingsRanges(
         9,
         10
     ),
-    val strength: SettingsSteps<Float> = SettingsSteps<Float>(
+    val strength: SettingsSteps<Int> = SettingsSteps<Int>(
         SettingType.strength,
-        0.1f,
-        0.2f,
-        0.3f,
-        0.4f,
-        0.5f,
-        0.6f,
-        0.7f,
-        0.8f,
-        0.9f,
-        1.0f
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
     ),
     val interval: SettingsSteps<Float> = SettingsSteps<Float>(
         SettingType.interval,

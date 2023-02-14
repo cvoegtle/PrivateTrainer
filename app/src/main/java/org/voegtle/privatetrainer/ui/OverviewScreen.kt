@@ -16,7 +16,7 @@ fun OverviewScreen(
     onSearchDeviceClicked: (state: MutableState<BluetoothState>) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
                             settings: DeviceSettings,
-                            state: BluetoothState) -> Unit
+                            state: MutableState<BluetoothState>) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -27,7 +27,7 @@ fun OverviewScreen(
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         BluetoothStateView(
             onSearchDeviceClicked = onSearchDeviceClicked,
-            onSendToDeviceClicked = fun (state: BluetoothState) {onSendToDeviceClicked(PrivateTrainerCommand.on, deviceSettings.value, state)})
+            onSendToDeviceClicked = fun (state: MutableState<BluetoothState>) {onSendToDeviceClicked(PrivateTrainerCommand.on, deviceSettings.value, state)})
         Spacer(Modifier.height(5.dp))
         DeviceSettingsEditor(deviceSettings.value, onValueChange = fun(updatedSettings: DeviceSettings) {
             deviceSettings.value = updatedSettings

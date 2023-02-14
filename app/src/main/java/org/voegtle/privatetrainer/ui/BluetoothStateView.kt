@@ -20,7 +20,7 @@ import org.voegtle.privatetrainer.ui.controls.ErrorView
 @Composable
 fun BluetoothStateView(
     onSearchDeviceClicked: (MutableState<BluetoothState>) -> Unit,
-    onSendToDeviceClicked: (BluetoothState) -> Unit
+    onSendToDeviceClicked: (MutableState<BluetoothState>) -> Unit
 ) {
     val bluetoothMutableState: MutableState<BluetoothState> =
         remember { mutableStateOf(BluetoothState()) }
@@ -51,7 +51,7 @@ fun BluetoothStateView(
         } else {
             BluetoothDeviceRow(
                 bluetoothState,
-                onButtonClick = { onSendToDeviceClicked(bluetoothMutableState.value) })
+                onButtonClick = { onSendToDeviceClicked(bluetoothMutableState) })
         }
 
     }

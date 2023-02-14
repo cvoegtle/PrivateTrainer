@@ -33,7 +33,7 @@ fun DeviceSettingsView(deviceSettings: DeviceSettings) {
         Row (modifier = Modifier.padding(bottom = 8.dp)){
             val deviceDescription =
                 "${context.getString(R.string.setting_mode)}: ${deviceSettings.mode}, " +
-                "${context.getString(R.string.setting_strength)}: ${renderPercent(deviceSettings.strength)}, " +
+                "${context.getString(R.string.setting_strength)}: ${renderLevel(deviceSettings.strength)}, " +
                 "${context.getString(R.string.setting_interval)}: ${renderSeconds(deviceSettings.interval)}"
             Text(deviceDescription)
         }
@@ -44,6 +44,6 @@ fun DeviceSettingsView(deviceSettings: DeviceSettings) {
 @Preview
 @Composable
 fun DeviceSettingsViewPreview() {
-    val deviceSettings = DeviceSettings(name = "Preview", mode = 2, strength = 0.2f, interval = 120.0f)
+    val deviceSettings = DeviceSettings(name = "Preview", mode = 2, strength = 2, interval = 120.0f)
     DeviceSettingsView(deviceSettings = deviceSettings)
 }
