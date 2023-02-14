@@ -21,6 +21,7 @@ import androidx.window.layout.FoldingFeature
 import kotlinx.coroutines.launch
 import org.voegtle.privatetrainer.business.BluetoothState
 import org.voegtle.privatetrainer.business.DeviceSettings
+import org.voegtle.privatetrainer.business.PrivateTrainerCommand
 import org.voegtle.privatetrainer.ui.EmptyComingSoon
 import org.voegtle.privatetrainer.ui.OverviewScreen
 import org.voegtle.privatetrainer.ui.FavoriteSettingsManagementScreen
@@ -32,7 +33,10 @@ fun PrivateTrainerApp (
     windowSize: WindowSizeClass,
     displayFeatures: List<DisplayFeature>,
     savedDeviceSettings: List<DeviceSettings>,
-    onSearchDeviceClicked: (MutableState<BluetoothState>) -> Unit
+    onSearchDeviceClicked: (MutableState<BluetoothState>) -> Unit,
+    onSendToDeviceClicked: (command: PrivateTrainerCommand,
+                            settings:DeviceSettings,
+                            state: BluetoothState) -> Unit
 ) {
     /**
      * This will help us select type of navigation and content type depending on window size and
@@ -108,7 +112,8 @@ fun PrivateTrainerApp (
         savedDeviceSettings = savedDeviceSettings,
         displayFeatures = displayFeatures,
         navigationContentPosition = navigationContentPosition,
-        onSearchDeviceClicked = onSearchDeviceClicked
+        onSearchDeviceClicked = onSearchDeviceClicked,
+        onSendToDeviceClicked = onSendToDeviceClicked
     )
 
 }
@@ -122,6 +127,9 @@ private fun PrivateTrainerNavigationWrapper(
     displayFeatures: List<DisplayFeature>,
     navigationContentPosition: PrivateNavigationContentPosition,
     onSearchDeviceClicked: (state: MutableState<BluetoothState>) -> Unit,
+    onSendToDeviceClicked: (command: PrivateTrainerCommand,
+                            settings:DeviceSettings,
+                            state: BluetoothState) -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -152,7 +160,8 @@ private fun PrivateTrainerNavigationWrapper(
                 navController = navController,
                 selectedDestination = selectedDestination,
                 navigateToTopLevelDestination = navigationActions::navigateTo,
-                onSearchDeviceClicked = onSearchDeviceClicked
+                onSearchDeviceClicked = onSearchDeviceClicked,
+                onSendToDeviceClicked = onSendToDeviceClicked
             )
         }
     } else {
@@ -186,6 +195,7 @@ private fun PrivateTrainerNavigationWrapper(
                     }
                 },
                 onSearchDeviceClicked = onSearchDeviceClicked,
+                onSendToDeviceClicked = onSendToDeviceClicked
             )
         }
     }
@@ -203,7 +213,10 @@ fun PrivateTrainerAppContent(
     selectedDestination: String,
     navigateToTopLevelDestination: (PrivateTopLevelDestination) -> Unit,
     onDrawerClicked: () -> Unit = {},
-    onSearchDeviceClicked: (state: MutableState<BluetoothState>) -> Unit
+    onSearchDeviceClicked: (state: MutableState<BluetoothState>) -> Unit,
+    onSendToDeviceClicked: (command: PrivateTrainerCommand,
+                            settings:DeviceSettings,
+                            state: BluetoothState) -> Unit
 ) {
     Row(modifier = modifier.fillMaxSize()) {
         Column(
@@ -218,7 +231,8 @@ fun PrivateTrainerAppContent(
                 displayFeatures = displayFeatures,
                 navigationType = navigationType,
                 modifier = Modifier.weight(1f),
-                onSearchDeviceClicked = onSearchDeviceClicked
+                onSearchDeviceClicked = onSearchDeviceClicked,
+                onSendToDeviceClicked = onSendToDeviceClicked
             )
             AnimatedVisibility(visible = navigationType == PrivateNavigationType.BOTTOM_NAVIGATION) {
                 PrivateBottomNavigationBar(
@@ -240,6 +254,9 @@ private fun PrivateTrainerNavHost(
     navigationType: PrivateNavigationType,
     modifier: Modifier = Modifier,
     onSearchDeviceClicked: (state: MutableState<BluetoothState>) -> Unit,
+    onSendToDeviceClicked: (command: PrivateTrainerCommand,
+                            settings:DeviceSettings,
+                            state: BluetoothState) -> Unit
 ) {
     NavHost(
         modifier = modifier,
@@ -247,7 +264,7 @@ private fun PrivateTrainerNavHost(
         startDestination = PrivateRoute.START,
     ) {
         composable(PrivateRoute.START) {
-            OverviewScreen(onSearchDeviceClicked)
+            OverviewScreen(onSearchDeviceClicked, onSendToDeviceClicked)
         }
         composable(PrivateRoute.SAVED_SETTINGS) {
             FavoriteSettingsManagementScreen(savedDeviceSettings)

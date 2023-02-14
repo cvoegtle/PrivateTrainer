@@ -20,6 +20,10 @@ enum class BluetoothConnectionStatus {
     not_supported, disabled, permission_denied, not_connected, device_found
 }
 
+enum class PrivateTrainerCommand {
+    on, off, update
+}
+
 @Parcelize
 data class DeviceSettings(
     var id: String? = null,

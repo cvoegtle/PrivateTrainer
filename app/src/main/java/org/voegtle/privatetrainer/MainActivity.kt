@@ -28,6 +28,7 @@ import com.lorenzofelletti.permissions.dispatcher.dsl.withRequestCode
 import org.voegtle.privatetrainer.business.BluetoothConnectionStatus.*
 import org.voegtle.privatetrainer.business.BluetoothState
 import org.voegtle.privatetrainer.business.DeviceSettings
+import org.voegtle.privatetrainer.business.PrivateTrainerCommand
 import org.voegtle.privatetrainer.business.PrivateTrainerStore
 import org.voegtle.privatetrainer.business.bluetooth.*
 import org.voegtle.privatetrainer.ui.theme.PrivateTrainerTheme
@@ -49,10 +50,22 @@ class MainActivity : ComponentActivity() {
                 PrivateTrainerApp(
                     windowSize = windowSize,
                     displayFeatures = displayFeatures,
-                    savedDeviceSettings = settingsStore.retrieveFavoriteSettings()
-                ) { state -> determineBluetoothState(state) }
+                    savedDeviceSettings = settingsStore.retrieveFavoriteSettings(),
+                    onSearchDeviceClicked = fun(state: MutableState<BluetoothState>) { determineBluetoothState(state) },
+                    onSendToDeviceClicked = fun(command: PrivateTrainerCommand,
+                                                settings:DeviceSettings,
+                                                state: BluetoothState) { sendCommandToDevice(command, settings, state) }
+                )
             }
         }
+    }
+
+    private fun sendCommandToDevice(
+        command: PrivateTrainerCommand,
+        settings: DeviceSettings,
+        state: BluetoothState
+    ) {
+        TODO("Not yet implemented")
     }
 
     private fun determineBluetoothState(bluetoothState: MutableState<BluetoothState>) {
