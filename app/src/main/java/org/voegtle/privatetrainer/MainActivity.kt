@@ -73,11 +73,7 @@ class MainActivity : ComponentActivity() {
         settings: DeviceSettings,
         state: MutableState<BluetoothState>
     ) {
-        val bluetoothManager: BluetoothManager = getSystemService(BluetoothManager::class.java)
-        BluetoothScanner(bluetoothManager, state.value).scanForPrivateTrainer {
-            bluetoothCaller = BluetoothCaller(this, it, state)
-            bluetoothCaller!!.connect()
-        }
+        bluetoothCaller!!.sendToDevice(command, settings)
     }
 
     private fun determineBluetoothState(bluetoothState: MutableState<BluetoothState>) {
@@ -112,7 +108,8 @@ class MainActivity : ComponentActivity() {
         bluetoothState: MutableState<BluetoothState>
     ) {
         BluetoothScanner(bluetoothManager, bluetoothState.value).scanForPrivateTrainer {
-            bluetoothState.value = bluetoothState.value.copy(selectedDevice = BleDevice(it.name))
+            bluetoothState.value = bluetoothState.value.copy(selectedDevice = BleDevice(it.name), connectionStatus = device_found)
+            bluetoothCaller = BluetoothCaller(this, it, bluetoothState)
         }
     }
 
