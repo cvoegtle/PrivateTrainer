@@ -27,7 +27,7 @@ fun OverviewScreen(
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         BluetoothStateView(
             onSearchDeviceClicked = onSearchDeviceClicked,
-            onSendToDeviceClicked = fun (state: MutableState<BluetoothState>) {onSendToDeviceClicked(PrivateTrainerCommand.on, deviceSettings.value, state)})
+            onSendToDeviceClicked = fun (command: PrivateTrainerCommand, state: MutableState<BluetoothState>) {onSendToDeviceClicked(command, deviceSettings.value, state)})
         Spacer(Modifier.height(5.dp))
         DeviceSettingsEditor(deviceSettings.value, onValueChange = fun(updatedSettings: DeviceSettings) {
             deviceSettings.value = updatedSettings

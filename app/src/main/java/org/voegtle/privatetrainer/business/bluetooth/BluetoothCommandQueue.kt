@@ -16,6 +16,10 @@ class BluetoothCommandQueue {
         run()
     }
 
+    fun scheduleDeferred(command: () -> Unit) {
+        commandQueue.add(command)
+    }
+
     private fun run() {
         if (!running) {
             runNext()
