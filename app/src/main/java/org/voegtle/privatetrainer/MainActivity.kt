@@ -58,10 +58,9 @@ class MainActivity : ComponentActivity() {
                     },
                     onSendToDeviceClicked = fun(
                         command: PrivateTrainerCommand,
-                        settings: DeviceSettings,
-                        state: MutableState<BluetoothState>
+                        settings: DeviceSettings
                     ) {
-                        sendCommandToDevice(command, settings, state)
+                        sendCommandToDevice(command, settings)
                     }
                 )
             }
@@ -70,10 +69,9 @@ class MainActivity : ComponentActivity() {
 
     private fun sendCommandToDevice(
         command: PrivateTrainerCommand,
-        settings: DeviceSettings,
-        state: MutableState<BluetoothState>
+        settings: DeviceSettings
     ) {
-        bluetoothCaller!!.sendToDevice(command, settings, state)
+        bluetoothCaller!!.sendToDevice(command, settings)
     }
 
     private fun determineBluetoothState(bluetoothState: MutableState<BluetoothState>) {

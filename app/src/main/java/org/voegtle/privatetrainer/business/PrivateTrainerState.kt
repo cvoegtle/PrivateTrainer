@@ -22,7 +22,7 @@ enum class BluetoothConnectionStatus {
 }
 
 enum class PrivateTrainerCommand {
-    on, off, update, toggleNotification
+    on, off, update, toggleNotification, requestBatteryStatus, readBattery
 }
 
 @Parcelize

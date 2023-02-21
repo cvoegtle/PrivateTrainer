@@ -8,6 +8,8 @@ import androidx.compose.runtime.MutableState
 import org.voegtle.privatetrainer.business.BluetoothState
 import org.voegtle.privatetrainer.business.DeviceSettings
 import org.voegtle.privatetrainer.business.PrivateTrainerCommand
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets.US_ASCII
 import java.util.*
 
 @SuppressLint("MissingPermission")
@@ -109,10 +111,7 @@ class BluetoothCaller(
             value: ByteArray,
             status: Int
         ) {
-            val currentState = bluetoothState.value.copy()
-            currentState.characteristics.put(characteristic.uuid, value)
-            bluetoothState.value = currentState
-
+            extractBatteryLevel(characteristic, value)
             commandQueue.runNext()
         }
 
@@ -122,10 +121,7 @@ class BluetoothCaller(
             value: ByteArray
         ) {
             Log.e("PrivateTrainer", "characteristic value: ${value}")
-
-            val currentState = bluetoothState.value.copy()
-            currentState.characteristics[characteristic.uuid] = value
-            bluetoothState.value = currentState
+            extractBatteryLevel(characteristic, value)
 
             commandQueue.runNext()
         }
@@ -158,10 +154,21 @@ class BluetoothCaller(
         }
     }
 
+    private fun extractBatteryLevel(
+        characteristic: BluetoothGattCharacteristic,
+        value: ByteArray
+    ) {
+        val currentState = bluetoothState.value.copy()
+        currentState.characteristics[characteristic.uuid] = value
+        if (characteristic.uuid == uuid_battery_characteristic) {
+            currentState.selectedDevice?.batteryLevel = value.toString(US_ASCII)
+        }
+        bluetoothState.value = currentState
+    }
+
     fun sendToDevice(
         command: PrivateTrainerCommand,
         settings: DeviceSettings,
-        state: MutableState<BluetoothState>
     ) {
         Log.e("BluetoothCaller", "sendToDevice()")
         commandQueue.clear()
@@ -169,14 +176,25 @@ class BluetoothCaller(
         privateTrainerDevice.connectGatt(context, false, bluetoothGattCallback)
 
         when (command) {
-            PrivateTrainerCommand.update -> commandQueue.scheduleDeferred { askForBatteryStatus() }
+            PrivateTrainerCommand.on -> commandQueue.scheduleDeferred { switchOn() }
+            PrivateTrainerCommand.requestBatteryStatus -> commandQueue.scheduleDeferred { askForBatteryStatus() }
             PrivateTrainerCommand.toggleNotification -> commandQueue.scheduleDeferred {
-                requestCharacteristicsNotification(state) }
+                requestCharacteristicsNotification() }
+            PrivateTrainerCommand.readBattery -> commandQueue.scheduleDeferred { readBatteryStatus() }
         }
     }
 
     fun discoverServices() {
         gatt?.discoverServices()
+    }
+
+    private fun switchOn() {
+        findPrivateTrainerCharacteristic()?.let {
+            gatt!!.writeCharacteristic(
+                it,
+                byteArrayOf(0x04, 0x51), BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+            )
+        }
     }
 
     private fun askForBatteryStatus() {
@@ -189,13 +207,15 @@ class BluetoothCaller(
         }
     }
 
+    private fun readBatteryStatus() {
+        findBatteryCharacteristic()?.let {
+            gatt!!.readCharacteristic(it)
+        }
+    }
+
     private fun sendCommandsToCharacteristics() {
         findPrivateTrainerCharacteristic()?.let {
             commandQueue.schedule {
-                gatt!!.writeCharacteristic(
-                    it,
-                    byteArrayOf(0x04, 0x51), BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
-                )
             }
             commandQueue.schedule {
                 gatt!!.writeCharacteristic(
@@ -239,11 +259,9 @@ class BluetoothCaller(
         return null
     }
 
-    private fun requestCharacteristicsNotification(
-        state: MutableState<BluetoothState>
-    ) {
+    private fun requestCharacteristicsNotification() {
         gatt?.let {
-            val enable = !state.value.notificationsEnabled
+            val enable = !bluetoothState.value.notificationsEnabled
 
             val privateTrainerService = it.getService(uuid_privatetrainer_service)
             for (characteristic in privateTrainerService.characteristics) {
@@ -252,7 +270,7 @@ class BluetoothCaller(
                 }
             }
 
-            state.value = state.value.copy(notificationsEnabled = enable)
+            bluetoothState.value = bluetoothState.value.copy(notificationsEnabled = enable)
         }
     }
 

@@ -31,7 +31,7 @@ fun BluetoothDevice(bluetoothState: BluetoothState, modifier: Modifier) {
             )
             Row() {
                 Text(
-                    context.getString(R.string.battery) + ": " + renderPercent(it.batteryLevel),
+                    context.getString(R.string.battery) + ": " + it.batteryLevel,
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.inverseOnSurface
                 )

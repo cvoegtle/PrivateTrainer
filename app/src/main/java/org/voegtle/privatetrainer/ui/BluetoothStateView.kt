@@ -29,8 +29,7 @@ fun BluetoothStateView(
     val bluetoothState = bluetoothMutableState.value
     Surface(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(120.dp),
+            .fillMaxWidth(),
         color = MaterialTheme.colorScheme.inverseSurface
     ) {
         if (bluetoothState.connectionStatus == not_supported) {
@@ -80,7 +79,7 @@ private fun BluetoothDeviceRows(
 
             IconButton(
                 onClick = {
-                    onButtonClick(PrivateTrainerCommand.update)
+                    onButtonClick(PrivateTrainerCommand.on)
                 },
                 colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.errorContainer)
             ) {
@@ -93,6 +92,22 @@ private fun BluetoothDeviceRows(
                         .fillMaxHeight()
                         .align(Alignment.CenterVertically)
                 )
+            }
+        }
+        Row(Modifier.fillMaxWidth()) {
+            TextButton( colors = ButtonDefaults.filledTonalButtonColors(),
+                onClick = {
+                    onButtonClick(PrivateTrainerCommand.requestBatteryStatus)
+                }) {
+                Text(text = context.getString(R.string.request_battery_status))
+            }
+        }
+        Row(Modifier.fillMaxWidth()) {
+            TextButton( colors = ButtonDefaults.filledTonalButtonColors(),
+                onClick = {
+                    onButtonClick(PrivateTrainerCommand.readBattery)
+                }) {
+                Text(text = context.getString(R.string.read_battery_status))
             }
         }
         Row(Modifier.fillMaxWidth()) {

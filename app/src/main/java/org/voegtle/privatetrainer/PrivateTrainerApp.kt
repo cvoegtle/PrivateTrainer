@@ -35,8 +35,7 @@ fun PrivateTrainerApp (
     savedDeviceSettings: List<DeviceSettings>,
     onSearchDeviceClicked: (MutableState<BluetoothState>) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
-                            settings:DeviceSettings,
-                            state: MutableState<BluetoothState>) -> Unit
+                            settings:DeviceSettings) -> Unit
 ) {
     /**
      * This will help us select type of navigation and content type depending on window size and
@@ -128,8 +127,7 @@ private fun PrivateTrainerNavigationWrapper(
     navigationContentPosition: PrivateNavigationContentPosition,
     onSearchDeviceClicked: (state: MutableState<BluetoothState>) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
-                            settings:DeviceSettings,
-                            state: MutableState<BluetoothState>) -> Unit
+                            settings:DeviceSettings) -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -215,8 +213,7 @@ fun PrivateTrainerAppContent(
     onDrawerClicked: () -> Unit = {},
     onSearchDeviceClicked: (state: MutableState<BluetoothState>) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
-                            settings:DeviceSettings,
-                            state: MutableState<BluetoothState>) -> Unit
+                            settings:DeviceSettings) -> Unit
 ) {
     Row(modifier = modifier.fillMaxSize()) {
         Column(
@@ -255,8 +252,7 @@ private fun PrivateTrainerNavHost(
     modifier: Modifier = Modifier,
     onSearchDeviceClicked: (state: MutableState<BluetoothState>) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
-                            settings:DeviceSettings,
-                            state: MutableState<BluetoothState>) -> Unit
+                            settings:DeviceSettings) -> Unit
 ) {
     NavHost(
         modifier = modifier,
