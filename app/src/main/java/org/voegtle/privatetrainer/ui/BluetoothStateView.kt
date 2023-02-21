@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.voegtle.privatetrainer.R
@@ -52,43 +53,57 @@ fun BluetoothStateView(
         } else {
             BluetoothDeviceRows(
                 bluetoothState,
-                onButtonClick = fun (command) {onSendToDeviceClicked(command, bluetoothMutableState) })
+                onButtonClick = fun(command) {
+                    onSendToDeviceClicked(
+                        command,
+                        bluetoothMutableState
+                    )
+                })
         }
 
     }
 }
 
 @Composable
-private fun BluetoothDeviceRows(bluetoothState: BluetoothState, onButtonClick: (command: PrivateTrainerCommand) -> Unit = {}) {
-    Row(modifier = Modifier.fillMaxWidth()) {
-        BluetoothDevice(
-            bluetoothState = bluetoothState,
-            modifier = Modifier.fillMaxWidth(0.85f)
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-
-        IconButton(
-            onClick = {
-                onButtonClick(PrivateTrainerCommand.update)
-            },
-            colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.errorContainer)
-        ) {
-            Icon(
-                imageVector = Icons.Filled.PlayArrow,
-                contentDescription = stringResource(
-                    id = R.string.device_start
-                ),
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .align(Alignment.CenterVertically)
+private fun BluetoothDeviceRows(
+    bluetoothState: BluetoothState,
+    onButtonClick: (command: PrivateTrainerCommand) -> Unit = {}
+) {
+    val context = LocalContext.current
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            BluetoothDevice(
+                bluetoothState = bluetoothState,
+                modifier = Modifier.fillMaxWidth(0.85f)
             )
-        }
-    }
-    Row(Modifier.fillMaxWidth()) {
-        Button(onClick = {
-            onButtonClick(PrivateTrainerCommand.enableNotification)
-        }) {
+            Spacer(modifier = Modifier.width(8.dp))
 
+            IconButton(
+                onClick = {
+                    onButtonClick(PrivateTrainerCommand.update)
+                },
+                colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.PlayArrow,
+                    contentDescription = stringResource(
+                        id = R.string.device_start
+                    ),
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .align(Alignment.CenterVertically)
+                )
+            }
+        }
+        Row(Modifier.fillMaxWidth()) {
+            val textId = if (bluetoothState.notificationsEnabled) R.string.disable_notifications else R.string.enable_notifications
+            TextButton( colors = ButtonDefaults.filledTonalButtonColors(),
+                onClick = {
+                    onButtonClick(PrivateTrainerCommand.toggleNotification)
+                }) {
+                Text(text = context.getString(textId))
+            }
         }
     }
+
 }

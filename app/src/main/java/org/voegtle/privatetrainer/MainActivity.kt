@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
         settings: DeviceSettings,
         state: MutableState<BluetoothState>
     ) {
-        bluetoothCaller!!.sendToDevice(command, settings)
+        bluetoothCaller!!.sendToDevice(command, settings, state)
     }
 
     private fun determineBluetoothState(bluetoothState: MutableState<BluetoothState>) {

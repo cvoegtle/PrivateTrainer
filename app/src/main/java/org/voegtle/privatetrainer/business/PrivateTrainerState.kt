@@ -8,7 +8,8 @@ import java.util.UUID
 data class BluetoothState(
     var selectedDevice: BleDevice? = null,
     var connectionStatus: BluetoothConnectionStatus = BluetoothConnectionStatus.not_connected,
-    var characteristics : MutableMap<UUID, ByteArray> = HashMap()
+    var characteristics : MutableMap<UUID, ByteArray> = HashMap(),
+    var  notificationsEnabled: Boolean = true
 ) {
     fun copyFrom(bluetoothState: BluetoothState) {
         this.selectedDevice = bluetoothState.selectedDevice
@@ -21,7 +22,7 @@ enum class BluetoothConnectionStatus {
 }
 
 enum class PrivateTrainerCommand {
-    on, off, update, enableNotification
+    on, off, update, toggleNotification
 }
 
 @Parcelize

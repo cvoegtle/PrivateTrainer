@@ -22,4 +22,6 @@
     <string name = "error_bluetooth_access_denied">Der Zugriff auf Bluetooth wurde verweigert.</string>
     <string name = "error_bluetooth_device_not_connected">Das Bluetooth-Gerät ist nicht verbunden</string>
   <string name="settings_name">Name</string>
+  <string name="disable_notifications">Notifications ausschalten</string>
+    <string name="enable_notifications">Notifications einschalten</string>
 </resources>

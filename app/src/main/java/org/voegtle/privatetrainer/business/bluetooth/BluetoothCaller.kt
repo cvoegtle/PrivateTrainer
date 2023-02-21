@@ -28,7 +28,6 @@ class BluetoothCaller(
 
     val commandQueue = BluetoothCommandQueue()
     var gatt: BluetoothGatt? = null
-    var notificationsEnabled = true
 
     val bluetoothGattCallback = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(
@@ -159,7 +158,11 @@ class BluetoothCaller(
         }
     }
 
-    fun sendToDevice(command: PrivateTrainerCommand, settings: DeviceSettings) {
+    fun sendToDevice(
+        command: PrivateTrainerCommand,
+        settings: DeviceSettings,
+        state: MutableState<BluetoothState>
+    ) {
         Log.e("BluetoothCaller", "sendToDevice()")
         commandQueue.clear()
         commandQueue.scheduleDeferred { discoverServices() }
@@ -167,9 +170,8 @@ class BluetoothCaller(
 
         when (command) {
             PrivateTrainerCommand.update -> commandQueue.scheduleDeferred { askForBatteryStatus() }
-            PrivateTrainerCommand.enableNotification -> commandQueue.scheduleDeferred {
-                notificationsEnabled = !notificationsEnabled
-                requestCharacteristicsNotification(notificationsEnabled) }
+            PrivateTrainerCommand.toggleNotification -> commandQueue.scheduleDeferred {
+                requestCharacteristicsNotification(state) }
         }
     }
 
@@ -237,14 +239,20 @@ class BluetoothCaller(
         return null
     }
 
-    private fun requestCharacteristicsNotification(enable: Boolean) {
+    private fun requestCharacteristicsNotification(
+        state: MutableState<BluetoothState>
+    ) {
         gatt?.let {
+            val enable = !state.value.notificationsEnabled
+
             val privateTrainerService = it.getService(uuid_privatetrainer_service)
             for (characteristic in privateTrainerService.characteristics) {
                 if (characteristic.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0) {
                     toggleNotifications(it, characteristic, enable)
                 }
             }
+
+            state.value = state.value.copy(notificationsEnabled = enable)
         }
     }
 
