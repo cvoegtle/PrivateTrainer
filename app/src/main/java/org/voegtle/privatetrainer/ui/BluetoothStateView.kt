@@ -3,6 +3,9 @@ package org.voegtle.privatetrainer.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Power
+import androidx.compose.material.icons.filled.PowerInput
+import androidx.compose.material.icons.filled.PowerOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -22,7 +25,7 @@ import org.voegtle.privatetrainer.ui.controls.ErrorView
 @Composable
 fun BluetoothStateView(
     onSearchDeviceClicked: (MutableState<BluetoothState>) -> Unit,
-    onSendToDeviceClicked: (command: PrivateTrainerCommand, MutableState<BluetoothState>) -> Unit
+    onSendToDeviceClicked: (command: PrivateTrainerCommand) -> Unit
 ) {
     val bluetoothMutableState: MutableState<BluetoothState> =
         remember { mutableStateOf(BluetoothState()) }
@@ -53,10 +56,7 @@ fun BluetoothStateView(
             BluetoothDeviceRows(
                 bluetoothState,
                 onButtonClick = fun(command) {
-                    onSendToDeviceClicked(
-                        command,
-                        bluetoothMutableState
-                    )
+                    onSendToDeviceClicked(command)
                 })
         }
 
@@ -69,6 +69,8 @@ private fun BluetoothDeviceRows(
     onButtonClick: (command: PrivateTrainerCommand) -> Unit = {}
 ) {
     val context = LocalContext.current
+    val powerIcon = if (bluetoothState.powerOn) Icons.Filled.PowerOff else Icons.Filled.Power
+    val powerCommand = if (bluetoothState.powerOn) PrivateTrainerCommand.off else PrivateTrainerCommand.on
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.fillMaxWidth()) {
             BluetoothDevice(
@@ -79,12 +81,12 @@ private fun BluetoothDeviceRows(
 
             IconButton(
                 onClick = {
-                    onButtonClick(PrivateTrainerCommand.on)
+                    onButtonClick(powerCommand)
                 },
                 colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.errorContainer)
             ) {
                 Icon(
-                    imageVector = Icons.Filled.PlayArrow,
+                    imageVector = powerIcon,
                     contentDescription = stringResource(
                         id = R.string.device_start
                     ),

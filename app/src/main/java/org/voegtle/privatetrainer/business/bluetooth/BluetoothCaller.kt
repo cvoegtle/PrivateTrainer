@@ -5,10 +5,7 @@ import android.bluetooth.*
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.MutableState
-import org.voegtle.privatetrainer.business.BluetoothState
-import org.voegtle.privatetrainer.business.DeviceSettings
-import org.voegtle.privatetrainer.business.PrivateTrainerCommand
-import java.nio.charset.Charset
+import org.voegtle.privatetrainer.business.*
 import java.nio.charset.StandardCharsets.US_ASCII
 import java.util.*
 
@@ -177,6 +174,7 @@ class BluetoothCaller(
 
         when (command) {
             PrivateTrainerCommand.on -> commandQueue.scheduleDeferred { switchOn() }
+            PrivateTrainerCommand.off-> commandQueue.scheduleDeferred { switchOff() }
             PrivateTrainerCommand.requestBatteryStatus -> commandQueue.scheduleDeferred { askForBatteryStatus() }
             PrivateTrainerCommand.toggleNotification -> commandQueue.scheduleDeferred {
                 requestCharacteristicsNotification() }
@@ -190,21 +188,31 @@ class BluetoothCaller(
 
     private fun switchOn() {
         findPrivateTrainerCharacteristic()?.let {
-            gatt!!.writeCharacteristic(
-                it,
-                byteArrayOf(0x04, 0x51), BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
-            )
+            writeCharacteristic(it, CommandSequence().on)
+            bluetoothState.value= bluetoothState.value.copy(powerOn = true)
+        }
+    }
+
+    private fun switchOff() {
+        findPrivateTrainerCharacteristic()?.let {
+            writeCharacteristic(it, CommandSequence().off)
+            bluetoothState.value= bluetoothState.value.copy(powerOn = false)
         }
     }
 
     private fun askForBatteryStatus() {
         findBatteryCharacteristic()?.let {
-            gatt!!.writeCharacteristic(
-                it,
-                byteArrayOf(0x41, 0x54, 0x2b, 0x56, 0x4f, 0x4c, 0x0d, 0x0a),
-                BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
-            )
+            writeCharacteristic(it, CommandSequence().battery)
         }
+    }
+
+    private fun writeCharacteristic(characteristic: BluetoothGattCharacteristic, byteSequence: ByteArray) {
+        gatt!!.writeCharacteristic(
+            characteristic,
+            byteSequence,
+            BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+        )
+        Log.w("BluetoothCaller", "write to ${characteristic.uuid} value=${byteSequence.toHex()}")
     }
 
     private fun readBatteryStatus() {

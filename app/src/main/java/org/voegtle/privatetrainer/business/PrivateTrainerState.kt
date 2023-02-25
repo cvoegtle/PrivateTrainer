@@ -9,13 +9,9 @@ data class BluetoothState(
     var selectedDevice: BleDevice? = null,
     var connectionStatus: BluetoothConnectionStatus = BluetoothConnectionStatus.not_connected,
     var characteristics : MutableMap<UUID, ByteArray> = HashMap(),
-    var  notificationsEnabled: Boolean = true
-) {
-    fun copyFrom(bluetoothState: BluetoothState) {
-        this.selectedDevice = bluetoothState.selectedDevice
-        this.connectionStatus = bluetoothState.connectionStatus
-    }
-}
+    var  notificationsEnabled: Boolean = true,
+    var powerOn: Boolean = false
+)
 
 enum class BluetoothConnectionStatus {
     not_supported, disabled, permission_denied, not_connected, device_found
@@ -23,6 +19,13 @@ enum class BluetoothConnectionStatus {
 
 enum class PrivateTrainerCommand {
     on, off, update, toggleNotification, requestBatteryStatus, readBattery
+}
+
+fun ByteArray.toHex(): String = joinToString(separator = "") { eachByte -> "%02x".format(eachByte) }
+class CommandSequence {
+    val on = byteArrayOf(0x04, 0x51)
+    val off = byteArrayOf(0x04, 0x50)
+    val battery = byteArrayOf(0x41, 0x54, 0x2b, 0x56, 0x4f, 0x4c, 0x0d, 0x0a)
 }
 
 @Parcelize
