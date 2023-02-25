@@ -44,6 +44,6 @@ fun DeviceSettingsView(deviceSettings: DeviceSettings) {
 @Preview
 @Composable
 fun DeviceSettingsViewPreview() {
-    val deviceSettings = DeviceSettings(name = "Preview", mode = 2, strength = 2, interval = 120.0f)
+    val deviceSettings = DeviceSettings(name = "Preview", mode = 2, strength = 2, interval = 120)
     DeviceSettingsView(deviceSettings = deviceSettings)
 }

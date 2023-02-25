@@ -64,7 +64,7 @@ fun DeviceSettingsEditor(deviceSettings: DeviceSettings, onValueChange: (deviceS
                 onChange = { strength ->
                     onValueChange(deviceSettings.copy(strength = strength))
                 })
-            SettingType.interval -> FloatSliderRow(
+            SettingType.interval -> IntSliderRow(
                 value = deviceSettings.interval,
                 range = settingsRanges.interval,
                 onChange = { interval ->
@@ -75,7 +75,7 @@ fun DeviceSettingsEditor(deviceSettings: DeviceSettings, onValueChange: (deviceS
     }
 }
 
-fun renderSeconds(interval: Float) = "${interval}s"
+fun renderSeconds(interval: Int) = "${interval}s"
 fun renderPercent(value: Float?) =
     if (value == null) "- %" else String.format("%.0f", value * 100) + "%"
 fun renderLevel(value: Int?) =

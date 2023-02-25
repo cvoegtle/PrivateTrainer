@@ -31,7 +31,7 @@ data class DeviceSettings(
     var name: String = "",
     var mode: Int = 1, // 1 - 10
     var strength: Int = 8, // Stufe 1 - 10
-    var interval: Float = 2.0f // 0,1 - 120s
+    var interval: Int = 3 // 1 - 200ss
 ) : Parcelable {
     fun isFavorite() = id != null
 }
@@ -64,7 +64,7 @@ enum class SettingType {
 }
 
 class SettingsRanges(
-    val mode: SettingsSteps<Int> = SettingsSteps<Int>(
+    val mode: SettingsSteps<Int> = SettingsSteps(
         SettingType.mode,
         1,
         2,
@@ -77,7 +77,7 @@ class SettingsRanges(
         9,
         10
     ),
-    val strength: SettingsSteps<Int> = SettingsSteps<Int>(
+    val strength: SettingsSteps<Int> = SettingsSteps(
         SettingType.strength,
         1,
         2,
@@ -90,19 +90,19 @@ class SettingsRanges(
         9,
         10
     ),
-    val interval: SettingsSteps<Float> = SettingsSteps<Float>(
+    val interval: SettingsSteps<Int> = SettingsSteps(
         SettingType.interval,
-        0.1f,
-        0.5f,
-        1.0f,
-        2.0f,
-        5.0f,
-        8.0f,
-        15.0f,
-        30.0f,
-        60.0f,
-        90.0f,
-        120.0f
+        1,
+        2,
+        3,
+        5,
+        7,
+        10,
+        14,
+        20,
+        40,
+        100,
+        200
     )
 ) {
     fun getRange(type: SettingType): SettingsSteps<*> = when (type) {
