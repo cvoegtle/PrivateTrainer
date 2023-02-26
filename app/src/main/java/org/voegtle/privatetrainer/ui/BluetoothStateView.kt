@@ -99,17 +99,17 @@ private fun BluetoothDeviceRows(
         Row(Modifier.fillMaxWidth()) {
             TextButton( colors = ButtonDefaults.filledTonalButtonColors(),
                 onClick = {
-                    onButtonClick(PrivateTrainerCommand.requestBatteryStatus)
+                    onButtonClick(PrivateTrainerCommand.update)
                 }) {
-                Text(text = context.getString(R.string.request_battery_status))
+                Text(text = context.getString(R.string.update_device_settings))
             }
         }
         Row(Modifier.fillMaxWidth()) {
             TextButton( colors = ButtonDefaults.filledTonalButtonColors(),
                 onClick = {
-                    onButtonClick(PrivateTrainerCommand.readBattery)
+                    onButtonClick(PrivateTrainerCommand.requestBatteryStatus)
                 }) {
-                Text(text = context.getString(R.string.read_battery_status))
+                Text(text = context.getString(R.string.request_battery_status))
             }
         }
         Row(Modifier.fillMaxWidth()) {

@@ -28,13 +28,21 @@ class CommandSequence {
     val battery = byteArrayOf(0x41, 0x54, 0x2b, 0x56, 0x4f, 0x4c, 0x0d, 0x0a)
 }
 
+class CommandType {
+    val strength: Byte = 0x01
+    val mode: Byte = 0x02
+    val interval: Byte = 0x03
+
+    val MODE_OFFSET: Int = 16
+}
+
 @Parcelize
 data class DeviceSettings(
     var id: String? = null,
     var name: String = "",
     var mode: Int = 1, // 1 - 10
     var strength: Int = 8, // Stufe 1 - 10
-    var interval: Int = 3 // 1 - 200ss
+    var interval: Int = 3 // 1 - 200s
 ) : Parcelable {
     fun isFavorite() = id != null
 }

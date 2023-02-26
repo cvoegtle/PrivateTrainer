@@ -179,6 +179,18 @@ class BluetoothCaller(
             PrivateTrainerCommand.toggleNotification -> commandQueue.scheduleDeferred {
                 requestCharacteristicsNotification() }
             PrivateTrainerCommand.readBattery -> commandQueue.scheduleDeferred { readBatteryStatus() }
+            PrivateTrainerCommand.update -> {
+                commandQueue.scheduleDeferred { sendSetting(CommandType().strength, settings.strength) }
+                commandQueue.scheduleDeferred { sendSetting(CommandType().mode, settings.mode + CommandType().MODE_OFFSET) }
+                commandQueue.scheduleDeferred { sendSetting(CommandType().interval, settings.interval) }
+            }
+        }
+    }
+
+    private fun sendSetting(type: Byte, value: Int) {
+        findPrivateTrainerCharacteristic()?.let {
+            val commandSequence = byteArrayOf(type, value.toByte())
+            writeCharacteristic(it, commandSequence)
         }
     }
 
@@ -219,32 +231,6 @@ class BluetoothCaller(
         findBatteryCharacteristic()?.let {
             gatt!!.readCharacteristic(it)
         }
-    }
-
-    private fun sendCommandsToCharacteristics() {
-        findPrivateTrainerCharacteristic()?.let {
-            commandQueue.schedule {
-            }
-            commandQueue.schedule {
-                gatt!!.writeCharacteristic(
-                    it,
-                    byteArrayOf(0x01, 0x08), BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
-                )
-            }
-            commandQueue.schedule {
-                gatt!!.writeCharacteristic(
-                    it,
-                    byteArrayOf(0x02, 0x1a), BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
-                )
-            }
-            commandQueue.schedule {
-                gatt!!.writeCharacteristic(
-                    it,
-                    byteArrayOf(0x03, 0x0a), BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
-                )
-            }
-        }
-
     }
 
     private fun findPrivateTrainerCharacteristic(): BluetoothGattCharacteristic? {
