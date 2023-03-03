@@ -36,6 +36,12 @@ class BluetoothCaller(
         ) {
             val connected = newState == BluetoothProfile.STATE_CONNECTED
             this@BluetoothCaller.gatt = gatt
+            val selectedDevice = bluetoothState.value.selectedDevice!!
+
+            if (connected != selectedDevice.connected) {
+                bluetoothState.value =
+                    bluetoothState.value.copy(selectedDevice = selectedDevice.copy(connected = connected))
+            }
 
             if (connected) {
                 commandQueue.runNext()
