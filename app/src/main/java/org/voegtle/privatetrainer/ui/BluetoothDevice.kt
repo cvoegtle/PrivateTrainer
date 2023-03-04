@@ -16,10 +16,10 @@ import org.voegtle.privatetrainer.business.BluetoothState
 
 @SuppressLint("MissingPermission")
 @Composable
-fun BluetoothDevice(bluetoothState: BluetoothState, modifier: Modifier) {
+fun BluetoothDevice(bluetoothState: BluetoothState) {
     val context = LocalContext.current
 
-    Column(modifier = modifier) {
+    Column() {
         val selectedDevice = bluetoothState.selectedDevice
         selectedDevice?.let {
             val connectionText =
