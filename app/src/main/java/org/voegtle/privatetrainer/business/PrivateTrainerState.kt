@@ -10,7 +10,8 @@ data class BluetoothState(
     var connectionStatus: BluetoothConnectionStatus = BluetoothConnectionStatus.not_connected,
     var characteristics : MutableMap<UUID, ByteArray> = HashMap(),
     var  notificationsEnabled: Boolean = true,
-    var powerOn: Boolean = false
+    var powerOn: Boolean = false,
+    var lastStatus: Int? = null
 )
 
 enum class BluetoothConnectionStatus {

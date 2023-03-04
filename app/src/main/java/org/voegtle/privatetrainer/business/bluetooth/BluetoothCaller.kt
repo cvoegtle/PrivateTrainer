@@ -40,7 +40,7 @@ class BluetoothCaller(
 
             if (connected != selectedDevice.connected) {
                 bluetoothState.value =
-                    bluetoothState.value.copy(selectedDevice = selectedDevice.copy(connected = connected))
+                    bluetoothState.value.copy(selectedDevice = selectedDevice.copy(connected = connected), lastStatus = status)
             }
 
             if (connected) {
@@ -52,6 +52,7 @@ class BluetoothCaller(
             gatt: BluetoothGatt,
             status: Int
         ) {
+            updateStatus(status)
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 commandQueue.runNext()
             }
@@ -67,6 +68,7 @@ class BluetoothCaller(
             status: Int
         ) {
             Log.e("PrivateTrainer", "write characteristic status: ${status}")
+            updateStatus(status)
             commandQueue.runNext()
         }
 
@@ -76,6 +78,7 @@ class BluetoothCaller(
             status: Int
         ) {
             super.onDescriptorRead(gatt, descriptor, status)
+            updateStatus(status)
             commandQueue.runNext()
         }
 
@@ -86,6 +89,7 @@ class BluetoothCaller(
             value: ByteArray
         ) {
             super.onDescriptorRead(gatt, descriptor, status, value)
+            updateStatus(status)
             commandQueue.runNext()
         }
 
@@ -95,16 +99,19 @@ class BluetoothCaller(
             status: Int
         ) {
             super.onDescriptorWrite(gatt, descriptor, status)
+            updateStatus(status)
             commandQueue.runNext()
         }
 
         override fun onReliableWriteCompleted(gatt: BluetoothGatt?, status: Int) {
             super.onReliableWriteCompleted(gatt, status)
+            updateStatus(status)
             commandQueue.runNext()
         }
 
         override fun onReadRemoteRssi(gatt: BluetoothGatt?, rssi: Int, status: Int) {
             super.onReadRemoteRssi(gatt, rssi, status)
+            updateStatus(status)
             commandQueue.runNext()
         }
 
@@ -115,6 +122,7 @@ class BluetoothCaller(
             status: Int
         ) {
             extractBatteryLevel(characteristic, value)
+            updateStatus(status)
             commandQueue.runNext()
         }
 
@@ -123,6 +131,7 @@ class BluetoothCaller(
             characteristic: BluetoothGattCharacteristic,
             value: ByteArray
         ) {
+            super.onCharacteristicChanged(gatt, characteristic, value)
             Log.e("PrivateTrainer", "characteristic value: ${value}")
             extractBatteryLevel(characteristic, value)
 
@@ -133,10 +142,9 @@ class BluetoothCaller(
             gatt: BluetoothGatt?,
             characteristic: BluetoothGattCharacteristic?
         ) {
+            super.onCharacteristicChanged(gatt, characteristic)
             Log.e("PrivateTrainer", "characteristic value: ${characteristic!!.value}")
-            val currentState = bluetoothState.value.copy()
-            currentState.characteristics[characteristic!!.uuid] = characteristic.value
-            bluetoothState.value = currentState
+            extractBatteryLevel(characteristic, characteristic.value)
 
             commandQueue.runNext()
         }
@@ -155,6 +163,10 @@ class BluetoothCaller(
             super.onPhyRead(gatt, txPhy, rxPhy, status)
             commandQueue.runNext()
         }
+    }
+
+    private fun updateStatus(status: Int) {
+        bluetoothState.value = bluetoothState.value.copy(lastStatus = status)
     }
 
     private fun extractBatteryLevel(

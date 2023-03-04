@@ -27,4 +27,5 @@
     <string name="read_battery_status">Batteriestand abfragen</string>
     <string name="request_battery_status">Batteriestatus anfordern</string>
   <string name="update_device_settings">Einstellungen senden</string>
+  <string name="last_error">Letzte Antwort:</string>
 </resources>

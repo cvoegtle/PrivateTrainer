@@ -24,6 +24,10 @@ fun BluetoothDevice(bluetoothState: BluetoothState, modifier: Modifier) {
         selectedDevice?.let {
             val connectionText =
                 context.getString(if (it.connected) R.string.connected else R.string.not_connected)
+            val lastErrorText =
+                context.getString(R.string.last_error) + " " + bluetoothState.lastStatus
+            val lastErrorColor =
+                if (bluetoothState.lastStatus == 0) MaterialTheme.colorScheme.inverseOnSurface else MaterialTheme.colorScheme.onError
             Text(
                 it.name,
                 style = MaterialTheme.typography.headlineMedium,
@@ -40,6 +44,12 @@ fun BluetoothDevice(bluetoothState: BluetoothState, modifier: Modifier) {
                     connectionText,
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.inverseOnSurface
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    lastErrorText,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = lastErrorColor
                 )
             }
         }
