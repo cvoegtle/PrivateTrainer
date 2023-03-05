@@ -56,10 +56,11 @@ fun DeviceSettingsEditor(
             selectedType,
             { type -> selectedType = type }
         )
+        val levelLabel = context.getString(R.string.level)
         ControlRow(
             SettingType.strength,
             R.string.setting_strength,
-            renderLevel(deviceSettings.strength),
+            renderLevel(levelLabel, deviceSettings.strength),
             selectedType,
             { type -> selectedType = type }
         )
@@ -98,5 +99,5 @@ fun renderSeconds(interval: Int) = "${interval}s"
 fun renderPercent(value: Float?) =
     if (value == null) "- %" else String.format("%.0f", value * 100) + "%"
 
-fun renderLevel(value: Int?) =
-    "Stufe ${value ?: "-"}"
+fun renderLevel(label: String, value: Int?) =
+    "${label} ${value ?: "-"}"

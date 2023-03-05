@@ -26,6 +26,7 @@ import org.voegtle.privatetrainer.ui.controls.NameEditRow
 @Composable
 fun DeviceSettingsView(deviceSettings: DeviceSettings) {
     val context = LocalContext.current
+    val levelLabel = context.getString(R.string.level)
     Column (modifier = Modifier.padding(4.dp)){
         Row (){
             Text(deviceSettings.name, fontWeight = FontWeight.Bold)
@@ -33,7 +34,7 @@ fun DeviceSettingsView(deviceSettings: DeviceSettings) {
         Row (modifier = Modifier.padding(bottom = 8.dp)){
             val deviceDescription =
                 "${context.getString(R.string.setting_mode)}: ${deviceSettings.mode}, " +
-                "${context.getString(R.string.setting_strength)}: ${renderLevel(deviceSettings.strength)}, " +
+                "${context.getString(R.string.setting_strength)}: ${renderLevel(levelLabel, deviceSettings.strength)}, " +
                 "${context.getString(R.string.setting_interval)}: ${renderSeconds(deviceSettings.interval)}"
             Text(deviceDescription)
         }

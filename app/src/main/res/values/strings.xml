@@ -29,4 +29,5 @@
   <string name="update_device_settings">Einstellungen senden</string>
   <string name="last_error">Letzte Antwort:</string>
     <string name="use_characteristic">Characteristik</string>
+    <string name="level">Stufe</string>
 </resources>
