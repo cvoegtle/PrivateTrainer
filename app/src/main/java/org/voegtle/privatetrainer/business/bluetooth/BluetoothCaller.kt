@@ -134,7 +134,7 @@ class BluetoothCaller(
             value: ByteArray
         ) {
             super.onCharacteristicChanged(gatt, characteristic, value)
-            Log.e("PrivateTrainer", "characteristic value: ${value}")
+            Log.e("PrivateTrainer", "characteristic value: $value")
             extractBatteryLevel(characteristic, value)
 
             commandQueue.runNext()
