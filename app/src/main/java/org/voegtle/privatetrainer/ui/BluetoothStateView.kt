@@ -74,9 +74,7 @@ private fun BluetoothDeviceRows(
         if (bluetoothState.powerOn) PrivateTrainerCommand.off else PrivateTrainerCommand.on
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.fillMaxWidth()) {
-            BluetoothDevice(
-                bluetoothState = bluetoothState
-            )
+            BluetoothDevice(bluetoothState = bluetoothState)
 
             bluetoothState.selectedDevice?.let {
                 if (!it.connected) {

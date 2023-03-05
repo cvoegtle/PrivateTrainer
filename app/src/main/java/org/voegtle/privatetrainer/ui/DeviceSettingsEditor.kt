@@ -1,9 +1,13 @@
 package org.voegtle.privatetrainer.ui
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import org.voegtle.privatetrainer.R
+import org.voegtle.privatetrainer.business.CharacteristicUuid
 import org.voegtle.privatetrainer.business.DeviceSettings
 import org.voegtle.privatetrainer.business.SettingType
 import org.voegtle.privatetrainer.business.SettingsRanges
@@ -14,7 +18,10 @@ import org.voegtle.privatetrainer.ui.controls.NameEditRow
 import java.util.*
 
 @Composable
-fun DeviceSettingsEditor(deviceSettings: DeviceSettings, onValueChange: (deviceSettings: DeviceSettings) -> Unit) {
+fun DeviceSettingsEditor(
+    deviceSettings: DeviceSettings,
+    onValueChange: (deviceSettings: DeviceSettings) -> Unit
+) {
     val context = LocalContext.current
 
     var selectedType by remember { mutableStateOf(SettingType.mode) }
@@ -26,10 +33,22 @@ fun DeviceSettingsEditor(deviceSettings: DeviceSettings, onValueChange: (deviceS
             favorite = deviceSettings.id != null,
             onNameChange = { name -> onValueChange(deviceSettings.copy(name = name)) },
             onFocusLost = { onValueChange(deviceSettings) }, // pretend something changed
-            onFavoriteClicked = { favorite ->onValueChange(deviceSettings.copy(
-                    id = if (favorite) UUID.randomUUID().toString() else null
-                ))
+            onFavoriteClicked = { favorite ->
+                onValueChange(
+                    deviceSettings.copy(
+                        id = if (favorite) UUID.randomUUID().toString() else null
+                    )
+                )
             })
+        Row() {
+            TextButton(onClick = {
+                val newCharacteristic =
+                    if (deviceSettings.characteristicUuid == CharacteristicUuid.primary.name) CharacteristicUuid.alternate else CharacteristicUuid.primary
+                onValueChange(deviceSettings.copy(characteristicUuid = newCharacteristic.name))
+            }) {
+                Text(context.getString(R.string.use_characteristic) + " " + deviceSettings.characteristicUuid)
+            }
+        }
         ControlRow(
             SettingType.mode,
             R.string.setting_mode,
@@ -78,5 +97,6 @@ fun DeviceSettingsEditor(deviceSettings: DeviceSettings, onValueChange: (deviceS
 fun renderSeconds(interval: Int) = "${interval}s"
 fun renderPercent(value: Float?) =
     if (value == null) "- %" else String.format("%.0f", value * 100) + "%"
+
 fun renderLevel(value: Int?) =
-     "Stufe ${value ?: "-"}"
+    "Stufe ${value ?: "-"}"

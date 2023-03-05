@@ -20,8 +20,7 @@ class BluetoothCaller(
     private val uuid_deviceInformation = UUID.fromString("0000180a-0000-1000-8000-00805f9b34fb")
     private val uuid_privatetrainer_service =
         UUID.fromString("0000ff00-0000-1000-8000-00805f9b34fb")
-    private val uuid_privatetrainer_characteristic =
-        UUID.fromString("0000ff02-0000-1000-8000-00805f9b34fb")
+    private var uuid_privatetrainer_characteristic = CharacteristicUuid.primary.uuid
     private val uuid_battery_characteristic =
         UUID.fromString("0000ff03-0000-1000-8000-00805f9b34fb")
 
@@ -40,7 +39,10 @@ class BluetoothCaller(
 
             if (connected != selectedDevice.connected) {
                 bluetoothState.value =
-                    bluetoothState.value.copy(selectedDevice = selectedDevice.copy(connected = connected), lastStatus = status)
+                    bluetoothState.value.copy(
+                        selectedDevice = selectedDevice.copy(connected = connected),
+                        lastStatus = status
+                    )
             }
 
             if (connected) {
@@ -186,24 +188,42 @@ class BluetoothCaller(
         settings: DeviceSettings,
     ) {
         Log.e("BluetoothCaller", "sendToDevice()")
+        configureCharacteristicUuid(settings.characteristicUuid)
         commandQueue.clear()
         commandQueue.scheduleDeferred { discoverServices() }
         privateTrainerDevice.connectGatt(context, false, bluetoothGattCallback)
 
         when (command) {
             PrivateTrainerCommand.on -> commandQueue.scheduleDeferred { switchOn() }
-            PrivateTrainerCommand.off-> commandQueue.scheduleDeferred { switchOff() }
+            PrivateTrainerCommand.off -> commandQueue.scheduleDeferred { switchOff() }
             PrivateTrainerCommand.requestBatteryStatus -> commandQueue.scheduleDeferred { askForBatteryStatus() }
             PrivateTrainerCommand.toggleNotification -> commandQueue.scheduleDeferred {
-                requestCharacteristicsNotification() }
+                requestCharacteristicsNotification()
+            }
             PrivateTrainerCommand.readBattery -> commandQueue.scheduleDeferred { readBatteryStatus() }
             PrivateTrainerCommand.update -> {
-                commandQueue.scheduleDeferred { sendSetting(CommandType().strength, settings.strength) }
-                commandQueue.scheduleDeferred { sendSetting(CommandType().mode, settings.mode + CommandType().MODE_OFFSET) }
-                commandQueue.scheduleDeferred { sendSetting(CommandType().interval, settings.interval) }
+                commandQueue.scheduleDeferred {
+                    sendSetting(
+                        CommandType().strength,
+                        settings.strength
+                    )
+                }
+                commandQueue.scheduleDeferred {
+                    sendSetting(
+                        CommandType().mode,
+                        settings.mode + CommandType().MODE_OFFSET
+                    )
+                }
+                commandQueue.scheduleDeferred {
+                    sendSetting(
+                        CommandType().interval,
+                        settings.interval
+                    )
+                }
             }
         }
     }
+
 
     private fun sendSetting(type: Byte, value: Int) {
         findPrivateTrainerCharacteristic()?.let {
@@ -212,21 +232,21 @@ class BluetoothCaller(
         }
     }
 
-    fun discoverServices() {
+    private fun discoverServices() {
         gatt?.discoverServices()
     }
 
     private fun switchOn() {
         findPrivateTrainerCharacteristic()?.let {
             writeCharacteristic(it, CommandSequence().on)
-            bluetoothState.value= bluetoothState.value.copy(powerOn = true)
+            bluetoothState.value = bluetoothState.value.copy(powerOn = true)
         }
     }
 
     private fun switchOff() {
         findPrivateTrainerCharacteristic()?.let {
             writeCharacteristic(it, CommandSequence().off)
-            bluetoothState.value= bluetoothState.value.copy(powerOn = false)
+            bluetoothState.value = bluetoothState.value.copy(powerOn = false)
         }
     }
 
@@ -236,7 +256,10 @@ class BluetoothCaller(
         }
     }
 
-    private fun writeCharacteristic(characteristic: BluetoothGattCharacteristic, byteSequence: ByteArray) {
+    private fun writeCharacteristic(
+        characteristic: BluetoothGattCharacteristic,
+        byteSequence: ByteArray
+    ) {
         gatt!!.writeCharacteristic(
             characteristic,
             byteSequence,
@@ -249,6 +272,11 @@ class BluetoothCaller(
         findBatteryCharacteristic()?.let {
             gatt!!.readCharacteristic(it)
         }
+    }
+
+    private fun configureCharacteristicUuid(characteristicUuid: String) {
+        uuid_privatetrainer_characteristic =
+            if (characteristicUuid == CharacteristicUuid.primary.name) CharacteristicUuid.primary.uuid else CharacteristicUuid.alternate.uuid
     }
 
     private fun findPrivateTrainerCharacteristic(): BluetoothGattCharacteristic? {

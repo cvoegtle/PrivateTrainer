@@ -26,8 +26,17 @@ fun ByteArray.toHex(): String = joinToString(separator = "") { eachByte -> "%02x
 class CommandSequence {
     val on = byteArrayOf(0x04, 0x51)
     val off = byteArrayOf(0x04, 0x50)
-    val battery = byteArrayOf(0x41, 0x54, 0x2b, 0x56, 0x4f, 0x4c, 0x0d, 0x0a)
+    val battery:ByteArray = "AT+VOL\r\n".toByteArray(Charsets.US_ASCII)
+//    val battery = byteArrayOf(0x41, 0x54, 0x2b, 0x56, 0x4f, 0x4c, 0x0d, 0x0a)
 }
+
+class CharacteristicUuid(val name: String, val uuid: UUID) {
+    companion object {
+        val primary = CharacteristicUuid(name = "ff02", uuid = UUID.fromString("0000ff02-0000-1000-8000-00805f9b34fb") )
+        val alternate = CharacteristicUuid(name = "ff01", uuid = UUID.fromString("0000ff01-0000-1000-8000-00805f9b34fb") )
+    }
+}
+
 
 class CommandType {
     val strength: Byte = 0x01
@@ -43,31 +52,12 @@ data class DeviceSettings(
     var name: String = "",
     var mode: Int = 1, // 1 - 10
     var strength: Int = 8, // Stufe 1 - 10
-    var interval: Int = 3 // 1 - 200s
+    var interval: Int = 3, // 1 - 200s
+    var characteristicUuid: String =  CharacteristicUuid.primary.name
 ) : Parcelable {
     fun isFavorite() = id != null
 }
 
-
-
-//val DeviceSettingsSaver = run {
-//    mapSaver<DeviceSettings>(
-//        save = {
-//            mapOf<String, Any>(
-//                SettingType.mode.toString() to it.mode,
-//                SettingType.strength.toString() to it.strength,
-//                SettingType.interval.toString() to it.interval
-//            )
-//        },
-//        restore = {
-//            DeviceSettings(
-//                mode = it[SettingType.mode.toString()] as Int,
-//                strength = it[SettingType.strength.toString()] as Float,
-//                interval = it[SettingType.interval.toString()] as Float
-//            )
-//        }
-//    )
-//}
 
 enum class SettingType {
     mode,

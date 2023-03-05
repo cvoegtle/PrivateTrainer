@@ -25,7 +25,7 @@ fun BluetoothDevice(bluetoothState: BluetoothState) {
             val connectionText =
                 context.getString(if (it.connected) R.string.connected else R.string.not_connected)
             val lastErrorText =
-                context.getString(R.string.last_error) + " " + bluetoothState.lastStatus
+                context.getString(R.string.last_error) + " " + (bluetoothState.lastStatus ?: "-")
             val lastErrorColor =
                 if (bluetoothState.lastStatus == 0) MaterialTheme.colorScheme.inverseOnSurface else MaterialTheme.colorScheme.onError
             Text(
