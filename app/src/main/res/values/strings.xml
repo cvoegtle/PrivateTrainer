@@ -7,8 +7,7 @@
     <string name="tab_settings">Einstellungen</string>
     <string name="tab_saved_settings">Gespeicherte Einstellungen</string>
     <string name="tab_about">Über Private Trainer</string>
-    <string name = "device_start">Trainer starten</string>
-    <string name = "device_stop">Trainer stoppen</string>
+    <string name = "search_device">Trainer suchen</string>
     <string name = "setting_mode">Modus</string>
     <string name = "keep_setting">Einstellungen merken</string>
     <string name = "setting_strength">Stärke</string>
@@ -24,7 +23,6 @@
   <string name="settings_name">Name</string>
   <string name="disable_notifications">Notifications ausschalten</string>
     <string name="enable_notifications">Notifications einschalten</string>
-    <string name="read_battery_status">Batteriestand abfragen</string>
     <string name="request_battery_status">Batteriestatus anfordern</string>
   <string name="update_device_settings">Einstellungen senden</string>
   <string name="last_error">Letzte Antwort:</string>

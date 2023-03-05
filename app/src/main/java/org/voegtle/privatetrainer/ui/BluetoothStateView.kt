@@ -89,7 +89,7 @@ private fun BluetoothDeviceRows(
                         Icon(
                             imageVector = Icons.Filled.Replay,
                             contentDescription = stringResource(
-                                id = R.string.device_start
+                                id = R.string.search_device
                             ),
                             modifier = Modifier
                                 .fillMaxHeight()
@@ -110,7 +110,7 @@ private fun BluetoothDeviceRows(
                 Icon(
                     imageVector = powerIcon,
                     contentDescription = stringResource(
-                        id = R.string.device_start
+                        id = R.string.search_device
                     ),
                     modifier = Modifier
                         .fillMaxHeight()

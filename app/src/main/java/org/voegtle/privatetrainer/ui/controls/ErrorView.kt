@@ -14,8 +14,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.voegtle.privatetrainer.R
-import java.util.logging.Level
-import java.util.logging.Logger
 
 
 @Composable
@@ -46,7 +44,7 @@ fun ErrorView(
             Icon(
                 imageVector = Icons.Filled.Replay,
                 contentDescription = stringResource(
-                    id = R.string.device_start
+                    id = R.string.search_device
                 ),
                 modifier = Modifier
                     .fillMaxHeight()

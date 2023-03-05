@@ -1,0 +1,31 @@
+<resources>
+  <string name="app_name">Private Trainer</string>
+    <string name="navigation_drawer">Navigation</string>
+    <string name="empty_screen_title">In Arbeit</string>
+    <string name="empty_screen_subtitle">Diese Seite wird bald fertiggestellt</string>
+    <string name="tab_start">开始</string>
+    <string name="tab_settings">设置</string>
+    <string name="tab_saved_settings">保存设置</string>
+    <string name="tab_about">关于 Private Trainer</string>
+    <string name = "search_device">Trainer suchen</string>
+    <string name = "setting_mode">模式</string>
+    <string name = "keep_setting">保存设置</string>
+    <string name = "setting_strength">强度</string>
+    <string name = "setting_interval">速度</string>
+    <string name = "battery">电池</string>
+    <string name = "bluetooth_scan">找蓝牙</string>
+    <string name = "connected">蓝牙连接成功</string>
+    <string name = "not_connected">蓝牙没有连接</string>
+    <string name = "error_bluetooth_not_supported">设备没只特蓝牙.</string>
+    <string name = "error_bluetooth_disabled">蓝牙关闭了.</string>
+    <string name = "error_bluetooth_access_denied">设置不允许用蓝牙.</string>
+    <string name = "error_bluetooth_device_not_connected">机器没有连上蓝牙</string>
+  <string name="settings_name">设置名称</string>
+  <string name="disable_notifications">关闭通知</string>
+    <string name="enable_notifications">开通通知</string>
+    <string name="request_battery_status">查询电量</string>
+  <string name="update_device_settings">发送模式强度和速度的设置n</string>
+  <string name="last_error">返回status:</string>
+    <string name="use_characteristic">属性</string>
+    <string name="level">级别</string>
+</resources>
