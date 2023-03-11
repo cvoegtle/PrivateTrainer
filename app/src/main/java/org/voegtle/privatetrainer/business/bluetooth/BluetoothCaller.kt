@@ -248,9 +248,9 @@ class BluetoothCaller(
         characteristic: BluetoothGattCharacteristic,
         byteSequence: ByteArray
     ) {
-        characteristic.setValue(byteSequence)
+        val valueAccepted = characteristic.setValue(byteSequence)
         gatt!!.writeCharacteristic(characteristic)
-        Log.w("BluetoothCaller", "write to ${characteristic.uuid} value=${byteSequence.toHex()}")
+        Log.w("BluetoothCaller", "write to ${characteristic.uuid} value=${byteSequence.toHex()} ${if (valueAccepted) "" else "not"} accepted")
     }
 
     private fun readBatteryStatus() {
