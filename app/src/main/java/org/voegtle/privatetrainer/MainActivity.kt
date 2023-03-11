@@ -88,7 +88,7 @@ class MainActivity : ComponentActivity() {
 
         permissionsManager.buildRequestResultsDispatcher {
             withRequestCode(BluetoothPermissions().code) {
-                checkPermissions(BluetoothPermissions().permissions)
+                checkPermissions(BluetoothPermissions().permissions())
                 doOnDenied {
                     bluetoothState.value.connectionStatus = permission_denied
                 }

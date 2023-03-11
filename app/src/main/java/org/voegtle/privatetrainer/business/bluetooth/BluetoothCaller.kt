@@ -13,11 +13,9 @@ import java.util.*
 
 class BluetoothCaller(
     val context: Context,
-    val privateTrainerDevice: BluetoothDevice,
+    private val privateTrainerDevice: BluetoothDevice,
     val bluetoothState: MutableState<BluetoothState>
 ) {
-    private val uuid_genericAccess = UUID.fromString("00001800-0000-1000-8000-00805f9b34fb")
-    private val uuid_deviceInformation = UUID.fromString("0000180a-0000-1000-8000-00805f9b34fb")
     private val uuid_privatetrainer_service =
         UUID.fromString("0000ff00-0000-1000-8000-00805f9b34fb")
     private var uuid_privatetrainer_characteristic = CharacteristicUuid.primary.uuid
@@ -69,17 +67,7 @@ class BluetoothCaller(
             characteristic: BluetoothGattCharacteristic?,
             status: Int
         ) {
-            Log.e("PrivateTrainer", "write characteristic status: ${status}")
-            updateStatus(status)
-            commandQueue.runNext()
-        }
-
-        override fun onDescriptorRead(
-            gatt: BluetoothGatt?,
-            descriptor: BluetoothGattDescriptor?,
-            status: Int
-        ) {
-            super.onDescriptorRead(gatt, descriptor, status)
+            Log.e("PrivateTrainer", "write characteristic status: $status")
             updateStatus(status)
             commandQueue.runNext()
         }
@@ -260,11 +248,8 @@ class BluetoothCaller(
         characteristic: BluetoothGattCharacteristic,
         byteSequence: ByteArray
     ) {
-        gatt!!.writeCharacteristic(
-            characteristic,
-            byteSequence,
-            BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
-        )
+        characteristic.setValue(byteSequence)
+        gatt!!.writeCharacteristic(characteristic)
         Log.w("BluetoothCaller", "write to ${characteristic.uuid} value=${byteSequence.toHex()}")
     }
 
