@@ -32,8 +32,8 @@ class CommandSequence {
 
 class CharacteristicUuid(val name: String, val uuid: UUID) {
     companion object {
-        val primary = CharacteristicUuid(name = "ff02", uuid = UUID.fromString("0000ff02-0000-1000-8000-00805f9b34fb") )
-        val alternate = CharacteristicUuid(name = "ff03", uuid = UUID.fromString("0000ff03-0000-1000-8000-00805f9b34fb") )
+        val primary = CharacteristicUuid(name = "ff03", uuid = UUID.fromString("0000ff03-0000-1000-8000-00805f9b34fb") )
+        val alternate = CharacteristicUuid(name = "ff02", uuid = UUID.fromString("0000ff02-0000-1000-8000-00805f9b34fb") )
     }
 }
 
