@@ -192,19 +192,19 @@ class BluetoothCaller(
             PrivateTrainerCommand.update -> {
                 commandQueue.scheduleDeferred {
                     sendSetting(
-                        CommandType().strength,
+                        CommandType.strength,
                         settings.strength
                     )
                 }
                 commandQueue.scheduleDeferred {
                     sendSetting(
-                        CommandType().mode,
-                        settings.mode + CommandType().MODE_OFFSET
+                        CommandType.mode,
+                        settings.mode + CommandType.MODE_OFFSET
                     )
                 }
                 commandQueue.scheduleDeferred {
                     sendSetting(
-                        CommandType().interval,
+                        CommandType.interval,
                         settings.interval
                     )
                 }
@@ -226,21 +226,21 @@ class BluetoothCaller(
 
     private fun switchOn() {
         findPrivateTrainerCharacteristic()?.let {
-            writeCharacteristic(it, CommandSequence().on)
+            writeCharacteristic(it, CommandSequence.on)
             bluetoothState.value = bluetoothState.value.copy(powerOn = true)
         }
     }
 
     private fun switchOff() {
         findPrivateTrainerCharacteristic()?.let {
-            writeCharacteristic(it, CommandSequence().off)
+            writeCharacteristic(it, CommandSequence.off)
             bluetoothState.value = bluetoothState.value.copy(powerOn = false)
         }
     }
 
     private fun askForBatteryStatus() {
         findBatteryCharacteristic()?.let {
-            writeCharacteristic(it, CommandSequence().battery)
+            writeCharacteristic(it, CommandSequence.battery)
         }
     }
 

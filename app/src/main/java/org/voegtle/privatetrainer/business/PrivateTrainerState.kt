@@ -24,26 +24,30 @@ enum class PrivateTrainerCommand {
 
 fun ByteArray.toHex(): String = joinToString(separator = "") { eachByte -> "%02x".format(eachByte) }
 class CommandSequence {
-    val on = byteArrayOf(0x04, 0x51)
-    val off = byteArrayOf(0x04, 0x50)
-    val battery:ByteArray = "AT+VOL\r\n".toByteArray(Charsets.US_ASCII)
+    companion object {
+        val on = byteArrayOf(0x04, 0x51)
+        val off = byteArrayOf(0x04, 0x50)
+        val battery: ByteArray = "AT+VOL\r\n".toByteArray(Charsets.US_ASCII)
+    }
+}
+
 //    val battery = byteArrayOf(0x41, 0x54, 0x2b, 0x56, 0x4f, 0x4c, 0x0d, 0x0a)
+class CommandType {
+    companion object {
+        val strength: Byte = 0x01
+        val mode: Byte = 0x02
+        val interval: Byte = 0x03
+
+        val MODE_OFFSET: Int = 16
+    }
 }
 
 class CharacteristicUuid(val name: String, val uuid: UUID) {
+
     companion object {
         val primary = CharacteristicUuid(name = "ff03", uuid = UUID.fromString("0000ff03-0000-1000-8000-00805f9b34fb") )
         val alternate = CharacteristicUuid(name = "ff02", uuid = UUID.fromString("0000ff02-0000-1000-8000-00805f9b34fb") )
     }
-}
-
-
-class CommandType {
-    val strength: Byte = 0x01
-    val mode: Byte = 0x02
-    val interval: Byte = 0x03
-
-    val MODE_OFFSET: Int = 16
 }
 
 @Parcelize
