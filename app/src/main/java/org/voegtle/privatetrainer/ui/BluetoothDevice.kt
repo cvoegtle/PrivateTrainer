@@ -28,6 +28,8 @@ fun BluetoothDevice(bluetoothState: BluetoothState) {
                 context.getString(R.string.last_error) + " " + (bluetoothState.lastStatus ?: "-")
             val lastErrorColor =
                 if (bluetoothState.lastStatus == 0) MaterialTheme.colorScheme.inverseOnSurface else MaterialTheme.colorScheme.onError
+            val lastWrittenText =
+                context.getString(R.string.last_text) + ": " + (bluetoothState.lastWrittenValue ?: "-")
             Text(
                 it.name,
                 style = MaterialTheme.typography.headlineMedium,
@@ -50,6 +52,13 @@ fun BluetoothDevice(bluetoothState: BluetoothState) {
                     lastErrorText,
                     style = MaterialTheme.typography.titleSmall,
                     color = lastErrorColor
+                )
+            }
+            Row() {
+                Text(
+                    lastWrittenText,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.inverseOnSurface
                 )
             }
         }

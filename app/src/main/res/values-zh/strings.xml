@@ -28,4 +28,5 @@
   <string name="last_error">返回status:</string>
     <string name="use_characteristic">属性</string>
     <string name="level">级别</string>
+    <string name="last_text">Last sent</string>
 </resources>

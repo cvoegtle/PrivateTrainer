@@ -11,7 +11,8 @@ data class BluetoothState(
     var characteristics : MutableMap<UUID, ByteArray> = HashMap(),
     var  notificationsEnabled: Boolean = true,
     var powerOn: Boolean = false,
-    var lastStatus: Int? = null
+    var lastStatus: Int? = null,
+    var lastWrittenValue: String?  = null
 )
 
 enum class BluetoothConnectionStatus {
@@ -22,11 +23,25 @@ enum class PrivateTrainerCommand {
     on, off, update, toggleNotification, requestBatteryStatus, readBattery
 }
 
-fun ByteArray.toHex(): String = joinToString(separator = "") { eachByte -> "%02x".format(eachByte) }
+fun paddedByteArray(vararg input:Byte):ByteArray {
+    val bytes = ArrayList<Byte>()
+    for (b in input) {
+        bytes.add(b)
+    }
+
+    while (bytes.size < 6) {
+        bytes.add(0x01)
+    }
+//    bytes.add('\r'.toByte())
+//    bytes.add('\n'.toByte())
+    return bytes.toByteArray()
+}
+
+fun ByteArray.toHex(): String = joinToString(separator = ":") { eachByte -> "%02x".format(eachByte) }
 class CommandSequence {
     companion object {
-        val on = byteArrayOf(0x04, 0x51)
-        val off = byteArrayOf(0x04, 0x50)
+        val on = paddedByteArray(0x04, 0x51)
+        val off = paddedByteArray(0x04, 0x50, 0x01, 0x01, 0x01, 0x01 )
         val battery: ByteArray = "AT+VOL\r\n".toByteArray(Charsets.US_ASCII)
     }
 }

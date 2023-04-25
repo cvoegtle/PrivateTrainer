@@ -215,7 +215,7 @@ class BluetoothCaller(
 
     private fun sendSetting(type: Byte, value: Int) {
         findPrivateTrainerCharacteristic()?.let {
-            val commandSequence = byteArrayOf(type, value.toByte())
+            val commandSequence = paddedByteArray(type, value.toByte())
             writeCharacteristic(it, commandSequence)
         }
     }
@@ -250,6 +250,10 @@ class BluetoothCaller(
     ) {
         val valueAccepted = characteristic.setValue(byteSequence)
         gatt!!.writeCharacteristic(characteristic)
+        if (valueAccepted) {
+            bluetoothState.value =
+                bluetoothState.value.copy(lastWrittenValue = byteSequence.toHex())
+        }
         Log.w("BluetoothCaller", "write to ${characteristic.uuid} value=${byteSequence.toHex()} ${if (valueAccepted) "" else "not"} accepted")
     }
 
