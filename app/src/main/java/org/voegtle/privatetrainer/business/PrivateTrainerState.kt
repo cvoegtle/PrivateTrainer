@@ -15,7 +15,7 @@ data class BluetoothState(
     var lastWrittenValue: String?  = null
 ) {
     fun lastReceivedNotifications(): String {
-        return characteristics.map { e -> e.key.toString().substring(4, 8) + e.value}.joinToString(separator = "\n")
+        return characteristics.map { e -> e.key.toString().substring(4, 8)+ "=" + e.value}.joinToString(separator = "\n")
     }
 }
 
