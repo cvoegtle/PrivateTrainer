@@ -29,4 +29,5 @@
     <string name="use_characteristic">属性</string>
     <string name="level">级别</string>
     <string name="last_text">Last sent</string>
+    <string name="last_notification">Last received</string>
 </resources>

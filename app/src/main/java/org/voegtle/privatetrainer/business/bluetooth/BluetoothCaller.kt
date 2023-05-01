@@ -164,7 +164,7 @@ class BluetoothCaller(
         value: ByteArray
     ) {
         val currentState = bluetoothState.value.copy()
-        currentState.characteristics[characteristic.uuid] = value
+        currentState.characteristics[characteristic.uuid] = value.toHex()
         if (characteristic.uuid == uuid_battery_characteristic) {
             currentState.selectedDevice?.batteryLevel = value.toString(US_ASCII)
         }

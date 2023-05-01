@@ -30,6 +30,9 @@ fun BluetoothDevice(bluetoothState: BluetoothState) {
                 if (bluetoothState.lastStatus == 0) MaterialTheme.colorScheme.inverseOnSurface else MaterialTheme.colorScheme.onError
             val lastWrittenText =
                 context.getString(R.string.last_text) + ": " + (bluetoothState.lastWrittenValue ?: "-")
+            val lastNotification =
+                context.getString(R.string.last_notification) + ": " + (bluetoothState.lastReceivedNotifications() ?: "-")
+
             Text(
                 it.name,
                 style = MaterialTheme.typography.headlineMedium,
@@ -57,6 +60,13 @@ fun BluetoothDevice(bluetoothState: BluetoothState) {
             Row() {
                 Text(
                     lastWrittenText,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.inverseOnSurface
+                )
+            }
+            Row() {
+                Text(
+                    lastNotification,
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.inverseOnSurface
                 )

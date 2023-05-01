@@ -8,12 +8,16 @@ import java.util.UUID
 data class BluetoothState(
     var selectedDevice: BleDevice? = null,
     var connectionStatus: BluetoothConnectionStatus = BluetoothConnectionStatus.not_connected,
-    var characteristics : MutableMap<UUID, ByteArray> = HashMap(),
+    var characteristics : MutableMap<UUID, String> = HashMap(),
     var  notificationsEnabled: Boolean = true,
     var powerOn: Boolean = false,
     var lastStatus: Int? = null,
     var lastWrittenValue: String?  = null
-)
+) {
+    fun lastReceivedNotifications(): String {
+        return characteristics.map { e -> e.key.toString().substring(4, 8) + e.value}.joinToString(separator = "\n")
+    }
+}
 
 enum class BluetoothConnectionStatus {
     not_supported, disabled, permission_denied, not_connected, device_found

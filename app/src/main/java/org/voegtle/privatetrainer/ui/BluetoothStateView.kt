@@ -3,6 +3,8 @@ package org.voegtle.privatetrainer.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Lightbulb
+import androidx.compose.material.icons.outlined.PowerSettingsNew
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -10,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -69,7 +72,7 @@ private fun BluetoothDeviceRows(
     onSearchClicked: () -> Unit
 ) {
     val context = LocalContext.current
-    val powerIcon = if (bluetoothState.powerOn) Icons.Filled.PowerOff else Icons.Filled.Power
+    val colorOnOffIndicator = if (bluetoothState.powerOn) Color.Yellow else Color.Gray
     val powerCommand =
         if (bluetoothState.powerOn) PrivateTrainerCommand.off else PrivateTrainerCommand.on
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -101,6 +104,17 @@ private fun BluetoothDeviceRows(
 
             Spacer(modifier = Modifier.width(8.dp))
 
+            Icon(
+                imageVector = Icons.Outlined.Lightbulb,
+                contentDescription = stringResource(
+                    id = R.string.search_device
+                ),
+                tint=colorOnOffIndicator,
+                modifier = Modifier.height(50.dp)
+            )
+
+            Spacer(modifier = Modifier.width(2.dp))
+
             IconButton(
                 onClick = {
                     onButtonClick(powerCommand)
@@ -108,7 +122,7 @@ private fun BluetoothDeviceRows(
                 colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.errorContainer),
             ) {
                 Icon(
-                    imageVector = powerIcon,
+                    imageVector = Icons.Outlined.PowerSettingsNew,
                     contentDescription = stringResource(
                         id = R.string.search_device
                     ),

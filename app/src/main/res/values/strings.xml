@@ -29,4 +29,5 @@
     <string name="use_characteristic">Characteristik</string>
     <string name="level">Stufe</string>
   <string name="last_text">Zuletzt gesendet</string>
+  <string name="last_notification">Zuletzt empfangen</string>
 </resources>
