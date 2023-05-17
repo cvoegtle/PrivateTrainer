@@ -30,4 +30,5 @@
     <string name="level">Stufe</string>
   <string name="last_text">Zuletzt gesendet</string>
   <string name="last_notification">Zuletzt empfangen</string>
+    <string name="about">Private Trainer, Version 4</string>
 </resources>

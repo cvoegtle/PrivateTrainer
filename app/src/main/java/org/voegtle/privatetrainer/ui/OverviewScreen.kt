@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import org.voegtle.privatetrainer.business.*
+import org.voegtle.privatetrainer.ui.controls.About
 
 @Composable
 fun OverviewScreen(
@@ -32,6 +33,8 @@ fun OverviewScreen(
             deviceSettings.value = updatedSettings
             storeCurrentDeviceSettings(context, updatedSettings)
         })
+        Spacer(Modifier.height(5.dp))
+        About()
     }
 }
 

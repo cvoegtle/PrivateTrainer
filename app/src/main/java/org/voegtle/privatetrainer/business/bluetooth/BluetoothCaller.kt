@@ -248,6 +248,7 @@ class BluetoothCaller(
         characteristic: BluetoothGattCharacteristic,
         byteSequence: ByteArray
     ) {
+        Thread.sleep(1000)
         val valueAccepted = characteristic.setValue(byteSequence)
         gatt!!.writeCharacteristic(characteristic)
         if (valueAccepted) {
