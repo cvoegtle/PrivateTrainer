@@ -36,20 +36,14 @@ fun NameEditRow(name: String,
             onValueChange = onNameChange,
             label = { Text(context.getString(R.string.settings_name)) }
         )
-        IconButton(
+        PrivateIconButton(
+            imageVector = if (favorite) { Icons.Filled.ThumbUp } else {Icons.Outlined.ThumbUp},
             onClick = { onFavoriteClicked(!favorite) },
-            colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.errorContainer)
-        ) {
-            Icon(
-                imageVector = if (favorite) { Icons.Filled.ThumbUp } else {Icons.Outlined.ThumbUp},
-                contentDescription = stringResource(
-                    id = R.string.search_device
-                ),
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .align(Alignment.CenterVertically)
-            )
-        }
+            id = R.string.search_device,
+            modifier = Modifier
+                .fillMaxHeight()
+                .align(Alignment.CenterVertically)
+        )
     }
 
 }

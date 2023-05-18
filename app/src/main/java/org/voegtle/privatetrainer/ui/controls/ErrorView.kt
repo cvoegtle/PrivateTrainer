@@ -35,22 +35,13 @@ fun ErrorView(
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        IconButton(
-            onClick = {
-                onButtonClick()
-            },
-            colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.errorContainer)
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Replay,
-                contentDescription = stringResource(
-                    id = R.string.search_device
-                ),
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .align(Alignment.CenterVertically)
-            )
-        }
+        PrivateIconButton(
+            imageVector = Icons.Filled.Replay,
+            onClick = onButtonClick,
+            id = R.string.search_device,
+            modifier = Modifier
+                .fillMaxHeight()
+                .align(Alignment.CenterVertically))
     }
 
 }

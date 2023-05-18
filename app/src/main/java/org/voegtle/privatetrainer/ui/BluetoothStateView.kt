@@ -21,6 +21,7 @@ import org.voegtle.privatetrainer.business.BluetoothConnectionStatus.*
 import org.voegtle.privatetrainer.business.BluetoothState
 import org.voegtle.privatetrainer.business.PrivateTrainerCommand
 import org.voegtle.privatetrainer.ui.controls.ErrorView
+import org.voegtle.privatetrainer.ui.controls.PrivateIconButton
 
 @Composable
 fun BluetoothStateView(
@@ -82,23 +83,14 @@ private fun BluetoothDeviceRows(
             bluetoothState.selectedDevice?.let {
                 if (!it.connected) {
                     Spacer(modifier = Modifier.width(8.dp))
-
-                    IconButton(
-                        onClick = {
-                            onSearchClicked()
-                        },
-                        colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.errorContainer)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Replay,
-                            contentDescription = stringResource(
-                                id = R.string.search_device
-                            ),
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .align(Alignment.CenterVertically)
-                        )
-                    }
+                    PrivateIconButton(
+                        imageVector = Icons.Filled.Replay,
+                        id = R.string.search_device,
+                        onClick = onSearchClicked,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .align(Alignment.CenterVertically)
+                    )
                 }
             }
 
@@ -109,28 +101,22 @@ private fun BluetoothDeviceRows(
                 contentDescription = stringResource(
                     id = R.string.search_device
                 ),
-                tint=colorOnOffIndicator,
+                tint = colorOnOffIndicator,
                 modifier = Modifier.height(50.dp)
             )
 
             Spacer(modifier = Modifier.width(2.dp))
 
-            IconButton(
+            PrivateIconButton(
+                imageVector = Icons.Outlined.PowerSettingsNew,
                 onClick = {
                     onButtonClick(powerCommand)
                 },
-                colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.errorContainer),
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.PowerSettingsNew,
-                    contentDescription = stringResource(
-                        id = R.string.search_device
-                    ),
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .align(Alignment.CenterVertically)
-                )
-            }
+                id = R.string.search_device,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .align(Alignment.CenterVertically)
+            )
         }
         Row(Modifier.fillMaxWidth()) {
             TextButton(colors = ButtonDefaults.filledTonalButtonColors(),
