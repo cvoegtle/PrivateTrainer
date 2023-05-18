@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 import org.voegtle.privatetrainer.business.BluetoothState
 import org.voegtle.privatetrainer.business.DeviceSettings
 import org.voegtle.privatetrainer.business.PrivateTrainerCommand
+import org.voegtle.privatetrainer.ui.AboutScreen
 import org.voegtle.privatetrainer.ui.EmptyComingSoon
 import org.voegtle.privatetrainer.ui.OverviewScreen
 import org.voegtle.privatetrainer.ui.FavoriteSettingsManagementScreen
@@ -269,7 +270,7 @@ private fun PrivateTrainerNavHost(
             EmptyComingSoon()
         }
         composable(PrivateRoute.ABOUT) {
-            EmptyComingSoon()
+            AboutScreen()
         }
     }
 }
