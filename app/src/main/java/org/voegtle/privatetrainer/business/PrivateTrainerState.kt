@@ -64,8 +64,8 @@ class CommandType {
 class CharacteristicUuid(val name: String, val uuid: UUID) {
 
     companion object {
-        val primary = CharacteristicUuid(name = "ff03", uuid = UUID.fromString("0000ff03-0000-1000-8000-00805f9b34fb") )
-        val alternate = CharacteristicUuid(name = "ff02", uuid = UUID.fromString("0000ff02-0000-1000-8000-00805f9b34fb") )
+        val battery = CharacteristicUuid(name = "ff03", uuid = UUID.fromString("0000ff03-0000-1000-8000-00805f9b34fb") )
+        val command = CharacteristicUuid(name = "ff02", uuid = UUID.fromString("0000ff02-0000-1000-8000-00805f9b34fb") )
     }
 }
 
@@ -76,7 +76,6 @@ data class DeviceSettings(
     var mode: Int = 1, // 1 - 10
     var strength: Int = 8, // Stufe 1 - 10
     var interval: Int = 3, // 1 - 200s
-    var characteristicUuid: String =  CharacteristicUuid.primary.name
 ) : Parcelable {
     fun isFavorite() = id != null
 }

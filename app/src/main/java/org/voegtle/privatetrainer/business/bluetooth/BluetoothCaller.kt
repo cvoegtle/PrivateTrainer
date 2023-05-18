@@ -18,9 +18,8 @@ class BluetoothCaller(
 ) {
     private val uuid_privatetrainer_service =
         UUID.fromString("0000ff00-0000-1000-8000-00805f9b34fb")
-    private var uuid_privatetrainer_characteristic = CharacteristicUuid.primary.uuid
-    private val uuid_battery_characteristic =
-        UUID.fromString("0000ff03-0000-1000-8000-00805f9b34fb")
+    private val uuid_command_characteristic = CharacteristicUuid.command.uuid
+    private val uuid_battery_characteristic = CharacteristicUuid.battery.uuid
 
     val commandQueue = BluetoothCommandQueue()
     var gatt: BluetoothGatt? = null
@@ -176,7 +175,6 @@ class BluetoothCaller(
         settings: DeviceSettings,
     ) {
         Log.e("BluetoothCaller", "sendToDevice()")
-        configureCharacteristicUuid(settings.characteristicUuid)
         commandQueue.clear()
         commandQueue.scheduleDeferred { discoverServices() }
         privateTrainerDevice.connectGatt(context, false, bluetoothGattCallback)
@@ -264,13 +262,8 @@ class BluetoothCaller(
         }
     }
 
-    private fun configureCharacteristicUuid(characteristicUuid: String) {
-        uuid_privatetrainer_characteristic =
-            if (characteristicUuid == CharacteristicUuid.primary.name) CharacteristicUuid.primary.uuid else CharacteristicUuid.alternate.uuid
-    }
-
     private fun findPrivateTrainerCharacteristic(): BluetoothGattCharacteristic? {
-        return findCharacteristic(uuid_privatetrainer_characteristic)
+        return findCharacteristic(uuid_command_characteristic)
     }
 
     private fun findBatteryCharacteristic(): BluetoothGattCharacteristic? {

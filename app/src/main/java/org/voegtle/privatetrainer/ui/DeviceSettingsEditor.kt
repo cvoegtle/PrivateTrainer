@@ -40,15 +40,6 @@ fun DeviceSettingsEditor(
                     )
                 )
             })
-        Row() {
-            TextButton(onClick = {
-                val newCharacteristic =
-                    if (deviceSettings.characteristicUuid == CharacteristicUuid.primary.name) CharacteristicUuid.alternate else CharacteristicUuid.primary
-                onValueChange(deviceSettings.copy(characteristicUuid = newCharacteristic.name))
-            }) {
-                Text(context.getString(R.string.use_characteristic) + " " + deviceSettings.characteristicUuid)
-            }
-        }
         ControlRow(
             SettingType.mode,
             R.string.setting_mode,
