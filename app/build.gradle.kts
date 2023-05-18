@@ -108,7 +108,7 @@ dependencies {
 
     implementation(libs.androidx.compose.materialWindow)
     implementation(libs.androidx.compose.material.iconsExtended)
-    implementation("com.github.lorenzofelletti:permissions:0.4.2")
+    implementation("com.github.lorenzofelletti:permissions:0.5.0")
     implementation("com.google.code.gson:gson:2.10.1")
 
     implementation(libs.androidx.lifecycle.runtime)
