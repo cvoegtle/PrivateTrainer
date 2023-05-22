@@ -1,6 +1,7 @@
 package org.voegtle.privatetrainer.ui
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Lightbulb
@@ -96,14 +97,20 @@ private fun BluetoothDeviceRows(
 
             Spacer(modifier = Modifier.width(8.dp))
 
-            Icon(
-                imageVector = Icons.Outlined.Lightbulb,
-                contentDescription = stringResource(
-                    id = R.string.search_device
-                ),
-                tint = colorOnOffIndicator,
-                modifier = Modifier.height(50.dp)
-            )
+            Surface (
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                modifier = Modifier.width(45.dp),
+                shape = RoundedCornerShape(4.dp)
+            ){
+                Icon(
+                    imageVector = Icons.Outlined.Lightbulb,
+                    contentDescription = stringResource(
+                        id = R.string.search_device
+                    ),
+                    tint = colorOnOffIndicator,
+                    modifier = Modifier.height(45.dp)
+                )
+            }
 
             Spacer(modifier = Modifier.width(2.dp))
 
