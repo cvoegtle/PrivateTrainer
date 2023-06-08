@@ -2,6 +2,7 @@ package org.voegtle.privatetrainer.business.bluetooth
 
 data class BleDevice(
     val name: String,
+    val address: String,
     var connected: Boolean = false,
     var batteryLevel: String = "-"
 ) {

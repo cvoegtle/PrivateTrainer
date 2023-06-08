@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,16 +30,31 @@ fun BluetoothDevice(bluetoothState: BluetoothState) {
             val lastErrorColor =
                 if (bluetoothState.lastStatus == 0) MaterialTheme.colorScheme.inverseOnSurface else MaterialTheme.colorScheme.onError
             val lastWrittenText =
-                context.getString(R.string.last_text) + ": " + (bluetoothState.lastWrittenValue ?: "-")
+                context.getString(R.string.last_text) + ": " + (bluetoothState.lastWrittenValue
+                    ?: "-")
             val lastNotification =
-                context.getString(R.string.last_notification) + ": " + (bluetoothState.lastReceivedNotifications() ?: "-")
+                context.getString(R.string.last_notification) + ": " + (bluetoothState.lastReceivedNotifications()
+                    ?: "-")
 
-            Text(
-                it.name,
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.inverseOnSurface
-            )
+            Row {
+                Text(
+                    it.name,
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.inverseOnSurface
+                )
+            }
             Row() {
+                Text(
+                    it.address,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.inverseOnSurface
+                )
+            }
+            Divider(
+                color = MaterialTheme.colorScheme.inverseOnSurface,
+                thickness = 1.dp
+            )
+            Row {
                 Text(
                     context.getString(R.string.battery) + ": " + it.batteryLevel,
                     style = MaterialTheme.typography.titleSmall,
@@ -57,14 +73,14 @@ fun BluetoothDevice(bluetoothState: BluetoothState) {
                     color = lastErrorColor
                 )
             }
-            Row() {
+            Row {
                 Text(
                     lastWrittenText,
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.inverseOnSurface
                 )
             }
-            Row() {
+            Row {
                 Text(
                     lastNotification,
                     style = MaterialTheme.typography.titleSmall,

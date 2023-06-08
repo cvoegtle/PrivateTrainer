@@ -121,19 +121,8 @@ class BluetoothCaller(
             value: ByteArray
         ) {
             super.onCharacteristicChanged(gatt, characteristic, value)
-            Log.e("PrivateTrainer", "characteristic value: $value")
+            Log.e("PrivateTrainer", "characteristic value: ${value.toHex()}")
             extractBatteryLevel(characteristic, value)
-
-            commandQueue.runNext()
-        }
-
-        override fun onCharacteristicChanged(
-            gatt: BluetoothGatt?,
-            characteristic: BluetoothGattCharacteristic?
-        ) {
-            super.onCharacteristicChanged(gatt, characteristic)
-            Log.e("PrivateTrainer", "characteristic value: ${characteristic!!.value}")
-            extractBatteryLevel(characteristic, characteristic.value)
 
             commandQueue.runNext()
         }

@@ -106,7 +106,13 @@ class MainActivity : ComponentActivity() {
         bluetoothState: MutableState<BluetoothState>
     ) {
         BluetoothScanner(bluetoothManager, bluetoothState.value).scanForPrivateTrainer {
-            bluetoothState.value = bluetoothState.value.copy(selectedDevice = BleDevice(it.name), connectionStatus = device_found)
+            val foundDevice = BleDevice(it.name, it.address)
+            val updatedBluetoothState = bluetoothState.value.copy(
+                selectedDevice = foundDevice,
+                connectionStatus = device_found
+            )
+            updatedBluetoothState.foundDevices.put(foundDevice.address, foundDevice)
+            bluetoothState.value = updatedBluetoothState
             bluetoothCaller = BluetoothCaller(this, it, bluetoothState)
         }
     }

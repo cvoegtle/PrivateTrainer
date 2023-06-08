@@ -80,7 +80,8 @@ private fun BluetoothDeviceRows(
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.fillMaxWidth()) {
             BluetoothDevice(bluetoothState = bluetoothState)
-
+        }
+        Row(Modifier.fillMaxWidth()) {
             bluetoothState.selectedDevice?.let {
                 if (!it.connected) {
                     Spacer(modifier = Modifier.width(8.dp))

@@ -7,6 +7,7 @@ import java.util.UUID
 
 data class BluetoothState(
     var selectedDevice: BleDevice? = null,
+    var foundDevices: MutableMap<String, BleDevice> = HashMap(),
     var connectionStatus: BluetoothConnectionStatus = BluetoothConnectionStatus.not_connected,
     var characteristics : MutableMap<UUID, String> = HashMap(),
     var  notificationsEnabled: Boolean = true,
