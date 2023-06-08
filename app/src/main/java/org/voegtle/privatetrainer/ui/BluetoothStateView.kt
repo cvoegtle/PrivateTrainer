@@ -58,7 +58,6 @@ fun BluetoothStateView(
             BluetoothDeviceRows(
                 bluetoothState,
                 onButtonClick = fun(command) {
-                    bluetoothMutableState.value = bluetoothState.copy(lastStatus = null)
                     onSendToDeviceClicked(command)
                 },
                 onSearchClicked = { onSearchDeviceClicked(bluetoothMutableState) })

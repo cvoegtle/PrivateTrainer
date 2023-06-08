@@ -83,24 +83,31 @@ class BluetoothCaller(
             super.onCharacteristicChanged(gatt, characteristic, value)
             Log.e("PrivateTrainer", "characteristic value: ${value.toHex()} (\"${value.toString(US_ASCII)}\")")
             extractBatteryLevel(characteristic, value)
-
+            extractLastValue(characteristic, value)
             commandQueue.runNext()
         }
     }
 
     private fun updateStatus(status: Int) {
-        bluetoothState.value = bluetoothState.value.copy(lastStatus = status)
+        if (bluetoothState.value.lastStatus != status) {
+            bluetoothState.value = bluetoothState.value.copy(lastStatus = status)
+        }
     }
 
     private fun extractBatteryLevel(
         characteristic: BluetoothGattCharacteristic,
         value: ByteArray
     ) {
+        if (isBatteryCharacteristic(characteristic) && isBatteryVolume(value)) {
+            val currentState = bluetoothState.value.copy()
+            currentState.selectedDevice?.batteryLevel = value.toString(US_ASCII)
+            bluetoothState.value = currentState
+        }
+    }
+
+    private fun extractLastValue(characteristic: BluetoothGattCharacteristic, value: ByteArray) {
         val currentState = bluetoothState.value.copy()
         currentState.characteristics[characteristic.uuid] = value.toHex()
-        if (isBatteryCharacteristic(characteristic) && isBatteryVolume(value)) {
-            currentState.selectedDevice?.batteryLevel = value.toString(US_ASCII)
-        }
         bluetoothState.value = currentState
     }
 
@@ -149,7 +156,7 @@ class BluetoothCaller(
     }
 
     private fun clearBluetoothState(command: PrivateTrainerCommand) {
-        var clearedState = bluetoothState.value.copy();
+        var clearedState = bluetoothState.value.copy()
         val clearBatteryStatus = command == PrivateTrainerCommand.requestBatteryStatus
         clearedState.clear(clearBatteryStatus)
         bluetoothState.value = clearedState
