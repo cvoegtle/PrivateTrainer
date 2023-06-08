@@ -52,9 +52,7 @@ class MainActivity : ComponentActivity() {
                     displayFeatures = displayFeatures,
                     savedDeviceSettings = settingsStore.retrieveFavoriteSettings(),
                     onSearchDeviceClicked = fun(state: MutableState<BluetoothState>) {
-                        determineBluetoothState(
-                            state
-                        )
+                        determineBluetoothState(state)
                     },
                     onSendToDeviceClicked = fun(
                         command: PrivateTrainerCommand,

@@ -21,8 +21,6 @@
     <string name = "error_bluetooth_access_denied">Permission denied</string>
     <string name = "error_bluetooth_device_not_connected">The bluetooth device is not connected</string>
   <string name="settings_name">Name</string>
-  <string name="disable_notifications">disable notifications</string>
-    <string name="enable_notifications">enable notifications</string>
     <string name="request_battery_status">request battery status</string>
   <string name="update_device_settings">send settings</string>
   <string name="last_error">Last response</string>

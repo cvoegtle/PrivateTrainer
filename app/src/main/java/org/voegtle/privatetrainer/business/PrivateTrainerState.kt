@@ -18,6 +18,20 @@ data class BluetoothState(
     fun lastReceivedNotifications(): String {
         return characteristics.map { e -> e.key.toString().substring(4, 8)+ "=" + e.value}.joinToString(separator = "\n")
     }
+
+    fun clear(includingBattery: Boolean) {
+        characteristics.clear()
+        if (includingBattery) {
+            selectedDevice?.let { it.batteryLevel = BatteryConstants.UNKNOWN_STATUS }
+        }
+    }
+}
+
+class BatteryConstants {
+    companion object {
+        val UNKNOWN_STATUS = "-"
+        val PREFIX = "+VOL"
+    }
 }
 
 enum class BluetoothConnectionStatus {
@@ -25,7 +39,7 @@ enum class BluetoothConnectionStatus {
 }
 
 enum class PrivateTrainerCommand {
-    on, off, update, toggleNotification, requestBatteryStatus, readBattery
+    on, off, update, requestBatteryStatus
 }
 
 fun paddedByteArray(vararg input:Byte):ByteArray {

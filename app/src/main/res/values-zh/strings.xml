@@ -21,8 +21,6 @@
     <string name = "error_bluetooth_access_denied">设置不允许用蓝牙.</string>
     <string name = "error_bluetooth_device_not_connected">机器没有连上蓝牙</string>
   <string name="settings_name">设置名称</string>
-  <string name="disable_notifications">关闭通知</string>
-    <string name="enable_notifications">开通通知</string>
     <string name="request_battery_status">查询电量</string>
   <string name="update_device_settings">发送模式强度和速度的设置n</string>
   <string name="last_error">返回status:</string>

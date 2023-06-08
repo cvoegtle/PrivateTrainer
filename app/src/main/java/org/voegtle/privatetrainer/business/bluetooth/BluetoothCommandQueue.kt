@@ -11,11 +11,6 @@ class BluetoothCommandQueue {
         commandQueue.clear()
     }
 
-    fun schedule(command: () -> Unit) {
-        commandQueue.add(command)
-        run()
-    }
-
     fun scheduleDeferred(command: () -> Unit) {
         commandQueue.add(command)
     }

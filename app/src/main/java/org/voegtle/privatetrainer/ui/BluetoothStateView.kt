@@ -142,16 +142,6 @@ private fun BluetoothDeviceRows(
                 Text(text = context.getString(R.string.request_battery_status))
             }
         }
-        Row(Modifier.fillMaxWidth()) {
-            val textId =
-                if (bluetoothState.notificationsEnabled) R.string.disable_notifications else R.string.enable_notifications
-            TextButton(colors = ButtonDefaults.filledTonalButtonColors(),
-                onClick = {
-                    onButtonClick(PrivateTrainerCommand.toggleNotification)
-                }) {
-                Text(text = context.getString(textId))
-            }
-        }
     }
 
 }
