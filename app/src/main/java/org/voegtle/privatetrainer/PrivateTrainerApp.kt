@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 import org.voegtle.privatetrainer.business.BluetoothState
 import org.voegtle.privatetrainer.business.DeviceSettings
 import org.voegtle.privatetrainer.business.PrivateTrainerCommand
+import org.voegtle.privatetrainer.business.PrivateTrainerDeviceContainer
 import org.voegtle.privatetrainer.ui.AboutScreen
 import org.voegtle.privatetrainer.ui.EmptyComingSoon
 import org.voegtle.privatetrainer.ui.OverviewScreen
@@ -34,7 +35,7 @@ fun PrivateTrainerApp (
     windowSize: WindowSizeClass,
     displayFeatures: List<DisplayFeature>,
     savedDeviceSettings: List<DeviceSettings>,
-    onSearchDeviceClicked: (MutableState<BluetoothState>) -> Unit,
+    onSearchDeviceClicked: (MutableState<PrivateTrainerDeviceContainer>) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
                             settings:DeviceSettings) -> Unit
 ) {
@@ -126,7 +127,7 @@ private fun PrivateTrainerNavigationWrapper(
     savedDeviceSettings: List<DeviceSettings>,
     displayFeatures: List<DisplayFeature>,
     navigationContentPosition: PrivateNavigationContentPosition,
-    onSearchDeviceClicked: (state: MutableState<BluetoothState>) -> Unit,
+    onSearchDeviceClicked: (state: MutableState<PrivateTrainerDeviceContainer>) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
                             settings:DeviceSettings) -> Unit
 ) {
@@ -212,7 +213,7 @@ fun PrivateTrainerAppContent(
     selectedDestination: String,
     navigateToTopLevelDestination: (PrivateTopLevelDestination) -> Unit,
     onDrawerClicked: () -> Unit = {},
-    onSearchDeviceClicked: (state: MutableState<BluetoothState>) -> Unit,
+    onSearchDeviceClicked: (state: MutableState<PrivateTrainerDeviceContainer>) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
                             settings:DeviceSettings) -> Unit
 ) {
@@ -251,7 +252,7 @@ private fun PrivateTrainerNavHost(
     displayFeatures: List<DisplayFeature>,
     navigationType: PrivateNavigationType,
     modifier: Modifier = Modifier,
-    onSearchDeviceClicked: (state: MutableState<BluetoothState>) -> Unit,
+    onSearchDeviceClicked: (state: MutableState<PrivateTrainerDeviceContainer>) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
                             settings:DeviceSettings) -> Unit
 ) {

@@ -1,5 +1,6 @@
 package org.voegtle.privatetrainer.ui
 
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -20,17 +21,26 @@ import androidx.compose.ui.unit.dp
 import org.voegtle.privatetrainer.R
 import org.voegtle.privatetrainer.business.BluetoothConnectionStatus.*
 import org.voegtle.privatetrainer.business.BluetoothState
+import org.voegtle.privatetrainer.business.DeviceStore
 import org.voegtle.privatetrainer.business.PrivateTrainerCommand
+import org.voegtle.privatetrainer.business.PrivateTrainerDeviceContainer
 import org.voegtle.privatetrainer.ui.controls.ErrorView
 import org.voegtle.privatetrainer.ui.controls.PrivateIconButton
 
 @Composable
 fun BluetoothStateView(
-    onSearchDeviceClicked: (MutableState<BluetoothState>) -> Unit,
+    onSearchDeviceClicked: (MutableState<PrivateTrainerDeviceContainer>) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand) -> Unit
 ) {
+    val context = LocalContext.current
+
     val bluetoothMutableState: MutableState<BluetoothState> =
         remember { mutableStateOf(BluetoothState()) }
+
+    val devices: MutableState<PrivateTrainerDeviceContainer> = remember {
+        mutableStateOf(retrieveDevices(context))
+    }
+
     val bluetoothState = bluetoothMutableState.value
     Surface(
         modifier = Modifier
@@ -42,17 +52,17 @@ fun BluetoothStateView(
         } else if (bluetoothState.connectionStatus == disabled) {
             ErrorView(
                 messageId = R.string.error_bluetooth_disabled,
-                onButtonClick = { onSearchDeviceClicked(bluetoothMutableState) }
+                onButtonClick = { onSearchDeviceClicked(devices) }
             )
         } else if (bluetoothState.connectionStatus == permission_denied) {
             ErrorView(
                 messageId = R.string.error_bluetooth_access_denied,
-                onButtonClick = { onSearchDeviceClicked(bluetoothMutableState) }
+                onButtonClick = { onSearchDeviceClicked(devices) }
             )
         } else if (bluetoothState.selectedDevice == null) {
             ErrorView(
                 messageId = R.string.error_bluetooth_device_not_connected,
-                onButtonClick = { onSearchDeviceClicked(bluetoothMutableState) }
+                onButtonClick = { onSearchDeviceClicked(devices) }
             )
         } else {
             BluetoothDeviceRows(
@@ -60,7 +70,7 @@ fun BluetoothStateView(
                 onButtonClick = fun(command) {
                     onSendToDeviceClicked(command)
                 },
-                onSearchClicked = { onSearchDeviceClicked(bluetoothMutableState) })
+                onSearchClicked = { onSearchDeviceClicked(devices) })
         }
 
     }
@@ -143,4 +153,8 @@ private fun BluetoothDeviceRows(
         }
     }
 
+}
+
+fun retrieveDevices(context: Context): PrivateTrainerDeviceContainer {
+    return DeviceStore(context).retrieveDevices()
 }

@@ -14,12 +14,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import org.voegtle.privatetrainer.business.BluetoothState
 import org.voegtle.privatetrainer.business.DeviceSettings
+import org.voegtle.privatetrainer.business.DeviceStore
 import org.voegtle.privatetrainer.business.PrivateTrainerCommand
-import org.voegtle.privatetrainer.business.PrivateTrainerStore
+import org.voegtle.privatetrainer.business.PrivateTrainerDevice
+import org.voegtle.privatetrainer.business.PrivateTrainerDeviceContainer
+import org.voegtle.privatetrainer.business.SettingsStore
 
 @Composable
 fun OverviewScreen(
-    onSearchDeviceClicked: (state: MutableState<BluetoothState>) -> Unit,
+    onSearchDeviceClicked: (devices: MutableState<PrivateTrainerDeviceContainer>, ) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
                             settings: DeviceSettings) -> Unit
 ) {
@@ -42,9 +45,9 @@ fun OverviewScreen(
 }
 
 fun retrieveCurrentDeviceSettings(context: Context): DeviceSettings {
-    return PrivateTrainerStore(context).retrieveCurrentSettings()
+    return SettingsStore(context).retrieveCurrentSettings()
 }
 
 private fun storeCurrentDeviceSettings(context: Context, currentDeviceSettings: DeviceSettings) {
-    PrivateTrainerStore(context).storeSettings(currentDeviceSettings)
+    SettingsStore(context).storeSettings(currentDeviceSettings)
 }

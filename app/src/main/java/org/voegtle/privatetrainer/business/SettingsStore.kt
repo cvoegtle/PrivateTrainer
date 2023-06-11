@@ -3,12 +3,7 @@ package org.voegtle.privatetrainer.business
 import android.content.Context
 import com.google.gson.Gson
 
-private const val CURRENT_STORE = "CURRENT_STORE"
-private const val FAVORITE_STORE = "FAVORITE_STORE"
-private const val SAVED_SETTINGS = "SAVED_SETTINGS"
-private const val CURRENT_SETTINGS = "CURRENT_SETTINGS"
-
-class PrivateTrainerStore(context: Context) {
+class SettingsStore(context: Context) {
     val shorttimePreferences = context.getSharedPreferences(CURRENT_STORE, Context.MODE_PRIVATE)
     val longtimetimePreferences = context.getSharedPreferences(FAVORITE_STORE, Context.MODE_PRIVATE)
     val gson: Gson = Gson()
@@ -51,5 +46,11 @@ class PrivateTrainerStore(context: Context) {
 
     private fun settings2json(deviceSettings: DeviceSettings): String {
         return gson.toJson(deviceSettings)
+    }
+
+    companion object {
+        private const val CURRENT_STORE = "CURRENT_STORE"
+        private const val FAVORITE_STORE = "FAVORITE_STORE"
+        private const val CURRENT_SETTINGS = "CURRENT_SETTINGS"
     }
 }

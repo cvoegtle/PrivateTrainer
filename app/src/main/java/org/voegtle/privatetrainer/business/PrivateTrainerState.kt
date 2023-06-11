@@ -9,14 +9,15 @@ data class BluetoothState(
     var selectedDevice: BleDevice? = null,
     var foundDevices: MutableMap<String, BleDevice> = HashMap(),
     var connectionStatus: BluetoothConnectionStatus = BluetoothConnectionStatus.not_connected,
-    var characteristics : MutableMap<UUID, String> = HashMap(),
-    var  notificationsEnabled: Boolean = true,
+    var characteristics: MutableMap<UUID, String> = HashMap(),
+    var notificationsEnabled: Boolean = true,
     var powerOn: Boolean = false,
     var lastStatus: Int? = null,
-    var lastWrittenValue: String?  = null
+    var lastWrittenValue: String? = null
 ) {
     fun lastReceivedNotifications(): String {
-        return characteristics.map { e -> e.key.toString().substring(4, 8)+ "=" + e.value}.joinToString(separator = "\n")
+        return characteristics.map { e -> e.key.toString().substring(4, 8) + "=" + e.value }
+            .joinToString(separator = "\n")
     }
 
     fun clear(includingBattery: Boolean) {
@@ -42,7 +43,7 @@ enum class PrivateTrainerCommand {
     on, off, update, requestBatteryStatus
 }
 
-fun paddedByteArray(vararg input:Byte):ByteArray {
+fun paddedByteArray(vararg input: Byte): ByteArray {
     val bytes = ArrayList<Byte>()
     for (b in input) {
         bytes.add(b)
@@ -56,11 +57,13 @@ fun paddedByteArray(vararg input:Byte):ByteArray {
     return bytes.toByteArray()
 }
 
-fun ByteArray.toHex(): String = joinToString(separator = ":") { eachByte -> "%02x".format(eachByte) }
+fun ByteArray.toHex(): String =
+    joinToString(separator = ":") { eachByte -> "%02x".format(eachByte) }
+
 class CommandSequence {
     companion object {
         val on = paddedByteArray(0x04, 0x51)
-        val off = paddedByteArray(0x04, 0x50, 0x01, 0x01, 0x01, 0x01 )
+        val off = paddedByteArray(0x04, 0x50, 0x01, 0x01, 0x01, 0x01)
         val battery: ByteArray = "AT+VOL\r\n".toByteArray(Charsets.US_ASCII)
     }
 }
@@ -79,8 +82,14 @@ class CommandType {
 class CharacteristicUuid(val name: String, val uuid: UUID) {
 
     companion object {
-        val battery = CharacteristicUuid(name = "ff03", uuid = UUID.fromString("0000ff03-0000-1000-8000-00805f9b34fb") )
-        val command = CharacteristicUuid(name = "ff02", uuid = UUID.fromString("0000ff02-0000-1000-8000-00805f9b34fb") )
+        val battery = CharacteristicUuid(
+            name = "ff03",
+            uuid = UUID.fromString("0000ff03-0000-1000-8000-00805f9b34fb")
+        )
+        val command = CharacteristicUuid(
+            name = "ff02",
+            uuid = UUID.fromString("0000ff02-0000-1000-8000-00805f9b34fb")
+        )
     }
 }
 
@@ -93,6 +102,26 @@ data class DeviceSettings(
     var interval: Int = 3, // 1 - 200s
 ) : Parcelable {
     fun isFavorite() = id != null
+}
+
+@Parcelize
+data class PrivateTrainerDevice(
+    var givenName: String? = null,
+    var address: String
+) : Parcelable {
+    fun isUnnamed() = givenName == null
+}
+
+@Parcelize
+data class PrivateTrainerDeviceContainer(val devices: MutableMap<String, PrivateTrainerDevice>) :
+    Parcelable {
+    fun add(device: PrivateTrainerDevice) {
+        devices.put(device.address, device)
+    }
+
+    fun containsUnnamedDevices() = devices.any { device -> device.value.isUnnamed() }
+    fun unnamedDevices() =
+        devices.map { entry -> entry.value }.filter { device -> device.isUnnamed() }.toList()
 }
 
 

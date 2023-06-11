@@ -6,7 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import org.voegtle.privatetrainer.business.DeviceSettings
-import org.voegtle.privatetrainer.business.PrivateTrainerStore
+import org.voegtle.privatetrainer.business.SettingsStore
 
 @Composable
 fun FavoriteSettingsManagementScreen(settingsList: List<DeviceSettings>) {
@@ -21,7 +21,7 @@ fun FavoriteSettingsManagementScreen(settingsList: List<DeviceSettings>) {
 }
 
 fun retrieveFavoriteDeviceSettings(context: Context): List<DeviceSettings> {
-    return PrivateTrainerStore(context).retrieveFavoriteSettings()
+    return SettingsStore(context).retrieveFavoriteSettings()
 }
 
 @Preview
