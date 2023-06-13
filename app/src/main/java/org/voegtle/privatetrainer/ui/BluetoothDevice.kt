@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -14,13 +16,47 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import org.voegtle.privatetrainer.R
 import org.voegtle.privatetrainer.business.BluetoothState
+import org.voegtle.privatetrainer.business.PrivateTrainerDevice
+
+@Composable
+fun BluetoothDeviceRow(device: PrivateTrainerDevice) {
+    val context = LocalContext.current
+    val givenName = device.givenName ?: context.getString(R.string.unknown_device)
+    val color =
+        if (device.available) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
+    val background =
+        if (device.available) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceVariant
+
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = background) {
+        Column {
+            Row() {
+                Text(
+                    givenName,
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = color
+                )
+            }
+            Row() {
+                Text(
+                    device.address,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = color
+                )
+            }
+        }
+
+    }
+
+}
 
 @SuppressLint("MissingPermission")
 @Composable
-fun BluetoothDevice(bluetoothState: BluetoothState) {
+fun BluetoothDeviceStatus(bluetoothState: BluetoothState) {
     val context = LocalContext.current
 
-    Column() {
+    Column {
         val selectedDevice = bluetoothState.selectedDevice
         selectedDevice?.let {
             val connectionText =

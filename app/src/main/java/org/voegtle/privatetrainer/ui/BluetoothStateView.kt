@@ -2,6 +2,7 @@ package org.voegtle.privatetrainer.ui
 
 import android.content.Context
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -29,7 +30,7 @@ import org.voegtle.privatetrainer.ui.controls.PrivateIconButton
 
 @Composable
 fun BluetoothStateView(
-    onSearchDeviceClicked: (MutableState<PrivateTrainerDeviceContainer>) -> Unit,
+    onSearchDeviceClicked: (MutableState<BluetoothState>, MutableState<PrivateTrainerDeviceContainer>) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand) -> Unit
 ) {
     val context = LocalContext.current
@@ -43,8 +44,7 @@ fun BluetoothStateView(
 
     val bluetoothState = bluetoothMutableState.value
     Surface(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.inverseSurface
     ) {
         if (bluetoothState.connectionStatus == not_supported) {
@@ -52,32 +52,35 @@ fun BluetoothStateView(
         } else if (bluetoothState.connectionStatus == disabled) {
             ErrorView(
                 messageId = R.string.error_bluetooth_disabled,
-                onButtonClick = { onSearchDeviceClicked(devices) }
+                onButtonClick = { onSearchDeviceClicked(bluetoothMutableState, devices) }
             )
         } else if (bluetoothState.connectionStatus == permission_denied) {
             ErrorView(
                 messageId = R.string.error_bluetooth_access_denied,
-                onButtonClick = { onSearchDeviceClicked(devices) }
+                onButtonClick = { onSearchDeviceClicked(bluetoothMutableState, devices) }
             )
         } else if (bluetoothState.selectedDevice == null) {
             ErrorView(
                 messageId = R.string.error_bluetooth_device_not_connected,
-                onButtonClick = { onSearchDeviceClicked(devices) }
+                onButtonClick = { onSearchDeviceClicked(bluetoothMutableState, devices) }
             )
         } else {
-            BluetoothDeviceRows(
+            Column() {
+                devices.value.devices.values.forEach { device -> BluetoothDeviceRow(device = device)}
+            }
+            BluetoothDeviceRow(
                 bluetoothState,
                 onButtonClick = fun(command) {
                     onSendToDeviceClicked(command)
                 },
-                onSearchClicked = { onSearchDeviceClicked(devices) })
+                onSearchClicked = { onSearchDeviceClicked(bluetoothMutableState, devices) })
         }
 
     }
 }
 
 @Composable
-private fun BluetoothDeviceRows(
+private fun BluetoothDeviceRow(
     bluetoothState: BluetoothState,
     onButtonClick: (command: PrivateTrainerCommand) -> Unit,
     onSearchClicked: () -> Unit
@@ -88,7 +91,7 @@ private fun BluetoothDeviceRows(
         if (bluetoothState.powerOn) PrivateTrainerCommand.off else PrivateTrainerCommand.on
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.fillMaxWidth()) {
-            BluetoothDevice(bluetoothState = bluetoothState)
+            BluetoothDeviceStatus(bluetoothState = bluetoothState)
         }
         Row(Modifier.fillMaxWidth()) {
             bluetoothState.selectedDevice?.let {

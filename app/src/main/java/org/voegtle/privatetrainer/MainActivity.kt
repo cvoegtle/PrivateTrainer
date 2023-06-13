@@ -29,7 +29,6 @@ import org.voegtle.privatetrainer.business.BluetoothConnectionStatus.*
 import org.voegtle.privatetrainer.business.BluetoothState
 import org.voegtle.privatetrainer.business.DeviceSettings
 import org.voegtle.privatetrainer.business.PrivateTrainerCommand
-import org.voegtle.privatetrainer.business.PrivateTrainerDevice
 import org.voegtle.privatetrainer.business.PrivateTrainerDeviceContainer
 import org.voegtle.privatetrainer.business.SettingsStore
 import org.voegtle.privatetrainer.business.bluetooth.*
@@ -53,8 +52,8 @@ class MainActivity : ComponentActivity() {
                     windowSize = windowSize,
                     displayFeatures = displayFeatures,
                     savedDeviceSettings = settingsStore.retrieveFavoriteSettings(),
-                    onSearchDeviceClicked = fun(devices: MutableState<PrivateTrainerDeviceContainer>) {
-                        determineBluetoothState(devices)
+                    onSearchDeviceClicked = fun(bluetoothState: MutableState<BluetoothState>, devices: MutableState<PrivateTrainerDeviceContainer>) {
+                        determineBluetoothState(bluetoothState, devices)
                     },
                     onSendToDeviceClicked = fun(
                         command: PrivateTrainerCommand,
@@ -74,7 +73,7 @@ class MainActivity : ComponentActivity() {
         bluetoothCaller!!.sendToDevice(command, settings)
     }
 
-    private fun determineBluetoothState(devices: MutableState<PrivateTrainerDeviceContainer>) {
+    private fun determineBluetoothState(bluetoothState: MutableState<BluetoothState>, devices: MutableState<PrivateTrainerDeviceContainer>) {
 
         val bluetoothManager: BluetoothManager = getSystemService(BluetoothManager::class.java)
         val bluetoothAdapter: BluetoothAdapter? = bluetoothManager.adapter
@@ -93,7 +92,7 @@ class MainActivity : ComponentActivity() {
                     bluetoothState.value.connectionStatus = permission_denied
                 }
                 doOnGranted {
-                    scanBluetoothDeviceStatus(bluetoothManager, devices)
+                    scanBluetoothDeviceStatus(bluetoothManager, bluetoothState, devices)
                 }
             }
         }
@@ -103,14 +102,17 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("MissingPermission")
     private fun scanBluetoothDeviceStatus(
         bluetoothManager: BluetoothManager,
-        bluetoothState: MutableState<PrivateTrainerDeviceContainer>
+        bluetoothState: MutableState<BluetoothState>,
+        devices: MutableState<PrivateTrainerDeviceContainer>
     ) {
-        BluetoothScanner(bluetoothManager, bluetoothState.value).scanForPrivateTrainer {
-            val foundDevice = PrivateTrainerDevice(it.name, it.address)
+        val resettedDevices = devices.value.copy()
+        resettedDevices.resetAvailabilty()
+        devices.value = resettedDevices
 
-            updatedBluetoothState.foundDevices.put(foundDevice.address, foundDevice)
-            bluetoothState.value = updatedBluetoothState
-            bluetoothCaller = BluetoothCaller(this, it, bluetoothState)
+        BluetoothScanner(bluetoothManager, bluetoothState.value).scanForPrivateTrainer {
+            val updatedDevices = devices.value.copy()
+            updatedDevices.found(it.address)
+            devices.value = updatedDevices
         }
     }
 

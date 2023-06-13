@@ -22,7 +22,8 @@ import org.voegtle.privatetrainer.business.SettingsStore
 
 @Composable
 fun OverviewScreen(
-    onSearchDeviceClicked: (devices: MutableState<PrivateTrainerDeviceContainer>, ) -> Unit,
+    onSearchDeviceClicked: (bluetoothState: MutableState<BluetoothState>,
+                            devices: MutableState<PrivateTrainerDeviceContainer>, ) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
                             settings: DeviceSettings) -> Unit
 ) {

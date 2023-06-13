@@ -107,7 +107,8 @@ data class DeviceSettings(
 @Parcelize
 data class PrivateTrainerDevice(
     var givenName: String? = null,
-    var address: String
+    var address: String,
+    var available: Boolean = false
 ) : Parcelable {
     fun isUnnamed() = givenName == null
 }
@@ -115,13 +116,23 @@ data class PrivateTrainerDevice(
 @Parcelize
 data class PrivateTrainerDeviceContainer(val devices: MutableMap<String, PrivateTrainerDevice>) :
     Parcelable {
-    fun add(device: PrivateTrainerDevice) {
+    fun found(address: String) {
+        var device = devices.get(address)
+        if (device == null) {
+            device = PrivateTrainerDevice(address=address)
+        }
+        device.available = true
         devices.put(device.address, device)
+    }
+
+    fun resetAvailabilty() {
+        devices.forEach { entry -> entry.value.available = false }
     }
 
     fun containsUnnamedDevices() = devices.any { device -> device.value.isUnnamed() }
     fun unnamedDevices() =
         devices.map { entry -> entry.value }.filter { device -> device.isUnnamed() }.toList()
+
 }
 
 

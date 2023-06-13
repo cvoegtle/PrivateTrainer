@@ -30,4 +30,5 @@
   <string name="last_notification">Zuletzt empfangen</string>
     <string name="version">Version</string>
     <string name="created_at">Erstellt am</string>
+    <string name="unknown_device">Unbekannter Trainer</string>
 </resources>

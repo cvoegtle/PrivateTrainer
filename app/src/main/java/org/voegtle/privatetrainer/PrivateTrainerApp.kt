@@ -35,7 +35,7 @@ fun PrivateTrainerApp (
     windowSize: WindowSizeClass,
     displayFeatures: List<DisplayFeature>,
     savedDeviceSettings: List<DeviceSettings>,
-    onSearchDeviceClicked: (MutableState<PrivateTrainerDeviceContainer>) -> Unit,
+    onSearchDeviceClicked: (bluetoothState: MutableState<BluetoothState>, MutableState<PrivateTrainerDeviceContainer>) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
                             settings:DeviceSettings) -> Unit
 ) {
@@ -127,7 +127,8 @@ private fun PrivateTrainerNavigationWrapper(
     savedDeviceSettings: List<DeviceSettings>,
     displayFeatures: List<DisplayFeature>,
     navigationContentPosition: PrivateNavigationContentPosition,
-    onSearchDeviceClicked: (state: MutableState<PrivateTrainerDeviceContainer>) -> Unit,
+    onSearchDeviceClicked: (bluetoothState: MutableState<BluetoothState>,
+                            devices: MutableState<PrivateTrainerDeviceContainer>) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
                             settings:DeviceSettings) -> Unit
 ) {
@@ -213,7 +214,8 @@ fun PrivateTrainerAppContent(
     selectedDestination: String,
     navigateToTopLevelDestination: (PrivateTopLevelDestination) -> Unit,
     onDrawerClicked: () -> Unit = {},
-    onSearchDeviceClicked: (state: MutableState<PrivateTrainerDeviceContainer>) -> Unit,
+    onSearchDeviceClicked: (bluetoothState: MutableState<BluetoothState>,
+                            devices: MutableState<PrivateTrainerDeviceContainer>) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
                             settings:DeviceSettings) -> Unit
 ) {
@@ -252,7 +254,8 @@ private fun PrivateTrainerNavHost(
     displayFeatures: List<DisplayFeature>,
     navigationType: PrivateNavigationType,
     modifier: Modifier = Modifier,
-    onSearchDeviceClicked: (state: MutableState<PrivateTrainerDeviceContainer>) -> Unit,
+    onSearchDeviceClicked: (bluetoothState: MutableState<BluetoothState>,
+                            devices: MutableState<PrivateTrainerDeviceContainer>) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
                             settings:DeviceSettings) -> Unit
 ) {
