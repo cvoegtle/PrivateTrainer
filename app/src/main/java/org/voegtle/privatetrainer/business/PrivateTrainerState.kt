@@ -10,7 +10,6 @@ data class BluetoothState(
     var foundDevices: MutableMap<String, BleDevice> = HashMap(),
     var connectionStatus: BluetoothConnectionStatus = BluetoothConnectionStatus.not_connected,
     var characteristics: MutableMap<UUID, String> = HashMap(),
-    var notificationsEnabled: Boolean = true,
     var powerOn: Boolean = false,
     var lastStatus: Int? = null,
     var lastWrittenValue: String? = null

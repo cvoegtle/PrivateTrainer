@@ -5,6 +5,8 @@ import android.bluetooth.*
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.MutableState
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import org.voegtle.privatetrainer.business.*
 import java.nio.charset.StandardCharsets.US_ASCII
 import java.util.*
@@ -39,11 +41,7 @@ class BluetoothCaller(
             }
 
             if (connected != selectedDevice.connected) {
-                bluetoothState.value =
-                    bluetoothState.value.copy(
-                        selectedDevice = selectedDevice.copy(connected = connected),
-                        lastStatus = status
-                    )
+                updateDeviceStatus(connected, status)
             }
 
             if (connected) {
@@ -81,16 +79,13 @@ class BluetoothCaller(
             value: ByteArray
         ) {
             super.onCharacteristicChanged(gatt, characteristic, value)
-            Log.e("PrivateTrainer", "characteristic value: ${value.toHex()} (\"${value.toString(US_ASCII)}\")")
+            Log.e(
+                "PrivateTrainer",
+                "characteristic value: ${value.toHex()} (\"${value.toString(US_ASCII)}\")"
+            )
             extractBatteryLevel(characteristic, value)
             extractLastValue(characteristic, value)
             commandQueue.runNext()
-        }
-    }
-
-    private fun updateStatus(status: Int) {
-        if (bluetoothState.value.lastStatus != status) {
-            bluetoothState.value = bluetoothState.value.copy(lastStatus = status)
         }
     }
 
@@ -101,14 +96,14 @@ class BluetoothCaller(
         if (isBatteryCharacteristic(characteristic) && isBatteryVolume(value)) {
             val currentState = bluetoothState.value.copy()
             currentState.selectedDevice?.batteryLevel = value.toString(US_ASCII)
-            bluetoothState.value = currentState
+            updateOnMainThread(currentState)
         }
     }
 
     private fun extractLastValue(characteristic: BluetoothGattCharacteristic, value: ByteArray) {
         val currentState = bluetoothState.value.copy()
         currentState.characteristics[characteristic.uuid] = value.toHex()
-        bluetoothState.value = currentState
+        updateOnMainThread(currentState)
     }
 
     private fun isBatteryCharacteristic(characteristic: BluetoothGattCharacteristic) =
@@ -159,7 +154,7 @@ class BluetoothCaller(
         var clearedState = bluetoothState.value.copy()
         val clearBatteryStatus = command == PrivateTrainerCommand.requestBatteryStatus
         clearedState.clear(clearBatteryStatus)
-        bluetoothState.value = clearedState
+        updateOnMainThread(clearedState)
     }
 
 
@@ -177,14 +172,14 @@ class BluetoothCaller(
     private fun switchOn() {
         findPrivateTrainerCharacteristic()?.let {
             writeCharacteristic(it, CommandSequence.on)
-            bluetoothState.value = bluetoothState.value.copy(powerOn = true)
+            updatePowerOnTo(true)
         }
     }
 
     private fun switchOff() {
         findPrivateTrainerCharacteristic()?.let {
             writeCharacteristic(it, CommandSequence.off)
-            bluetoothState.value = bluetoothState.value.copy(powerOn = false)
+            updatePowerOnTo(false)
         }
     }
 
@@ -202,10 +197,17 @@ class BluetoothCaller(
         val valueAccepted = characteristic.setValue(byteSequence)
         gatt!!.writeCharacteristic(characteristic)
         if (valueAccepted) {
-            bluetoothState.value =
-                bluetoothState.value.copy(lastWrittenValue = byteSequence.toHex())
+            updateLastWritten(byteSequence)
         }
-        Log.w("BluetoothCaller", "write to ${characteristic.uuid} value=${byteSequence.toHex()} ${if (valueAccepted) "" else "not"} accepted")
+        Log.w(
+            "BluetoothCaller",
+            "write to ${characteristic.uuid} value=${byteSequence.toHex()} ${if (valueAccepted) "" else "not"} accepted"
+        )
+    }
+
+    private fun updateLastWritten(byteSequence: ByteArray) {
+        val newBluetoothState = bluetoothState.value.copy(lastWrittenValue = byteSequence.toHex())
+        updateOnMainThread(newBluetoothState)
     }
 
     private fun findPrivateTrainerCharacteristic(): BluetoothGattCharacteristic? {
@@ -237,7 +239,6 @@ class BluetoothCaller(
                 }
             }
 
-            bluetoothState.value = bluetoothState.value.copy(notificationsEnabled = true)
             commandQueue.runNext()
         }
     }
@@ -257,5 +258,38 @@ class BluetoothCaller(
 
     fun isConnected(): Boolean =
         gatt != null && bluetoothState.value.selectedDevice?.connected ?: false
+
+    private fun updatePowerOnTo(powerOn: Boolean) {
+        val newBluetoothState = bluetoothState.value.copy(powerOn = powerOn)
+        updateOnMainThread(newBluetoothState)
+    }
+
+
+    private fun updateDeviceStatus(
+        connected: Boolean,
+        status: Int
+    ) {
+        val selectedDevice = bluetoothState.value.selectedDevice!!
+        val newBluetoothState =
+            bluetoothState.value.copy(
+                selectedDevice = selectedDevice.copy(connected = connected),
+                lastStatus = status
+            )
+        updateOnMainThread(newBluetoothState)
+    }
+
+    private fun updateStatus(status: Int) {
+        if (bluetoothState.value.lastStatus != status) {
+            val newBluetoothState = bluetoothState.value.copy(lastStatus = status)
+            updateOnMainThread(newBluetoothState)
+        }
+    }
+
+    private fun updateOnMainThread(newBluetoothState: BluetoothState) {
+        MainScope().launch {
+            bluetoothState.value = newBluetoothState
+        }
+    }
+
 
 }

@@ -107,9 +107,7 @@ class MainActivity : ComponentActivity() {
         bluetoothState: MutableState<BluetoothState>,
         devices: MutableState<PrivateTrainerDeviceContainer>
     ) {
-        val resettedDevices = devices.value.copy()
-        resettedDevices.resetAvailabilty()
-        devices.value = resettedDevices
+        resetDevices(devices)
 
         BluetoothScanner(bluetoothManager, bluetoothState.value).scanForPrivateTrainer {
             MainScope().launch {
@@ -118,6 +116,14 @@ class MainActivity : ComponentActivity() {
                 devices.value = updatedDevices
                 bluetoothState.value = bluetoothState.value.copy(connectionStatus = device_found)
             }
+        }
+    }
+
+    private fun resetDevices(devices: MutableState<PrivateTrainerDeviceContainer>) {
+        MainScope().launch {
+            val resettedDevices = devices.value.copy()
+            resettedDevices.resetAvailabilty()
+            devices.value = resettedDevices
         }
     }
 
