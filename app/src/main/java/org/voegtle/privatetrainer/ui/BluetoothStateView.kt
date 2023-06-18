@@ -2,7 +2,6 @@ package org.voegtle.privatetrainer.ui
 
 import android.content.Context
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -68,19 +67,21 @@ fun BluetoothStateView(
             Column() {
                 devices.value.devices.values.forEach { device -> BluetoothDeviceRow(device = device)}
             }
-            BluetoothDeviceRow(
+/*            BluetoothDeviceState(
                 bluetoothState,
                 onButtonClick = fun(command) {
                     onSendToDeviceClicked(command)
                 },
                 onSearchClicked = { onSearchDeviceClicked(bluetoothMutableState, devices) })
+
+ */
         }
 
     }
 }
 
 @Composable
-private fun BluetoothDeviceRow(
+private fun BluetoothDeviceState(
     bluetoothState: BluetoothState,
     onButtonClick: (command: PrivateTrainerCommand) -> Unit,
     onSearchClicked: () -> Unit

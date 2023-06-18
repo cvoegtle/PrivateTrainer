@@ -10,6 +10,8 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -32,10 +34,11 @@ fun BluetoothDeviceRow(device: PrivateTrainerDevice) {
         color = background) {
         Column {
             Row() {
-                Text(
-                    givenName,
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = color
+                TextField (
+                    value = givenName,
+                    onValueChange = { name -> device.copy(givenName=name )},
+                    textStyle = MaterialTheme.typography.headlineSmall,
+                    label = { Text(context.getString(R.string.settings_name)) }
                 )
             }
             Row() {
