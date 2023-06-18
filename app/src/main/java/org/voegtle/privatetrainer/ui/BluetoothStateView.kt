@@ -59,7 +59,7 @@ fun BluetoothStateView(
                 messageId = R.string.error_bluetooth_access_denied,
                 onButtonClick = { onSearchDeviceClicked(bluetoothMutableState, devices) }
             )
-        } else if (bluetoothState.selectedDevice == null) {
+        } else if (devices.value.isEmpty()) {
             ErrorView(
                 messageId = R.string.error_bluetooth_device_not_connected,
                 onButtonClick = { onSearchDeviceClicked(bluetoothMutableState, devices) }

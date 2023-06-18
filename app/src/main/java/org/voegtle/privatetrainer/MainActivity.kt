@@ -25,6 +25,8 @@ import com.lorenzofelletti.permissions.dispatcher.dsl.checkPermissions
 import com.lorenzofelletti.permissions.dispatcher.dsl.doOnDenied
 import com.lorenzofelletti.permissions.dispatcher.dsl.doOnGranted
 import com.lorenzofelletti.permissions.dispatcher.dsl.withRequestCode
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import org.voegtle.privatetrainer.business.BluetoothConnectionStatus.*
 import org.voegtle.privatetrainer.business.BluetoothState
 import org.voegtle.privatetrainer.business.DeviceSettings
@@ -110,9 +112,12 @@ class MainActivity : ComponentActivity() {
         devices.value = resettedDevices
 
         BluetoothScanner(bluetoothManager, bluetoothState.value).scanForPrivateTrainer {
-            val updatedDevices = devices.value.copy()
-            updatedDevices.found(it.address)
-            devices.value = updatedDevices
+            MainScope().launch {
+                val updatedDevices = devices.value.copy()
+                updatedDevices.found(it.address)
+                devices.value = updatedDevices
+                bluetoothState.value = bluetoothState.value.copy(connectionStatus = device_found)
+            }
         }
     }
 

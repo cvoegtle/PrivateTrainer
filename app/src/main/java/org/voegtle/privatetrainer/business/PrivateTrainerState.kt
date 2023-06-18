@@ -133,6 +133,8 @@ data class PrivateTrainerDeviceContainer(val devices: MutableMap<String, Private
     fun unnamedDevices() =
         devices.map { entry -> entry.value }.filter { device -> device.isUnnamed() }.toList()
 
+    fun isEmpty() = devices.isEmpty()
+
 }
 
 
