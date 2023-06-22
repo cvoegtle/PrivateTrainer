@@ -9,7 +9,8 @@ class DeviceStore(context: Context) {
 
     fun store(device:PrivateTrainerDevice) {
         val editor = devicePreferences.edit()
-        editor.putString(device.address, devices2json(device))
+        val cleanedDevice = device.copy(available = false)
+        editor.putString(device.address, devices2json(cleanedDevice))
         editor.apply()
     }
 

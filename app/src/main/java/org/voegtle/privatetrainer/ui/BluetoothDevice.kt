@@ -13,17 +13,22 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import org.voegtle.privatetrainer.R
 import org.voegtle.privatetrainer.business.BluetoothState
+import org.voegtle.privatetrainer.business.DeviceStore
 import org.voegtle.privatetrainer.business.PrivateTrainerDevice
 
 @Composable
-fun BluetoothDeviceRow(device: PrivateTrainerDevice) {
+fun BluetoothDeviceRow(device: PrivateTrainerDevice,
+                       onDeviceChanged: (updateDevice: PrivateTrainerDevice) -> Unit) {
     val context = LocalContext.current
-    val givenName = device.givenName ?: context.getString(R.string.unknown_device)
+    var givenName = remember { mutableStateOf(device.givenName ?: context.getString(R.string.unknown_device)) }
     val color =
         if (device.available) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
     val background =
@@ -35,8 +40,15 @@ fun BluetoothDeviceRow(device: PrivateTrainerDevice) {
         Column {
             Row() {
                 TextField (
-                    value = givenName,
-                    onValueChange = { name -> device.copy(givenName=name )},
+                    value = givenName.value,
+                    modifier= Modifier.onFocusChanged { focusState ->
+                        if (!focusState.isFocused) {
+                            if (device.givenName != givenName.value) {
+                                onDeviceChanged(device.copy(givenName = givenName.value))
+                            }
+                        }
+                    },
+                    onValueChange = { givenName.value = it },
                     textStyle = MaterialTheme.typography.headlineSmall,
                     label = { Text(context.getString(R.string.settings_name)) }
                 )

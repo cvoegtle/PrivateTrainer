@@ -121,6 +121,10 @@ data class PrivateTrainerDeviceContainer(val devices: MutableMap<String, Private
             device = PrivateTrainerDevice(address=address)
         }
         device.available = true
+        put(device)
+    }
+
+    fun put(device: PrivateTrainerDevice) {
         devices.put(device.address, device)
     }
 

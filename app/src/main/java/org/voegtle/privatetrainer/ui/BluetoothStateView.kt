@@ -23,6 +23,7 @@ import org.voegtle.privatetrainer.business.BluetoothConnectionStatus.*
 import org.voegtle.privatetrainer.business.BluetoothState
 import org.voegtle.privatetrainer.business.DeviceStore
 import org.voegtle.privatetrainer.business.PrivateTrainerCommand
+import org.voegtle.privatetrainer.business.PrivateTrainerDevice
 import org.voegtle.privatetrainer.business.PrivateTrainerDeviceContainer
 import org.voegtle.privatetrainer.ui.controls.ErrorView
 import org.voegtle.privatetrainer.ui.controls.PrivateIconButton
@@ -65,7 +66,13 @@ fun BluetoothStateView(
             )
         } else {
             Column() {
-                devices.value.devices.values.forEach { device -> BluetoothDeviceRow(device = device)}
+                val privateTrainerDevices = devices.value
+                privateTrainerDevices.devices.values.forEach { device -> BluetoothDeviceRow(device = device,
+                     onDeviceChanged = {
+                         privateTrainerDevices.put(it)
+                         storeDevice(context, it)
+                     }
+                )}
             }
 /*            BluetoothDeviceState(
                 bluetoothState,
@@ -161,4 +168,8 @@ private fun BluetoothDeviceState(
 
 fun retrieveDevices(context: Context): PrivateTrainerDeviceContainer {
     return DeviceStore(context).retrieveDevices()
+}
+
+fun storeDevice(context: Context, device: PrivateTrainerDevice) {
+    DeviceStore(context).store(device)
 }
