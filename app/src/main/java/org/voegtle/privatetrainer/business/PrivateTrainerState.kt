@@ -107,7 +107,8 @@ data class DeviceSettings(
 data class PrivateTrainerDevice(
     var givenName: String? = null,
     var address: String,
-    var available: Boolean = false
+    var available: Boolean = false,
+    var autoConnect: Boolean = false
 ) : Parcelable {
     fun isUnnamed() = givenName == null
 }
@@ -137,7 +138,7 @@ data class PrivateTrainerDeviceContainer(val devices: MutableMap<String, Private
         devices.map { entry -> entry.value }.filter { device -> device.isUnnamed() }.toList()
 
     fun isEmpty() = devices.isEmpty()
-
+    fun size() = devices.size
 }
 
 

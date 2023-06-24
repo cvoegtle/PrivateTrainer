@@ -30,7 +30,9 @@ import kotlinx.coroutines.launch
 import org.voegtle.privatetrainer.business.BluetoothConnectionStatus.*
 import org.voegtle.privatetrainer.business.BluetoothState
 import org.voegtle.privatetrainer.business.DeviceSettings
+import org.voegtle.privatetrainer.business.DeviceStore
 import org.voegtle.privatetrainer.business.PrivateTrainerCommand
+import org.voegtle.privatetrainer.business.PrivateTrainerDevice
 import org.voegtle.privatetrainer.business.PrivateTrainerDeviceContainer
 import org.voegtle.privatetrainer.business.SettingsStore
 import org.voegtle.privatetrainer.business.bluetooth.*
@@ -44,6 +46,7 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ensureThreeDevices()
         setContent {
             PrivateTrainerTheme {
                 val windowSize = calculateWindowSizeClass(this)
@@ -129,6 +132,16 @@ class MainActivity : ComponentActivity() {
 
     fun isBluetoothDeviceConnected() = bluetoothCaller?.isConnected() ?: false
 
+    private fun ensureThreeDevices() {
+        val devices = DeviceStore(this).retrieveDevices()
+        for (i in devices.size() .. 2) {
+            val device = PrivateTrainerDevice(givenName = "Device $i", address = "address $i")
+            DeviceStore(this).store(device)
+        }
+
+    }
+
+
 }
 
 @Composable
@@ -156,3 +169,5 @@ fun DefaultPreview() {
         }
     }
 }
+
+

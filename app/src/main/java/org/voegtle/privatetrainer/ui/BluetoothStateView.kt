@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.voegtle.privatetrainer.R
 import org.voegtle.privatetrainer.business.BluetoothConnectionStatus.*
@@ -93,9 +94,11 @@ private fun BluetoothDeviceList(devices: MutableState<PrivateTrainerDeviceContai
         }
     }
 
-    deviceInEdit.value?.let {
+    deviceInEdit.value?.let { it ->
         val context = LocalContext.current
         val givenName = it.givenName ?: context.getString(R.string.unknown_device)
+        val nameUnderConstruction = remember { mutableStateOf(givenName) }
+        val autoConnectUnderConstruction = remember { mutableStateOf(it.autoConnect) }
 
         AlertDialog(
             onDismissRequest = { deviceInEdit.value = null },
@@ -107,16 +110,37 @@ private fun BluetoothDeviceList(devices: MutableState<PrivateTrainerDeviceContai
             confirmButton = {
                 Button(
                     onClick = {
-//            privateTrainerDevices.put(it)
-//            storeDevice(context, it)
+                        it.givenName = nameUnderConstruction.value
+                        it.autoConnect = autoConnectUnderConstruction.value
+                        privateTrainerDevices.put(it)
+                        storeDevice(context, it)
                         deviceInEdit.value = null
+                        devices.value = privateTrainerDevices.copy()
                     }) {
                     Text(context.getString(R.string.submit))
                 }
             },
             title = { Text(it.address) },
-            text = { Text(givenName) },
-            )
+            text = {
+                Column {
+                    Row {
+                        TextField(
+                            value = nameUnderConstruction.value,
+                            onValueChange = { changedName ->
+                                nameUnderConstruction.value = changedName
+                            })
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Checkbox(
+                            checked = autoConnectUnderConstruction.value,
+                            onCheckedChange = { changedFavorite ->
+                                autoConnectUnderConstruction.value = changedFavorite
+                            })
+                        Text(context.getString(R.string.auto_connect))
+                    }
+                }
+            },
+        )
     }
 }
 

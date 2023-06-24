@@ -33,4 +33,5 @@
     <string name="unknown_device">Unknown Trainer</string>
     <string name="submit">submit</string>
     <string name="cancel">cancel</string>
+    <string name="auto_connect">connect automatically</string>
 </resources>
