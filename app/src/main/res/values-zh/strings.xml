@@ -31,4 +31,6 @@
     <string name="version">Version</string>
     <string name="created_at">Created at</string>
     <string name="unknown_device">Unknown Trainer</string>
+    <string name="submit">submit</string>
+    <string name="cancel">cancel</string>
 </resources>

@@ -65,25 +65,58 @@ fun BluetoothStateView(
                 onButtonClick = { onSearchDeviceClicked(bluetoothMutableState, devices) }
             )
         } else {
-            Column() {
-                val privateTrainerDevices = devices.value
-                privateTrainerDevices.devices.values.forEach { device -> BluetoothDeviceRow(device = device,
-                     onDeviceChanged = {
-                         privateTrainerDevices.put(it)
-                         storeDevice(context, it)
-                     }
-                )}
-            }
-/*            BluetoothDeviceState(
-                bluetoothState,
-                onButtonClick = fun(command) {
-                    onSendToDeviceClicked(command)
-                },
-                onSearchClicked = { onSearchDeviceClicked(bluetoothMutableState, devices) })
+            BluetoothDeviceList(devices)
+            /*            BluetoothDeviceState(
+                            bluetoothState,
+                            onButtonClick = fun(command) {
+                                onSendToDeviceClicked(command)
+                            },
+                            onSearchClicked = { onSearchDeviceClicked(bluetoothMutableState, devices) })
 
- */
+             */
         }
 
+    }
+}
+
+@Composable
+private fun BluetoothDeviceList(devices: MutableState<PrivateTrainerDeviceContainer>) {
+    val deviceInEdit: MutableState<PrivateTrainerDevice?> = remember { mutableStateOf(null) }
+    val privateTrainerDevices = devices.value
+    Column() {
+        privateTrainerDevices.devices.values.forEach { device ->
+            BluetoothDeviceRow(device = device,
+                onEditClicked = {
+                    deviceInEdit.value = it
+                }
+            )
+        }
+    }
+
+    deviceInEdit.value?.let {
+        val context = LocalContext.current
+        val givenName = it.givenName ?: context.getString(R.string.unknown_device)
+
+        AlertDialog(
+            onDismissRequest = { deviceInEdit.value = null },
+            dismissButton = {
+                Button(onClick = { deviceInEdit.value = null }) {
+                    Text(context.getString(R.string.cancel))
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+//            privateTrainerDevices.put(it)
+//            storeDevice(context, it)
+                        deviceInEdit.value = null
+                    }) {
+                    Text(context.getString(R.string.submit))
+                }
+            },
+            title = { Text(it.address) },
+            text = { Text(givenName) },
+            )
     }
 }
 
@@ -118,11 +151,11 @@ private fun BluetoothDeviceState(
 
             Spacer(modifier = Modifier.width(8.dp))
 
-            Surface (
+            Surface(
                 color = MaterialTheme.colorScheme.secondaryContainer,
                 modifier = Modifier.width(45.dp),
                 shape = RoundedCornerShape(4.dp)
-            ){
+            ) {
                 Icon(
                     imageVector = Icons.Outlined.Lightbulb,
                     contentDescription = stringResource(

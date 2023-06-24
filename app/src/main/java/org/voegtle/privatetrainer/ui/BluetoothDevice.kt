@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -25,10 +28,12 @@ import org.voegtle.privatetrainer.business.DeviceStore
 import org.voegtle.privatetrainer.business.PrivateTrainerDevice
 
 @Composable
-fun BluetoothDeviceRow(device: PrivateTrainerDevice,
-                       onDeviceChanged: (updateDevice: PrivateTrainerDevice) -> Unit) {
+fun BluetoothDeviceRow(
+    device: PrivateTrainerDevice,
+    onEditClicked: (device: PrivateTrainerDevice) -> Unit
+) {
     val context = LocalContext.current
-    var givenName = remember { mutableStateOf(device.givenName ?: context.getString(R.string.unknown_device)) }
+    val givenName = device.givenName ?: context.getString(R.string.unknown_device)
     val color =
         if (device.available) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
     val background =
@@ -36,29 +41,24 @@ fun BluetoothDeviceRow(device: PrivateTrainerDevice,
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = background) {
-        Column {
-            Row() {
-                TextField (
-                    value = givenName.value,
-                    modifier= Modifier.onFocusChanged { focusState ->
-                        if (!focusState.isFocused) {
-                            if (device.givenName != givenName.value) {
-                                onDeviceChanged(device.copy(givenName = givenName.value))
-                            }
-                        }
-                    },
-                    onValueChange = { givenName.value = it },
-                    textStyle = MaterialTheme.typography.headlineSmall,
-                    label = { Text(context.getString(R.string.settings_name)) }
-                )
-            }
-            Row() {
-                Text(
-                    device.address,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = color
-                )
+        color = background
+    ) {
+        Button(onClick = { onEditClicked(device) }, colors = ButtonDefaults.filledTonalButtonColors()) {
+            Column() {
+                Row() {
+                    Text(
+                        givenName,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = color
+                    )
+                }
+                Row() {
+                    Text(
+                        device.address,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = color
+                    )
+                }
             }
         }
 
