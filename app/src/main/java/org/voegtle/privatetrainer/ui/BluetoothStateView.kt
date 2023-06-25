@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.voegtle.privatetrainer.R
 import org.voegtle.privatetrainer.business.BluetoothConnectionStatus.*
@@ -88,7 +87,7 @@ private fun BluetoothDeviceList(devices: MutableState<PrivateTrainerDeviceContai
         privateTrainerDevices.devices.values.forEach { device ->
             BluetoothDeviceRow(device = device,
                 onEditClicked = {
-                    deviceInEdit.value = it
+                    deviceInEdit.value = it.copy()
                 }
             )
         }
@@ -112,8 +111,9 @@ private fun BluetoothDeviceList(devices: MutableState<PrivateTrainerDeviceContai
                     onClick = {
                         it.givenName = nameUnderConstruction.value
                         it.autoConnect = autoConnectUnderConstruction.value
-                        privateTrainerDevices.put(it)
-                        storeDevice(context, it)
+
+                        updateAndStoreDevices(context, privateTrainerDevices, it)
+
                         deviceInEdit.value = null
                         devices.value = privateTrainerDevices.copy()
                     }) {
@@ -143,6 +143,7 @@ private fun BluetoothDeviceList(devices: MutableState<PrivateTrainerDeviceContai
         )
     }
 }
+
 
 @Composable
 private fun BluetoothDeviceState(
@@ -221,6 +222,22 @@ private fun BluetoothDeviceState(
         }
     }
 
+}
+
+private fun updateAndStoreDevices(
+    context: Context,
+    privateTrainerDevices: PrivateTrainerDeviceContainer,
+    changedDevice: PrivateTrainerDevice,
+) {
+    if (changedDevice.autoConnect) {
+        privateTrainerDevices.devices.filterValues { it.autoConnect }
+            .forEach { (key, device) ->
+                device.autoConnect = false
+                storeDevice(context, device)
+             }
+    }
+    privateTrainerDevices.put(changedDevice)
+    storeDevice(context, changedDevice)
 }
 
 fun retrieveDevices(context: Context): PrivateTrainerDeviceContainer {
