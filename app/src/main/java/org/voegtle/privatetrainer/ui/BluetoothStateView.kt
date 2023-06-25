@@ -47,25 +47,30 @@ fun BluetoothStateView(
         modifier = Modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.inverseSurface
     ) {
-        if (bluetoothState.connectionStatus == not_supported) {
-            ErrorView(messageId = R.string.error_bluetooth_not_supported)
-        } else if (bluetoothState.connectionStatus == disabled) {
-            ErrorView(
-                messageId = R.string.error_bluetooth_disabled,
-                onButtonClick = { onSearchDeviceClicked(bluetoothMutableState, devices) }
-            )
-        } else if (bluetoothState.connectionStatus == permission_denied) {
-            ErrorView(
-                messageId = R.string.error_bluetooth_access_denied,
-                onButtonClick = { onSearchDeviceClicked(bluetoothMutableState, devices) }
-            )
-        } else if (devices.value.isEmpty()) {
-            ErrorView(
-                messageId = R.string.error_bluetooth_device_not_connected,
-                onButtonClick = { onSearchDeviceClicked(bluetoothMutableState, devices) }
-            )
-        } else {
-            BluetoothDeviceList(devices)
+        Column {
+            Row {
+                if (bluetoothState.connectionStatus == not_supported) {
+                    ErrorView(messageId = R.string.error_bluetooth_not_supported)
+                } else if (bluetoothState.connectionStatus == disabled) {
+                    ErrorView(
+                        messageId = R.string.error_bluetooth_disabled,
+                        onButtonClick = { onSearchDeviceClicked(bluetoothMutableState, devices) }
+                    )
+                } else if (bluetoothState.connectionStatus == permission_denied) {
+                    ErrorView(
+                        messageId = R.string.error_bluetooth_access_denied,
+                        onButtonClick = { onSearchDeviceClicked(bluetoothMutableState, devices) }
+                    )
+                } else {
+                    ErrorView(
+                        messageId = R.string.search_device,
+                        onButtonClick = { onSearchDeviceClicked(bluetoothMutableState, devices) }
+                    )
+                }
+            }
+            Row {
+                BluetoothDeviceList(devices)
+            }
             /*            BluetoothDeviceState(
                             bluetoothState,
                             onButtonClick = fun(command) {
@@ -74,6 +79,7 @@ fun BluetoothStateView(
                             onSearchClicked = { onSearchDeviceClicked(bluetoothMutableState, devices) })
 
              */
+
         }
 
     }
@@ -234,7 +240,7 @@ private fun updateAndStoreDevices(
             .forEach { (key, device) ->
                 device.autoConnect = false
                 storeDevice(context, device)
-             }
+            }
     }
     privateTrainerDevices.put(changedDevice)
     storeDevice(context, changedDevice)

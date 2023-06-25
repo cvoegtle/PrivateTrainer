@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ensureThreeDevices()
+        // ensureThreeDevices()
         setContent {
             PrivateTrainerTheme {
                 val windowSize = calculateWindowSizeClass(this)
@@ -114,10 +114,11 @@ class MainActivity : ComponentActivity() {
 
         BluetoothScanner(bluetoothManager, bluetoothState.value).scanForPrivateTrainer {
             MainScope().launch {
+                bluetoothState.value = bluetoothState.value.copy(connectionStatus = device_found)
+
                 val updatedDevices = devices.value.copy()
                 updatedDevices.found(it.address)
                 devices.value = updatedDevices
-                bluetoothState.value = bluetoothState.value.copy(connectionStatus = device_found)
             }
         }
     }

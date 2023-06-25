@@ -50,13 +50,14 @@ fun BluetoothDeviceRow(
     val background =
         if (device.available) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceVariant
 
+
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = background
     ) {
         Button(
             onClick = { onEditClicked(device) },
-            colors = ButtonDefaults.filledTonalButtonColors()
+            colors = ButtonDefaults.filledTonalButtonColors(containerColor = background)
         ) {
             Row() {
                 Icon(
