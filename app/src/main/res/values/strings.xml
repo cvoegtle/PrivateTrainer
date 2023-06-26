@@ -34,4 +34,5 @@
     <string name="submit">übernehmen</string>
     <string name="cancel">abbrechen</string>
     <string name="auto_connect">automatisch verbinden</string>
+    <string name="device_found">Private Trainer in der Nähe gefunden</string>
 </resources>

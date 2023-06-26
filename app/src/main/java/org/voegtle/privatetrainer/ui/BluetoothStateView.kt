@@ -61,6 +61,11 @@ fun BluetoothStateView(
                         messageId = R.string.error_bluetooth_access_denied,
                         onButtonClick = { onSearchDeviceClicked(bluetoothMutableState, devices) }
                     )
+                } else if (bluetoothState.connectionStatus == device_found) {
+                    ErrorView(
+                        messageId = R.string.device_found,
+                        onButtonClick = { onSearchDeviceClicked(bluetoothMutableState, devices) }
+                    )
                 } else {
                     ErrorView(
                         messageId = R.string.search_device,
@@ -90,7 +95,7 @@ private fun BluetoothDeviceList(devices: MutableState<PrivateTrainerDeviceContai
     val deviceInEdit: MutableState<PrivateTrainerDevice?> = remember { mutableStateOf(null) }
     val privateTrainerDevices = devices.value
     Column() {
-        privateTrainerDevices.devices.values.forEach { device ->
+        privateTrainerDevices.devices.values.sortedBy { device -> !device.available }.forEach { device ->
             BluetoothDeviceRow(device = device,
                 onEditClicked = {
                     deviceInEdit.value = it.copy()

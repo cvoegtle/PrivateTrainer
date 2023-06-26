@@ -114,18 +114,22 @@ data class PrivateTrainerDevice(
 }
 
 @Parcelize
-data class PrivateTrainerDeviceContainer(val devices: MutableMap<String, PrivateTrainerDevice>) :
+data class PrivateTrainerDeviceContainer(
+    val devices: MutableMap<String, PrivateTrainerDevice>,
+    var updateCounter: Int = 0
+) :
     Parcelable {
     fun found(address: String) {
         var device = devices.get(address)
         if (device == null) {
-            device = PrivateTrainerDevice(address=address)
+            device = PrivateTrainerDevice(address = address)
         }
         device.available = true
         put(device)
     }
 
     fun put(device: PrivateTrainerDevice) {
+        updateCounter++
         devices.put(device.address, device)
     }
 
