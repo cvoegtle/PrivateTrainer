@@ -72,7 +72,7 @@ fun DeviceControlView(
 @Composable
 fun BluetoothDeviceList(devices: MutableState<PrivateTrainerDeviceContainer>) {
     val deviceInEdit: MutableState<PrivateTrainerDevice?> = remember { mutableStateOf(null) }
-    val privateTrainerDevices = devices.value
+    val privateTrainerDevices = devices.value.copy()
     Column() {
         privateTrainerDevices.devices.values.sortedBy { device -> !device.available }
             .filter { device -> privateTrainerDevices.showHiddenDevices == true || !device.hidden }
@@ -103,12 +103,13 @@ fun BluetoothDeviceList(devices: MutableState<PrivateTrainerDeviceContainer>) {
                 Button(
                     onClick = {
                         it.givenName = nameUnderConstruction.value
-                        it.autoConnect = autoConnectUnderConstruction.value
+                        it.autoConnect =
+                            autoConnectUnderConstruction.value && !hiddenUnderConstruction.value
                         it.hidden = hiddenUnderConstruction.value
                         updateAndStoreDevices(context, privateTrainerDevices, it)
 
                         deviceInEdit.value = null
-                        devices.value = privateTrainerDevices.copy()
+                        devices.value = privateTrainerDevices
                     }) {
                     Text(context.getString(R.string.submit))
                 }

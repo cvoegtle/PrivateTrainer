@@ -36,6 +36,6 @@
     <string name="auto_connect">connect automatically</string>
     <string name="device_found">Private Trainer in reach</string>
     <string name="all_devices">Show all</string>
-    <string name="active_devices">Show active only</string>
+    <string name="active_devices">Active only</string>
     <string name="hide">hide</string>
 </resources>
