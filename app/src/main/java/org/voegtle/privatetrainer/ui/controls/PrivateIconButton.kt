@@ -10,10 +10,16 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 
 @Composable
-fun PrivateIconButton(imageVector: ImageVector, onClick: () -> Unit, @StringRes id: Int, modifier: Modifier = Modifier) {
+fun PrivateIconButton(
+    imageVector: ImageVector,
+    onClick: () -> Unit, @StringRes
+    id: Int,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier) {
     IconButton(
         onClick = onClick,
-        colors = IconButtonDefaults.filledIconButtonColors()
+        colors = IconButtonDefaults.filledIconButtonColors(),
+        enabled = enabled
     ) {
         Icon(
             imageVector = imageVector,

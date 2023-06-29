@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -11,8 +12,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Grade
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.BluetoothSearching
 import androidx.compose.material.icons.outlined.Grade
 import androidx.compose.material.icons.outlined.Lightbulb
+import androidx.compose.material.icons.outlined.PowerSettingsNew
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -27,6 +30,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
@@ -36,6 +40,7 @@ import org.voegtle.privatetrainer.R
 import org.voegtle.privatetrainer.business.BluetoothState
 import org.voegtle.privatetrainer.business.DeviceStore
 import org.voegtle.privatetrainer.business.PrivateTrainerDevice
+import org.voegtle.privatetrainer.ui.controls.PrivateIconButton
 
 @Composable
 fun BluetoothDeviceRow(
@@ -55,41 +60,49 @@ fun BluetoothDeviceRow(
         modifier = Modifier.fillMaxWidth(),
         color = background
     ) {
-        Button(
-            onClick = { onEditClicked(device) },
-            colors = ButtonDefaults.filledTonalButtonColors(containerColor = background)
-        ) {
-            Row() {
-                Icon(
-                    imageVector = autoConnectImage,
-                    contentDescription = stringResource(
-                        id = R.string.auto_connect
-                    ),
-                    modifier = Modifier.height(45.dp).padding(end = 5.dp)
-                )
+        Row {
+            PrivateIconButton(
+                imageVector = Icons.Outlined.BluetoothSearching,
+                onClick = {
+                },
+                id = R.string.connect_device,
+                enabled = device.available
+            )
 
-                Column() {
-                    Row() {
-                        Text(
-                            givenName,
-                            style = MaterialTheme.typography.titleLarge,
-                            color = color
-                        )
-                    }
-                    Row() {
-                        Text(
-                            device.address,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = color
-                        )
+            Button(
+                onClick = { onEditClicked(device) },
+                colors = ButtonDefaults.filledTonalButtonColors(containerColor = background)
+            ) {
+                Row() {
+                    Icon(
+                        imageVector = autoConnectImage,
+                        contentDescription = stringResource(
+                            id = R.string.auto_connect
+                        ),
+                        modifier = Modifier.height(45.dp).padding(end = 5.dp)
+                    )
+
+                    Column() {
+                        Row() {
+                            Text(
+                                givenName,
+                                style = MaterialTheme.typography.titleLarge,
+                                color = color
+                            )
+                        }
+                        Row() {
+                            Text(
+                                device.address,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = color
+                            )
+                        }
                     }
                 }
+
             }
-
         }
-
     }
-
 }
 
 @SuppressLint("MissingPermission")

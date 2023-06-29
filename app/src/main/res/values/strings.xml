@@ -38,4 +38,5 @@
     <string name="all_devices">Alle</string>
     <string name="active_devices">Nur aktive</string>
     <string name="hide">ausblenden</string>
+    <string name="connect_device">Trainer verbinden</string>
 </resources>
