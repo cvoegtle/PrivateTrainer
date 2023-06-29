@@ -34,5 +34,8 @@
     <string name="submit">übernehmen</string>
     <string name="cancel">abbrechen</string>
     <string name="auto_connect">automatisch verbinden</string>
-    <string name="device_found">Private Trainer in der Nähe gefunden</string>
+    <string name="device_found">Private Trainer in der Nähe</string>
+    <string name="all_devices">Alle anzeigen</string>
+    <string name="active_devices">Nur aktive anzeigen</string>
+    <string name="hide">ausblenden</string>
 </resources>

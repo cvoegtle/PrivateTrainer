@@ -108,7 +108,8 @@ data class PrivateTrainerDevice(
     var givenName: String? = null,
     var address: String,
     var available: Boolean = false,
-    var autoConnect: Boolean = false
+    var autoConnect: Boolean = false,
+    var hidden: Boolean = false
 ) : Parcelable {
     fun isUnnamed() = givenName == null
 }
@@ -116,6 +117,7 @@ data class PrivateTrainerDevice(
 @Parcelize
 data class PrivateTrainerDeviceContainer(
     val devices: MutableMap<String, PrivateTrainerDevice>,
+    var showHiddenDevices: Boolean = false,
     var updateCounter: Int = 0
 ) :
     Parcelable {
@@ -138,11 +140,23 @@ data class PrivateTrainerDeviceContainer(
     }
 
     fun containsUnnamedDevices() = devices.any { device -> device.value.isUnnamed() }
+    fun containsHiddenDevices() = devices.any { device -> device.value.hidden }
     fun unnamedDevices() =
         devices.map { entry -> entry.value }.filter { device -> device.isUnnamed() }.toList()
 
     fun isEmpty() = devices.isEmpty()
     fun size() = devices.size
+    fun showHiddenDevices(): Boolean? {
+        if (containsHiddenDevices()) {
+            return showHiddenDevices
+        } else {
+            return null
+        }
+    }
+
+    fun toggleShowHidden() {
+        showHiddenDevices = !showHiddenDevices
+    }
 }
 
 

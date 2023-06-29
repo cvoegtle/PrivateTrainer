@@ -25,6 +25,8 @@ import org.voegtle.privatetrainer.business.DeviceStore
 import org.voegtle.privatetrainer.business.PrivateTrainerCommand
 import org.voegtle.privatetrainer.business.PrivateTrainerDevice
 import org.voegtle.privatetrainer.business.PrivateTrainerDeviceContainer
+import org.voegtle.privatetrainer.ui.controls.BluetoothDeviceList
+import org.voegtle.privatetrainer.ui.controls.DeviceControlView
 import org.voegtle.privatetrainer.ui.controls.ErrorView
 import org.voegtle.privatetrainer.ui.controls.PrivateIconButton
 
@@ -61,16 +63,18 @@ fun BluetoothStateView(
                         messageId = R.string.error_bluetooth_access_denied,
                         onButtonClick = { onSearchDeviceClicked(bluetoothMutableState, devices) }
                     )
-                } else if (bluetoothState.connectionStatus == device_found) {
-                    ErrorView(
-                        messageId = R.string.device_found,
-                        onButtonClick = { onSearchDeviceClicked(bluetoothMutableState, devices) }
-                    )
                 } else {
-                    ErrorView(
-                        messageId = R.string.search_device,
-                        onButtonClick = { onSearchDeviceClicked(bluetoothMutableState, devices) }
-                    )
+                    val messsageId =
+                        if (bluetoothState.connectionStatus == device_found) R.string.device_found else R.string.search_device
+                    DeviceControlView(
+                        messageId = messsageId,
+                        showHidden = devices.value.showHiddenDevices(),
+                        onSearchClicked = { onSearchDeviceClicked(bluetoothMutableState, devices) },
+                        onToggleHiddenState = {
+                            val updatedDevices = devices.value.copy()
+                            updatedDevices.toggleShowHidden()
+                            devices.value = updatedDevices
+                        })
                 }
             }
             Row {
@@ -87,71 +91,6 @@ fun BluetoothStateView(
 
         }
 
-    }
-}
-
-@Composable
-private fun BluetoothDeviceList(devices: MutableState<PrivateTrainerDeviceContainer>) {
-    val deviceInEdit: MutableState<PrivateTrainerDevice?> = remember { mutableStateOf(null) }
-    val privateTrainerDevices = devices.value
-    Column() {
-        privateTrainerDevices.devices.values.sortedBy { device -> !device.available }.forEach { device ->
-            BluetoothDeviceRow(device = device,
-                onEditClicked = {
-                    deviceInEdit.value = it.copy()
-                }
-            )
-        }
-    }
-
-    deviceInEdit.value?.let { it ->
-        val context = LocalContext.current
-        val givenName = it.givenName ?: context.getString(R.string.unknown_device)
-        val nameUnderConstruction = remember { mutableStateOf(givenName) }
-        val autoConnectUnderConstruction = remember { mutableStateOf(it.autoConnect) }
-
-        AlertDialog(
-            onDismissRequest = { deviceInEdit.value = null },
-            dismissButton = {
-                Button(onClick = { deviceInEdit.value = null }) {
-                    Text(context.getString(R.string.cancel))
-                }
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        it.givenName = nameUnderConstruction.value
-                        it.autoConnect = autoConnectUnderConstruction.value
-
-                        updateAndStoreDevices(context, privateTrainerDevices, it)
-
-                        deviceInEdit.value = null
-                        devices.value = privateTrainerDevices.copy()
-                    }) {
-                    Text(context.getString(R.string.submit))
-                }
-            },
-            title = { Text(it.address) },
-            text = {
-                Column {
-                    Row {
-                        TextField(
-                            value = nameUnderConstruction.value,
-                            onValueChange = { changedName ->
-                                nameUnderConstruction.value = changedName
-                            })
-                    }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Checkbox(
-                            checked = autoConnectUnderConstruction.value,
-                            onCheckedChange = { changedFavorite ->
-                                autoConnectUnderConstruction.value = changedFavorite
-                            })
-                        Text(context.getString(R.string.auto_connect))
-                    }
-                }
-            },
-        )
     }
 }
 
@@ -235,7 +174,7 @@ private fun BluetoothDeviceState(
 
 }
 
-private fun updateAndStoreDevices(
+fun updateAndStoreDevices(
     context: Context,
     privateTrainerDevices: PrivateTrainerDeviceContainer,
     changedDevice: PrivateTrainerDevice,
