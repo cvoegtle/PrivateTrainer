@@ -2,12 +2,11 @@ package org.voegtle.privatetrainer.business
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
-import org.voegtle.privatetrainer.business.bluetooth.BleDevice
 import java.util.UUID
 
 data class BluetoothState(
-    var selectedDevice: BleDevice? = null,
-    var connectionStatus: BluetoothConnectionStatus = BluetoothConnectionStatus.not_connected,
+    var selectedDevice: ConnectedPrivateTrainerDevice? = null,
+    var connectionStatus: BluetoothConnectionStatus = BluetoothConnectionStatus.not_initialised,
     var characteristics: MutableMap<UUID, String> = HashMap(),
     var powerOn: Boolean = false,
     var lastStatus: Int? = null,
@@ -34,7 +33,7 @@ class BatteryConstants {
 }
 
 enum class BluetoothConnectionStatus {
-    not_supported, disabled, permission_denied, not_connected, device_found, device_bound
+    not_initialised, not_supported, disabled, permission_denied, not_connected, device_found, device_bound
 }
 
 enum class PrivateTrainerCommand {
@@ -111,6 +110,26 @@ data class PrivateTrainerDevice(
     var hidden: Boolean = false
 ) : Parcelable {
     fun isUnnamed() = givenName == null
+
+    companion object {
+        val TECHNICAL_NAME = "TD5322A_V2.1.3BLE"
+    }
+}
+
+data class ConnectedPrivateTrainerDevice(
+    var givenName: String,
+    var address: String,
+    var connected: Boolean = false,
+    var batteryLevel: String = "-"
+) {
+    companion object {
+        fun fromPrivateTrainer(privateTrainerDevice: PrivateTrainerDevice): ConnectedPrivateTrainerDevice {
+            return ConnectedPrivateTrainerDevice(
+                givenName = privateTrainerDevice.givenName ?: PrivateTrainerDevice.TECHNICAL_NAME,
+                address = privateTrainerDevice.address
+            )
+        }
+    }
 }
 
 @Parcelize
@@ -120,13 +139,15 @@ data class PrivateTrainerDeviceContainer(
     var updateCounter: Int = 0
 ) :
     Parcelable {
-    fun found(address: String) {
+    fun found(address: String): PrivateTrainerDevice {
         var device = devices.get(address)
         if (device == null) {
             device = PrivateTrainerDevice(address = address)
         }
         device.available = true
         put(device)
+
+        return device
     }
 
     fun put(device: PrivateTrainerDevice) {

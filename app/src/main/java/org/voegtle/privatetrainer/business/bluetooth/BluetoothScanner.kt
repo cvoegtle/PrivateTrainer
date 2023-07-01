@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothManager
 import androidx.compose.runtime.MutableState
 import org.voegtle.privatetrainer.business.BluetoothConnectionStatus
 import org.voegtle.privatetrainer.business.BluetoothState
+import org.voegtle.privatetrainer.business.PrivateTrainerDevice
 
 class BluetoothScanner(private val bluetoothManager: BluetoothManager,
                        private val bluetoothState: BluetoothState) {
@@ -20,7 +21,7 @@ class BluetoothScanner(private val bluetoothManager: BluetoothManager,
                     val name = it?.device?.name
                     if (name.isNullOrBlank()) return@BleScanCallback
 
-                    if (name == BleDevice.NAME_PRIVATETRAINER) {
+                    if (name == PrivateTrainerDevice.TECHNICAL_NAME) {
                         callback(it.device)
                     }
                 })

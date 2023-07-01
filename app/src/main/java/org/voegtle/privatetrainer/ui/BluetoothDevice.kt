@@ -115,7 +115,7 @@ fun BluetoothDeviceStatus(bluetoothState: BluetoothState) {
 
             Row {
                 Text(
-                    it.name,
+                    it.givenName,
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.inverseOnSurface
                 )

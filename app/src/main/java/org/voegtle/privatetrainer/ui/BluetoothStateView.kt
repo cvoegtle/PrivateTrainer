@@ -45,7 +45,13 @@ fun BluetoothStateView(
         mutableStateOf(retrieveDevices(context))
     }
 
-    val bluetoothState = bluetoothMutableState.value
+    var bluetoothState = bluetoothMutableState.value
+    if (bluetoothState.connectionStatus == not_initialised) {
+        bluetoothState = bluetoothState.copy(connectionStatus = not_connected)
+        bluetoothMutableState.value = bluetoothState
+        onSearchDeviceClicked(bluetoothMutableState, devices)
+    }
+
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.inverseSurface

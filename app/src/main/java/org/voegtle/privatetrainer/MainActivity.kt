@@ -29,6 +29,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.voegtle.privatetrainer.business.BluetoothConnectionStatus.*
 import org.voegtle.privatetrainer.business.BluetoothState
+import org.voegtle.privatetrainer.business.ConnectedPrivateTrainerDevice
 import org.voegtle.privatetrainer.business.DeviceSettings
 import org.voegtle.privatetrainer.business.DeviceStore
 import org.voegtle.privatetrainer.business.PrivateTrainerCommand
@@ -53,8 +54,7 @@ class MainActivity : ComponentActivity() {
                 val displayFeatures = calculateDisplayFeatures(this)
                 val settingsStore = SettingsStore(this)
 
-                PrivateTrainerApp(
-                    windowSize = windowSize,
+                PrivateTrainerApp(windowSize = windowSize,
                     displayFeatures = displayFeatures,
                     savedDeviceSettings = settingsStore.retrieveFavoriteSettings(),
                     onSearchDeviceClicked = fun(
@@ -64,25 +64,21 @@ class MainActivity : ComponentActivity() {
                         determineBluetoothState(bluetoothState, devices)
                     },
                     onBindDeviceClicked = fun(
-                        bluetoothState: MutableState<BluetoothState>,
-                        device: PrivateTrainerDevice
+                        bluetoothState: MutableState<BluetoothState>, device: PrivateTrainerDevice
                     ) {
                         bindDevice(bluetoothState, device)
                     },
                     onSendToDeviceClicked = fun(
-                        command: PrivateTrainerCommand,
-                        settings: DeviceSettings
+                        command: PrivateTrainerCommand, settings: DeviceSettings
                     ) {
                         sendCommandToDevice(command, settings)
-                    }
-                )
+                    })
             }
         }
     }
 
     private fun sendCommandToDevice(
-        command: PrivateTrainerCommand,
-        settings: DeviceSettings
+        command: PrivateTrainerCommand, settings: DeviceSettings
     ) {
         bluetoothCaller!!.sendToDevice(command, settings)
     }
@@ -123,43 +119,55 @@ class MainActivity : ComponentActivity() {
         devices: MutableState<PrivateTrainerDeviceContainer>
     ) {
         resetDevices(devices)
+        resetBluetoothCaller()
 
         BluetoothScanner(bluetoothManager, bluetoothState.value).scanForPrivateTrainer {
             MainScope().launch {
-                bluetoothState.value = bluetoothState.value.copy(connectionStatus = device_found)
-
+                if (bluetoothState.value.connectionStatus < device_found) {
+                    bluetoothState.value =
+                        bluetoothState.value.copy(connectionStatus = device_found)
+                }
                 val updatedDevices = devices.value.copy()
-                updatedDevices.found(it.address)
+                val device = updatedDevices.found(it.address)
+                if (device.autoConnect) {
+                    setupBluetoothCaller(it, bluetoothState, device)
+                }
                 devices.value = updatedDevices
             }
         }
     }
 
     private fun bindDevice(
-        bluetoothState: MutableState<BluetoothState>,
-        privateTrainerDevice: PrivateTrainerDevice
+        bluetoothState: MutableState<BluetoothState>, privateTrainerDevice: PrivateTrainerDevice
     ) {
-        bluetoothCaller?.disconnect()
-        bluetoothCaller = null
+        resetBluetoothCaller()
 
         val bluetoothManager: BluetoothManager = getSystemService(BluetoothManager::class.java)
-        val bluetoothAdapter: BluetoothAdapter? = bluetoothManager.adapter
 
         BluetoothScanner(bluetoothManager, bluetoothState.value).scanForPrivateTrainer {
-            if (bluetoothCaller == null && it.address == privateTrainerDevice.address) {
-                bluetoothCaller = BluetoothCaller(this, it, bluetoothState)
+            if (it.address == privateTrainerDevice.address) {
                 MainScope().launch {
-                    bluetoothState.value =
-                        bluetoothState.value.copy(
-                            connectionStatus = device_bound,
-                            selectedDevice = BleDevice(
-                                name = privateTrainerDevice.givenName ?: "-",
-                                address = it.address))
+                    setupBluetoothCaller(it, bluetoothState, privateTrainerDevice)
                 }
             }
         }
     }
 
+    private fun setupBluetoothCaller(
+        bluetoothDevice: BluetoothDevice,
+        bluetoothState: MutableState<BluetoothState>,
+        privateTrainerDevice: PrivateTrainerDevice
+    ) {
+        if (bluetoothCaller == null) {
+            bluetoothCaller = BluetoothCaller(this, bluetoothDevice, bluetoothState)
+            bluetoothState.value = bluetoothState.value.copy(
+                connectionStatus = device_bound,
+                selectedDevice = ConnectedPrivateTrainerDevice.fromPrivateTrainer(
+                    privateTrainerDevice
+                )
+            )
+        }
+    }
 
     private fun resetDevices(devices: MutableState<PrivateTrainerDeviceContainer>) {
         MainScope().launch {
@@ -167,6 +175,11 @@ class MainActivity : ComponentActivity() {
             resettedDevices.resetAvailabilty()
             devices.value = resettedDevices
         }
+    }
+
+    private fun resetBluetoothCaller() {
+        bluetoothCaller?.disconnect()
+        bluetoothCaller = null
     }
 
     fun isBluetoothDeviceConnected() = bluetoothCaller?.isConnected() ?: false
