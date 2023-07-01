@@ -20,7 +20,7 @@ fun AboutScreen() {
     ) {
         Title(text = stringResource(id = R.string.app_name))
         Info(text = stringResource(id = R.string.version) + " 6")
-        Info(text = stringResource(id = R.string.created_at) + " 26.6.2023")
+        Info(text = stringResource(id = R.string.created_at) + " 1.7.2023")
     }
 }
 
