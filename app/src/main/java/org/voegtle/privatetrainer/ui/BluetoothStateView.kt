@@ -33,6 +33,7 @@ import org.voegtle.privatetrainer.ui.controls.PrivateIconButton
 @Composable
 fun BluetoothStateView(
     onSearchDeviceClicked: (MutableState<BluetoothState>, MutableState<PrivateTrainerDeviceContainer>) -> Unit,
+    onBindDeviceClicked: (bluetoothState: MutableState<BluetoothState>, device: PrivateTrainerDevice) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand) -> Unit
 ) {
     val context = LocalContext.current
@@ -78,17 +79,17 @@ fun BluetoothStateView(
                 }
             }
             Row {
-                BluetoothDeviceList(devices)
+                BluetoothDeviceList(
+                    devices,
+                    { device -> onBindDeviceClicked(bluetoothMutableState, device) })
             }
-            /*            BluetoothDeviceState(
-                            bluetoothState,
-                            onButtonClick = fun(command) {
-                                onSendToDeviceClicked(command)
-                            },
-                            onSearchClicked = { onSearchDeviceClicked(bluetoothMutableState, devices) })
-
-             */
-
+            if (bluetoothState.connectionStatus == device_bound) {
+                BluetoothDeviceState(
+                    bluetoothState,
+                    onButtonClick = fun(command) {
+                        onSendToDeviceClicked(command)
+                    })
+            }
         }
 
     }
@@ -98,33 +99,29 @@ fun BluetoothStateView(
 @Composable
 private fun BluetoothDeviceState(
     bluetoothState: BluetoothState,
-    onButtonClick: (command: PrivateTrainerCommand) -> Unit,
-    onSearchClicked: () -> Unit
+    onButtonClick: (command: PrivateTrainerCommand) -> Unit
 ) {
     val context = LocalContext.current
     val colorOnOffIndicator = if (bluetoothState.powerOn) Color.Yellow else Color.Gray
     val powerCommand =
         if (bluetoothState.powerOn) PrivateTrainerCommand.off else PrivateTrainerCommand.on
     Column(modifier = Modifier.fillMaxWidth()) {
-        Row(modifier = Modifier.fillMaxWidth()) {
+        Row(Modifier.fillMaxWidth().padding(start = 5.dp)) {
             BluetoothDeviceStatus(bluetoothState = bluetoothState)
         }
-        Row(Modifier.fillMaxWidth()) {
-            bluetoothState.selectedDevice?.let {
-                if (!it.connected) {
-                    Spacer(modifier = Modifier.width(8.dp))
-                    PrivateIconButton(
-                        imageVector = Icons.Filled.Replay,
-                        id = R.string.search_device,
-                        onClick = onSearchClicked,
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .align(Alignment.CenterVertically)
-                    )
-                }
-            }
+        Row(Modifier.fillMaxWidth().padding(start = 5.dp)) {
+            PrivateIconButton(
+                imageVector = Icons.Outlined.PowerSettingsNew,
+                onClick = {
+                    onButtonClick(powerCommand)
+                },
+                id = R.string.search_device,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .align(Alignment.CenterVertically)
+            )
 
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(2.dp))
 
             Surface(
                 color = MaterialTheme.colorScheme.secondaryContainer,
@@ -143,18 +140,6 @@ private fun BluetoothDeviceState(
 
             Spacer(modifier = Modifier.width(2.dp))
 
-            PrivateIconButton(
-                imageVector = Icons.Outlined.PowerSettingsNew,
-                onClick = {
-                    onButtonClick(powerCommand)
-                },
-                id = R.string.search_device,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .align(Alignment.CenterVertically)
-            )
-        }
-        Row(Modifier.fillMaxWidth()) {
             TextButton(colors = ButtonDefaults.filledTonalButtonColors(),
                 onClick = {
                     onButtonClick(PrivateTrainerCommand.update)
@@ -162,7 +147,7 @@ private fun BluetoothDeviceState(
                 Text(text = context.getString(R.string.update_device_settings))
             }
         }
-        Row(Modifier.fillMaxWidth()) {
+        Row(Modifier.fillMaxWidth().padding(start = 5.dp)) {
             TextButton(colors = ButtonDefaults.filledTonalButtonColors(),
                 onClick = {
                     onButtonClick(PrivateTrainerCommand.requestBatteryStatus)

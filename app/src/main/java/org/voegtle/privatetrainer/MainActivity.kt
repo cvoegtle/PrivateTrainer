@@ -57,8 +57,17 @@ class MainActivity : ComponentActivity() {
                     windowSize = windowSize,
                     displayFeatures = displayFeatures,
                     savedDeviceSettings = settingsStore.retrieveFavoriteSettings(),
-                    onSearchDeviceClicked = fun(bluetoothState: MutableState<BluetoothState>, devices: MutableState<PrivateTrainerDeviceContainer>) {
+                    onSearchDeviceClicked = fun(
+                        bluetoothState: MutableState<BluetoothState>,
+                        devices: MutableState<PrivateTrainerDeviceContainer>
+                    ) {
                         determineBluetoothState(bluetoothState, devices)
+                    },
+                    onBindDeviceClicked = fun(
+                        bluetoothState: MutableState<BluetoothState>,
+                        device: PrivateTrainerDevice
+                    ) {
+                        bindDevice(bluetoothState, device)
                     },
                     onSendToDeviceClicked = fun(
                         command: PrivateTrainerCommand,
@@ -78,7 +87,10 @@ class MainActivity : ComponentActivity() {
         bluetoothCaller!!.sendToDevice(command, settings)
     }
 
-    private fun determineBluetoothState(bluetoothState: MutableState<BluetoothState>, devices: MutableState<PrivateTrainerDeviceContainer>) {
+    private fun determineBluetoothState(
+        bluetoothState: MutableState<BluetoothState>,
+        devices: MutableState<PrivateTrainerDeviceContainer>
+    ) {
 
         val bluetoothManager: BluetoothManager = getSystemService(BluetoothManager::class.java)
         val bluetoothAdapter: BluetoothAdapter? = bluetoothManager.adapter
@@ -123,6 +135,32 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun bindDevice(
+        bluetoothState: MutableState<BluetoothState>,
+        privateTrainerDevice: PrivateTrainerDevice
+    ) {
+        bluetoothCaller?.disconnect()
+        bluetoothCaller = null
+
+        val bluetoothManager: BluetoothManager = getSystemService(BluetoothManager::class.java)
+        val bluetoothAdapter: BluetoothAdapter? = bluetoothManager.adapter
+
+        BluetoothScanner(bluetoothManager, bluetoothState.value).scanForPrivateTrainer {
+            if (bluetoothCaller == null && it.address == privateTrainerDevice.address) {
+                bluetoothCaller = BluetoothCaller(this, it, bluetoothState)
+                MainScope().launch {
+                    bluetoothState.value =
+                        bluetoothState.value.copy(
+                            connectionStatus = device_bound,
+                            selectedDevice = BleDevice(
+                                name = privateTrainerDevice.givenName ?: "-",
+                                address = it.address))
+                }
+            }
+        }
+    }
+
+
     private fun resetDevices(devices: MutableState<PrivateTrainerDeviceContainer>) {
         MainScope().launch {
             val resettedDevices = devices.value.copy()
@@ -135,14 +173,12 @@ class MainActivity : ComponentActivity() {
 
     private fun ensureThreeDevices() {
         val devices = DeviceStore(this).retrieveDevices()
-        for (i in devices.size() .. 2) {
+        for (i in devices.size()..2) {
             val device = PrivateTrainerDevice(givenName = "Device $i", address = "address $i")
             DeviceStore(this).store(device)
         }
 
     }
-
-
 }
 
 @Composable

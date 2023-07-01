@@ -24,8 +24,10 @@ import org.voegtle.privatetrainer.business.SettingsStore
 fun OverviewScreen(
     onSearchDeviceClicked: (bluetoothState: MutableState<BluetoothState>,
                             devices: MutableState<PrivateTrainerDeviceContainer>, ) -> Unit,
+    onBindDeviceClicked: (bluetoothState: MutableState<BluetoothState>,
+                          device: PrivateTrainerDevice) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
-                            settings: DeviceSettings) -> Unit
+                            settings: DeviceSettings) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -36,6 +38,7 @@ fun OverviewScreen(
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         BluetoothStateView(
             onSearchDeviceClicked = onSearchDeviceClicked,
+            onBindDeviceClicked = onBindDeviceClicked,
             onSendToDeviceClicked = fun (command: PrivateTrainerCommand) {onSendToDeviceClicked(command, deviceSettings.value)})
         Spacer(Modifier.height(5.dp))
         DeviceSettingsEditor(deviceSettings.value, onValueChange = fun(updatedSettings: DeviceSettings) {

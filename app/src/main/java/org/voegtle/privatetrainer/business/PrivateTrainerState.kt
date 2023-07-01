@@ -7,7 +7,6 @@ import java.util.UUID
 
 data class BluetoothState(
     var selectedDevice: BleDevice? = null,
-    var foundDevices: MutableMap<String, BleDevice> = HashMap(),
     var connectionStatus: BluetoothConnectionStatus = BluetoothConnectionStatus.not_connected,
     var characteristics: MutableMap<UUID, String> = HashMap(),
     var powerOn: Boolean = false,
@@ -35,7 +34,7 @@ class BatteryConstants {
 }
 
 enum class BluetoothConnectionStatus {
-    not_supported, disabled, permission_denied, not_connected, device_found
+    not_supported, disabled, permission_denied, not_connected, device_found, device_bound
 }
 
 enum class PrivateTrainerCommand {

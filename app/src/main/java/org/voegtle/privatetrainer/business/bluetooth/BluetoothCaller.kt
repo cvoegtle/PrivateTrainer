@@ -291,5 +291,9 @@ class BluetoothCaller(
         }
     }
 
+    fun disconnect() {
+        gatt?.disconnect()
+    }
+
 
 }

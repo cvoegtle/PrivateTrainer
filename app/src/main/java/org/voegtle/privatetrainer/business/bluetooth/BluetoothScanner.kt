@@ -16,12 +16,11 @@ class BluetoothScanner(private val bluetoothManager: BluetoothManager,
             BleScanManager(
                 bluetoothManager,
                 scanPeriod = 5000,
-                scanCallback = BleScanCallback({ it ->
+                scanCallback = BleScanCallback(onScanResultAction = { it ->
                     val name = it?.device?.name
-                    val address = it?.device?.address
                     if (name.isNullOrBlank()) return@BleScanCallback
 
-                    if (name == BleDevice.NAME_PRIVATETRAINER && address != "24:6F:44:82:0E:76") {
+                    if (name == BleDevice.NAME_PRIVATETRAINER) {
                         callback(it.device)
                     }
                 })

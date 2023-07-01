@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 import org.voegtle.privatetrainer.business.BluetoothState
 import org.voegtle.privatetrainer.business.DeviceSettings
 import org.voegtle.privatetrainer.business.PrivateTrainerCommand
+import org.voegtle.privatetrainer.business.PrivateTrainerDevice
 import org.voegtle.privatetrainer.business.PrivateTrainerDeviceContainer
 import org.voegtle.privatetrainer.ui.AboutScreen
 import org.voegtle.privatetrainer.ui.EmptyComingSoon
@@ -36,6 +37,7 @@ fun PrivateTrainerApp (
     displayFeatures: List<DisplayFeature>,
     savedDeviceSettings: List<DeviceSettings>,
     onSearchDeviceClicked: (bluetoothState: MutableState<BluetoothState>, MutableState<PrivateTrainerDeviceContainer>) -> Unit,
+    onBindDeviceClicked: (bluetoothState: MutableState<BluetoothState>, privateTrainerDevice: PrivateTrainerDevice) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
                             settings:DeviceSettings) -> Unit
 ) {
@@ -114,6 +116,7 @@ fun PrivateTrainerApp (
         displayFeatures = displayFeatures,
         navigationContentPosition = navigationContentPosition,
         onSearchDeviceClicked = onSearchDeviceClicked,
+        onBindDeviceClicked = onBindDeviceClicked,
         onSendToDeviceClicked = onSendToDeviceClicked
     )
 
@@ -129,6 +132,8 @@ private fun PrivateTrainerNavigationWrapper(
     navigationContentPosition: PrivateNavigationContentPosition,
     onSearchDeviceClicked: (bluetoothState: MutableState<BluetoothState>,
                             devices: MutableState<PrivateTrainerDeviceContainer>) -> Unit,
+    onBindDeviceClicked: (bluetoothState: MutableState<BluetoothState>,
+                          device: PrivateTrainerDevice) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
                             settings:DeviceSettings) -> Unit
 ) {
@@ -162,6 +167,7 @@ private fun PrivateTrainerNavigationWrapper(
                 selectedDestination = selectedDestination,
                 navigateToTopLevelDestination = navigationActions::navigateTo,
                 onSearchDeviceClicked = onSearchDeviceClicked,
+                onBindDeviceClicked = onBindDeviceClicked,
                 onSendToDeviceClicked = onSendToDeviceClicked
             )
         }
@@ -196,6 +202,7 @@ private fun PrivateTrainerNavigationWrapper(
                     }
                 },
                 onSearchDeviceClicked = onSearchDeviceClicked,
+                onBindDeviceClicked = onBindDeviceClicked,
                 onSendToDeviceClicked = onSendToDeviceClicked
             )
         }
@@ -216,6 +223,8 @@ fun PrivateTrainerAppContent(
     onDrawerClicked: () -> Unit = {},
     onSearchDeviceClicked: (bluetoothState: MutableState<BluetoothState>,
                             devices: MutableState<PrivateTrainerDeviceContainer>) -> Unit,
+    onBindDeviceClicked: (bluetoothState: MutableState<BluetoothState>,
+                          device: PrivateTrainerDevice) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
                             settings:DeviceSettings) -> Unit
 ) {
@@ -233,6 +242,7 @@ fun PrivateTrainerAppContent(
                 navigationType = navigationType,
                 modifier = Modifier.weight(1f),
                 onSearchDeviceClicked = onSearchDeviceClicked,
+                onBindDeviceClicked = onBindDeviceClicked,
                 onSendToDeviceClicked = onSendToDeviceClicked
             )
             AnimatedVisibility(visible = navigationType == PrivateNavigationType.BOTTOM_NAVIGATION) {
@@ -256,6 +266,8 @@ private fun PrivateTrainerNavHost(
     modifier: Modifier = Modifier,
     onSearchDeviceClicked: (bluetoothState: MutableState<BluetoothState>,
                             devices: MutableState<PrivateTrainerDeviceContainer>) -> Unit,
+    onBindDeviceClicked: (bluetoothState: MutableState<BluetoothState>,
+                          device: PrivateTrainerDevice) -> Unit,
     onSendToDeviceClicked: (command: PrivateTrainerCommand,
                             settings:DeviceSettings) -> Unit
 ) {
@@ -265,7 +277,7 @@ private fun PrivateTrainerNavHost(
         startDestination = PrivateRoute.START,
     ) {
         composable(PrivateRoute.START) {
-            OverviewScreen(onSearchDeviceClicked, onSendToDeviceClicked)
+            OverviewScreen(onSearchDeviceClicked, onBindDeviceClicked, onSendToDeviceClicked)
         }
         composable(PrivateRoute.SAVED_SETTINGS) {
             FavoriteSettingsManagementScreen(savedDeviceSettings)
