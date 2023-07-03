@@ -287,6 +287,7 @@ class BluetoothCaller(
 
     private fun updateOnMainThread(newBluetoothState: BluetoothState) {
         MainScope().launch {
+            newBluetoothState.incrementChangeCounter()
             bluetoothState.value = newBluetoothState
         }
     }

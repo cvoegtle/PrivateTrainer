@@ -10,7 +10,8 @@ data class BluetoothState(
     var characteristics: MutableMap<UUID, String> = HashMap(),
     var powerOn: Boolean = false,
     var lastStatus: Int? = null,
-    var lastWrittenValue: String? = null
+    var lastWrittenValue: String? = null,
+    var changeCounter: Int = 0
 ) {
     fun lastReceivedNotifications(): String {
         return characteristics.map { e -> e.key.toString().substring(4, 8) + "=" + e.value }
@@ -22,6 +23,10 @@ data class BluetoothState(
         if (includingBattery) {
             selectedDevice?.let { it.batteryLevel = BatteryConstants.UNKNOWN_STATUS }
         }
+    }
+
+    fun incrementChangeCounter() {
+        changeCounter++
     }
 }
 
