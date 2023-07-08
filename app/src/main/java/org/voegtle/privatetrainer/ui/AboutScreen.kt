@@ -19,8 +19,8 @@ fun AboutScreen() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Title(text = stringResource(id = R.string.app_name))
-        Info(text = stringResource(id = R.string.version) + " 6")
-        Info(text = stringResource(id = R.string.created_at) + " 3.7.2023")
+        Info(text = stringResource(id = R.string.version) + " 7")
+        Info(text = stringResource(id = R.string.created_at) + " 8.7.2023")
     }
 }
 

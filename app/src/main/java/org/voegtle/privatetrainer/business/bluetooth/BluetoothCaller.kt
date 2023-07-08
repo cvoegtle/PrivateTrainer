@@ -18,6 +18,7 @@ class BluetoothCaller(
     private val privateTrainerDevice: BluetoothDevice,
     val bluetoothState: MutableState<BluetoothState>
 ) {
+    private var disconnectCallback: () -> Unit = {}
     private val uuid_privatetrainer_service =
         UUID.fromString("0000ff00-0000-1000-8000-00805f9b34fb")
     private val uuid_command_characteristic = CharacteristicUuid.command.uuid
@@ -39,6 +40,8 @@ class BluetoothCaller(
             if (connected && !selectedDevice.connected) {
                 commandQueue.scheduleDeferred { enableCharacteristicsNotification() }
             }
+
+            respondeToDisconnect(newState)
 
             if (connected != selectedDevice.connected) {
                 updateDeviceStatus(connected, status)
@@ -193,7 +196,7 @@ class BluetoothCaller(
         characteristic: BluetoothGattCharacteristic,
         byteSequence: ByteArray
     ) {
-        Thread.sleep(1000)
+        Thread.sleep(500)
         val valueAccepted = characteristic.setValue(byteSequence)
         gatt!!.writeCharacteristic(characteristic)
         if (valueAccepted) {
@@ -273,7 +276,8 @@ class BluetoothCaller(
         val newBluetoothState =
             bluetoothState.value.copy(
                 selectedDevice = selectedDevice.copy(connected = connected),
-                lastStatus = status
+                lastStatus = status,
+                connectionStatus = if (connected) BluetoothConnectionStatus.device_bound else BluetoothConnectionStatus.not_connected
             )
         updateOnMainThread(newBluetoothState)
     }
@@ -292,9 +296,19 @@ class BluetoothCaller(
         }
     }
 
-    fun disconnect() {
+    fun disconnect(disconnectCallback: () -> Unit) {
+        this.disconnectCallback = disconnectCallback
         gatt?.disconnect()
     }
 
-
+    private fun respondeToDisconnect(newState: Int) {
+        if (bluetoothState.value.connectionStatus >= BluetoothConnectionStatus.device_bound &&
+            newState == BluetoothProfile.STATE_DISCONNECTED
+        ) {
+            MainScope().launch {
+                disconnectCallback()
+                disconnectCallback = {}
+            }
+        }
+    }
 }

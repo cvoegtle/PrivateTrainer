@@ -118,9 +118,26 @@ class MainActivity : ComponentActivity() {
         bluetoothState: MutableState<BluetoothState>,
         devices: MutableState<PrivateTrainerDeviceContainer>
     ) {
+        if (isBluetoothDeviceConnected()) {
+            bluetoothCaller?.disconnect({
+                startBluetoothScan(
+                    bluetoothManager,
+                    bluetoothState,
+                    devices
+                )
+            })
+        } else {
+            startBluetoothScan(bluetoothManager, bluetoothState, devices)
+        }
+    }
+
+    private fun startBluetoothScan(
+        bluetoothManager: BluetoothManager,
+        bluetoothState: MutableState<BluetoothState>,
+        devices: MutableState<PrivateTrainerDeviceContainer>
+    ) {
         resetDevices(devices)
         resetBluetoothCaller()
-
         BluetoothScanner(bluetoothManager, bluetoothState.value).scanForPrivateTrainer {
             MainScope().launch {
                 if (bluetoothState.value.connectionStatus < device_found) {
@@ -178,7 +195,6 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun resetBluetoothCaller() {
-        bluetoothCaller?.disconnect()
         bluetoothCaller = null
     }
 

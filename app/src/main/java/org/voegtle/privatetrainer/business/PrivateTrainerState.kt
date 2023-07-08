@@ -162,6 +162,7 @@ data class PrivateTrainerDeviceContainer(
 
     fun resetAvailabilty() {
         devices.forEach { entry -> entry.value.available = false }
+        updateCounter++
     }
 
     fun containsUnnamedDevices() = devices.any { device -> device.value.isUnnamed() }
